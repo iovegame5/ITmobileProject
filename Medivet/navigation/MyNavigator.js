@@ -8,7 +8,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
 
 // import screen ที่เกี่ยวข้อง
-import HomeScreen from "../screens/HomeScreen"
+
+import HomePageScreen from "../screens/HomePageScreen";
+import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import ProfileClinicScreen from "../screens/ProfileClinic"
+// import RegisterVet from "../screens/RegisterVetScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -17,8 +23,9 @@ const Drawer = createDrawerNavigator();
 function HomeNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="HomePage" component={HomeScreen} options={{ headerShown: false }} />
-
+      <Stack.Screen name="HomePage" component={HomePageScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="LoginPage" component={LoginScreen} options={{ headerShown: false ,} } />
+      <Stack.Screen name="RegisterPage" component={RegisterScreen} />
     </Stack.Navigator>
   )
 }
@@ -36,7 +43,7 @@ function MainNavigator() {
 export default function MyNavigator() {
   return (
     <NavigationContainer>
-      <MainNavigator />
+      <MainNavigator/>
     </NavigationContainer>
   );
 }
