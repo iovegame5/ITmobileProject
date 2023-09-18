@@ -21,6 +21,7 @@ const LoginScreen = ({navigation}) => {
     // Handle login logic here
     console.log("Login button pressed");
     // Dismiss the keyboard after login button press
+    navigation.navigate("all");
     
     Keyboard.dismiss();
   
