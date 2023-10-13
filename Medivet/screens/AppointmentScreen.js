@@ -11,8 +11,12 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { FIREBASE_APP } from "../database/firebaseDB";
 
 const AppointmentScreen = ({ route, navigation }) => {
+
+  const appointmentDB =  FIREBASE_APP.firestore().collection("Appointment");
+
   const [Name, onChangeName] = React.useState("");
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -31,6 +35,8 @@ const AppointmentScreen = ({ route, navigation }) => {
     { label: "17:00 - 18:00", value: "17:00 - 18:00" },
   ]);
 
+  console.log("ontime" + valuetime);
+
   const selectDate = () => {
     setShowdate(!showdate);
   };
@@ -45,6 +51,7 @@ const AppointmentScreen = ({ route, navigation }) => {
       if (Platform.OS == "android") {
         setShowdate();
         onChangedatetxt(formatDate(currentdate));
+        console.log("date" + date)
       }
     } else {
       selectDate();
@@ -58,7 +65,6 @@ const AppointmentScreen = ({ route, navigation }) => {
 
   const formatDate = (rawdate) => {
     let date = new Date(rawdate);
-
     let year = date.getFullYear();
     let month = date.getMonth() + 1;
     let day = date.getDate();
@@ -69,12 +75,32 @@ const AppointmentScreen = ({ route, navigation }) => {
     return `${day}/${month}/${year}`;
   };
 
+  function storeAppointment() {
+    appointmentDB
+      .add({
+        ClinicID: `/Clinic/L7Enot90M98NjnAxcb6R`,
+        Date: datetxt,
+        OwnerID: '1',
+        PetID: '1',
+        Status: 'รอการยืนยัน',
+        Time: valuetime
+      })
+      .then((res) => {
+        onChangedatetxt("");
+        setValuetime(null);
+        Alert.alert(
+          "Adding Alert",
+          "New subject was added!! Pls check your DB!!"
+        );
+      });
+  }
+
   return (
     <View style={styles.screen}>
       <Text style={styles.header}>จองคิวเข้ารักษา</Text>
 
       <View style={styles.form}>
-        <Text style={styles.txt}>ชื่อคลินิก : lolipop</Text>
+        <Text style={styles.txt}>ชื่อคลินิก : </Text>
 
         <Text style={styles.txt}>ชื่อ-นามสกุล :</Text>
         <TextInput
@@ -108,25 +134,6 @@ const AppointmentScreen = ({ route, navigation }) => {
         <Text style={styles.txt}>วันและเวลานัดหมาย : </Text>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <View style={{width: '45%'}}>
-            {!showdate && Platform.OS == "ios" && (
-              <View
-                style={{ flexDirection: "row", justifyContent: "space-around" }}
-              >
-                <TouchableOpacity
-                  style={[styles.btnios, styles.pickerbtnios]}
-                  onPress={selectDate}
-                >
-                  <Text>Cancel</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.btnios, styles.pickerbtnios]}
-                  onPress={confirmIosDate}
-                >
-                  <Text>Confirm</Text>
-                </TouchableOpacity>
-              </View>
-            )}
 
             {showdate && (
               <DateTimePicker
@@ -164,7 +171,7 @@ const AppointmentScreen = ({ route, navigation }) => {
       </View>
 
       <View style={{width: '70%', paddingVertical: 20, borderRadius: 20}}>
-        <Button onPress={() => navigation.navigate("ReminderUser")} title="Submit" color="#87D8C3"/>
+        <Button onPress={() => {storeAppointment(),navigation.navigate("ReminderUser")}} title="Submit" color="#87D8C3"/>
       </View>
     </View>
   );
