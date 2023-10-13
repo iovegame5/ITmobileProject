@@ -95,7 +95,7 @@ function HomeNavigator() {
         options={{
           headerTitle: (props) => <LogoTitle {...props} />,
           headerStyle: {
-            backgroundColor: "#E3F4F4",
+            backgroundColor: "#A2E5E1",
           },
         }}
       />
