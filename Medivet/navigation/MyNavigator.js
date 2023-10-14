@@ -146,6 +146,7 @@ function AppointmentNavigator() {
         name="ReminderAppointment"
         component={ReminderAppoint}
         options={{
+          title: "คิวเข้ารักษา",
           headerStyle: {
             backgroundColor: "#E3F4F4",
           },
@@ -198,6 +199,7 @@ function QueueNavigator() {
         name="ReminderUser"
         component={ReminderAppoint}
         options={{
+          title: "คิวเข้ารักษา",
           headerStyle: {
             backgroundColor: "#E3F4F4",
           },

@@ -37,7 +37,6 @@ const ReminderAppoint = ({ route, navigation }) => {
       <ScrollView style={{ flex: 1 }}>
         <View style={styles.container}>
           {/* // upcoming appointment */}
-          <Text style={styles.header}>คิวเข้ารักษา</Text>
           <View style={styles.alllist}>
             <View style={styles.eachbox}>
               <View style={styles.upcoming_box}>
