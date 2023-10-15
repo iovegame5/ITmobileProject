@@ -5,13 +5,14 @@ import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MyNavigator from "./navigation/MyNavigator.js";
-
+import TabViewExample from "./components/Tabs.js";
 import { ThemeProvider } from "@material-tailwind/react";
+import QueueOwner from "./components/QueueOwner.js";
 
 export default function App() {
   // เพิ่มโค้ดส่วนนี้ เพื่อจัดการ Stack Navigation
   return(
-      <MyNavigator />
+    <MyNavigator />
   );
 }
 
