@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Switch,
+  Image,
+  Linking,
+  ScrollView,
+  Button,
+  useWindowDimensions,
+  TouchableOpacity,
+} from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import QueueOwner from "../components/QueueOwner";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { FIREBASE_APP } from "../database/firebaseDB";
-import QueueOwner from "../components/QueueOwner";
 
-function ReminderAppoint() {
+const ReminderAppoint = ({ route, navigation }) => {
   const [queueowner_list, setQueueownerList] = useState([]);
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -54,23 +67,34 @@ function ReminderAppoint() {
     );
   };
 
-  const FirstRoute = () => (
-    <View className="flex-1 bg-white-100 items-center"></View>
-  );
+  console.log(queueowner_list)
 
-  const SecondRoute = () => (
+  const FirstRoute = () => (
     <View className="flex-1 bg-white-100 items-center">
-      <QueueOwner />
+              <QueueOwner ></QueueOwner>
     </View>
   );
 
+  const SecondRoute = () => (
+      <View className="flex-1 bg-white-100 items-center">
+        <QueueOwner queuedata={queueowner_list} navigation={navigation}></QueueOwner>
+      </View>
+    
+  );
+
   const ThirdRoute = () => (
-    <View className="flex-1 bg-white-100 items-center"></View>
+    <View className="flex-1 bg-white-100 items-center">
+       <QueueOwner></QueueOwner>
+    </View>
   );
 
   const FourthRoute = () => (
-    <View className="flex-1 bg-white-100 items-center"></View>
+    <View className="flex-1 bg-white-100 items-center">
+       <QueueOwner></QueueOwner>
+    </View>
   );
+
+  const layout = useWindowDimensions();
 
   return (
     <View style={{ flex: 1 }}>
@@ -84,11 +108,11 @@ function ReminderAppoint() {
         })}
         onIndexChange={setIndex}
         renderTabBar={renderTabBar}
-        initialLayout={{ width: useWindowDimensions().width }}
+        initialLayout={{ width: layout.width }}
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
