@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
@@ -10,70 +10,121 @@ import {
   ScrollView,
   Button,
   useWindowDimensions,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import QueueOwner from "../components/QueueOwner";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import {FIREBASE_APP} from "../database/firebaseDB";
 
-const FirstRoute = () => (
-  <View className="flex-1 bg-white-100 items-center">
-    <QueueOwner></QueueOwner>
-  </View>
-);
 
-const SecondRoute = () => (
-  <View className="flex-1 bg-white-100" />
-);
+class ReminderAppoint extends Component {
+  constructor(props) {
+    super(props);
+    this.queueOwner = FIREBASE_APP.firestore().collection("Appointment");
+    this.state = {
+      queueowner_list: [],
+      index: 0,
+      routes: [
+        { key: "first", title: "รอยืนยัน" },
+        { key: "second", title: "นัดหมาย" },
+        { key: "third", title: "ประวัติ" },
+        { key: "fourth", title: "เลื่อนนัด" },
+      ]
+    };
+    
+  }
+  
+  getCollection = (querySnapshot) => {
+    
+    const all_data = [];
+    querySnapshot.forEach((res) => {
 
-const ThirdRoute = () => (
-  <View className="flex-1 bg-white-100"></View>
-);
+      const { ClinicID, Date, OwnerID, PetID, Status, Time } = res.data();
+      all_data.push({
+        key: res.id,
+        ClinicID,
+        Date,
+        OwnerID,
+        PetID,
+        Status,
+        Time
+      });
+    });
+    // console.log("all_data : ", all_data);
+    
+    this.setState({
+      queueowner_list: all_data
+    });
+  };
 
-const FourthRoute = () => (
-  <View className="flex-1 bg-white-100"></View>
-);
 
-const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
-  third: ThirdRoute,
-  fourth: FourthRoute
-});
+  componentDidMount() {
+    this.unsubscribe = this.FIREBASE_APP.onSnapshot(this.getCollection);
+  };
 
-const renderTabBar = (props) => (
-  <TabBar
-    {...props}
-    indicatorStyle={{ backgroundColor: "#379895" }}
-    style={{ backgroundColor: "white" }}
-    labelStyle={{ color: "black" }}
-    activeColor="#379895"
-  />
-);
+  componentWillUnmount() {
+    this.unsubscribe();
+  };
 
-const ReminderAppoint = ({ route, navigation }) => {
-  const layout = useWindowDimensions();
 
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: "first", title: "รอยืนยัน" },
-    { key: "second", title: "นัดหมาย" },
-    { key: "third", title: "ประวัติ" },
-    {key: "fourth", title: "เลื่อนนัด"}
-  ]);
+  render() {
+    function FirstRoute() {
+      return (
+      <View className="flex-1 bg-white-100 items-center"></View>
+      );
+    }
+    
+    function SecondRoute() {
+      return (
+        <View className="flex-1 bg-white-100 items-center">
+        <QueueOwner></QueueOwner>
+      </View>
+      );
+    };
+    
+    function ThirdRoute() {
+      return (
+        <View className="flex-1 bg-white-100 items-center"></View>
+      );
+    };
+    
+    function FourthRoute() {
+      return (
+        <View className="flex-1 bg-white-100 items-center"></View>
+      );
+    }; 
 
-  return (
-    <View style={{ flex: 1 }}>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        renderTabBar={renderTabBar}
-        initialLayout={{ width: layout.width }}
-      />
-    </View>
-  );
-};
+
+    return (
+      <View style={{ flex: 1 }}>
+        <TabView
+          navigationState={this.state}
+          renderScene={SceneMap({
+            first: FirstRoute,
+            second: SecondRoute,
+            third: ThirdRoute,
+            fourth: FourthRoute,
+          })}
+          onIndexChange={(index) => this.setState({ index })}
+          renderTabBar={(props) => this.renderTabBar(props)}
+          initialLayout={{ width: useWindowDimensions().width }}
+        />
+      </View>
+    );
+  }
+
+  renderTabBar = (props) => {
+    return (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: "#379895" }}
+      style={{ backgroundColor: "white" }}
+      labelStyle={{ color: "black" }}
+      activeColor="#379895"
+    />
+  )};
+}
 
 const styles = StyleSheet.create({
   container: {
