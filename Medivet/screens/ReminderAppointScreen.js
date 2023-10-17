@@ -9,42 +9,68 @@ import {
   Linking,
   ScrollView,
   Button,
+  useWindowDimensions,
+  TouchableOpacity
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import QueueOwner from "../components/QueueOwner";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+
+const FirstRoute = () => (
+  <View className="flex-1 bg-white-100 items-center">
+    <QueueOwner></QueueOwner>
+  </View>
+);
+
+const SecondRoute = () => (
+  <View className="flex-1 bg-white-100" />
+);
+
+const ThirdRoute = () => (
+  <View className="flex-1 bg-white-100"></View>
+);
+
+const FourthRoute = () => (
+  <View className="flex-1 bg-white-100"></View>
+);
+
+const renderScene = SceneMap({
+  first: FirstRoute,
+  second: SecondRoute,
+  third: ThirdRoute,
+  fourth: FourthRoute
+});
+
+const renderTabBar = (props) => (
+  <TabBar
+    {...props}
+    indicatorStyle={{ backgroundColor: "#379895" }}
+    style={{ backgroundColor: "white" }}
+    labelStyle={{ color: "black" }}
+    activeColor="#379895"
+  />
+);
 
 const ReminderAppoint = ({ route, navigation }) => {
-  const renderMealItem = (itemData) => {
-    return (
-      //เขียนโค้ดเพิ่ม
-      <MealItem
-        title={itemData.item.title}
-        duration={itemData.item.duration}
-        complexity={itemData.item.complexity}
-        affordability={itemData.item.affordability}
-        image={itemData.item.imageUrl}
-        onSelectMeal={() => {
-          props.navigation.navigate("MealDetail", {
-            foodmenu: itemData.item.title,
-            howto: itemData.item.steps,
-          });
-        }}
-      />
-    );
-  };
+  const layout = useWindowDimensions();
 
-  
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: "first", title: "รอยืนยัน" },
+    { key: "second", title: "นัดหมาย" },
+    { key: "third", title: "ประวัติ" },
+    {key: "fourth", title: "เลื่อนนัด"}
+  ]);
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          {/* // upcoming appointment */}
-          <View style={styles.alllist}>
-            <QueueOwner></QueueOwner>
-          </View>
-        </View>
-      </ScrollView>
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        renderTabBar={renderTabBar}
+        initialLayout={{ width: layout.width }}
+      />
     </View>
   );
 };
@@ -68,8 +94,8 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 28,
-    fontWeight: 'bold',
-    marginVertical: 10
+    fontWeight: "bold",
+    marginVertical: 10,
   },
 });
 
