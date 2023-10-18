@@ -115,7 +115,7 @@ const Clinicdetail = ({route, navigation}) => {
                 }}
               />
               <View style={{marginTop: 10}}>
-              <Button  color="#87D8C3" title="Book an Appointment" onPress={() => navigation.navigate("FormAppointment")} />
+              <Button  color="#87D8C3" title="Book an Appointment" onPress={() => navigation.navigate("FormAppointment", {todo: "addQueue"})} />
               </View>
             </View>
             
