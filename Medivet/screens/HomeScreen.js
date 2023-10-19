@@ -32,7 +32,7 @@ const HomeScreen = (props) => {
         <View style={styles.container}>
            {/* // upcoming appointment */}
       <View>
-        <Text className="text-lg bg-red-500">Upcoming appointment</Text>
+        <Text className="text-xl font-medium">Upcoming appointment</Text>
         <View style={styles.upcoming_box}>
           <View style={styles.infoappoint}>
             <Text style={styles.txtinfoappoint}>ชื่อหมอ</Text>

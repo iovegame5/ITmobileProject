@@ -7,15 +7,15 @@ import {
   TextInput,
   Pressable,
   Platform,
+  Alert
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FIREBASE_APP } from "../database/firebaseDB";
 
-const AppointmentScreen = ({route, navigation}) => {
-
-    const appointmentDB = FIREBASE_APP.firestore().collection("Appointment");
+const AppointmentScreen = ({ route, navigation }) => {
+  const appointmentDB = FIREBASE_APP.firestore().collection("Appointment");
 
   const [Name, onChangeName] = React.useState("");
   const [open, setOpen] = useState(false);
@@ -35,29 +35,28 @@ const AppointmentScreen = ({route, navigation}) => {
     { label: "17:00 - 18:00", value: "17:00 - 18:00" },
   ]);
 
-  function ShowQueue() {
+  useEffect(() => {
     console.log("route " + route.params.todo);
     console.log(route.params.queueid);
-    const subjDoc = FIREBASE_APP
-            .firestore()
-            .collection("Appointment")
-            .doc(route.params.queueid);
-        subjDoc.get().then((res) => {
-            if (res.exists) {
-                const subj = res.data();
-                onChangedatetxt(subj.Date)
-                setValuetime(subj.Time)
-            } else {
-                console.log("Document does not exist!!");
-            }
-        });
-  }
+    const subjDoc = FIREBASE_APP.firestore()
+      .collection("Appointment")
+      .doc(route.params.queueid);
+    subjDoc.get().then((res) => {
+      if (res.exists) {
+        const subj = res.data();
+        onChangedatetxt(subj.Date);
+        setValuetime(subj.Time);
+      } else {
+        console.log("Document does not exist!!");
+      }
+    });
+  }, []);
 
-   const selectDate = () => {
+  const selectDate = () => {
     setShowdate(!showdate);
   };
 
-   const onchange = ({ type }, selectDate) => {
+  const onchange = ({ type }, selectDate) => {
     console.log(type);
     console.log(selectDate);
     if (type == "set") {
@@ -74,7 +73,7 @@ const AppointmentScreen = ({route, navigation}) => {
     }
   };
 
-   const formatDate = (rawdate) => {
+  const formatDate = (rawdate) => {
     let date = new Date(rawdate);
     let year = date.getFullYear();
     let month = date.getMonth() + 1;
@@ -106,11 +105,10 @@ const AppointmentScreen = ({route, navigation}) => {
           );
         });
     } else if (route.params.todo === "editQueue") {
-      const updateQueue = firebase
-        .firestore()
+      const updateQueue = FIREBASE_APP.firestore()
         .collection("Appointment")
         .doc(route.params.queueid);
-        updateQueue
+      updateQueue
         .set({
           ClinicID: `/Clinic/L7Enot90M98NjnAxcb6R`,
           Date: datetxt,
@@ -126,88 +124,97 @@ const AppointmentScreen = ({route, navigation}) => {
           );
         });
     }
-  };
+  }
 
-    return (
-      <View style={styles.screen}>
-        <Text style={styles.header}>จองคิวเข้ารักษา</Text>
-  
-        <View style={styles.form}>
-          <Text style={styles.txt}>ชื่อคลินิก : </Text>
-  
-          <Text style={styles.txt}>ชื่อ-นามสกุล :</Text>
-          <TextInput
-            style={styles.input}
-            value={Name}
-            onChangeText={onChangeName}
-            placeholder="Name"
-          />
-  
-          <Text style={styles.txt}>ชื่อสัตว์เลี้ยง :</Text>
-          <DropDownPicker
-            open={open}
-            value={value}
-            items={Petname}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={onChangePetname}
-            style={styles.dropdown}
-          />
-  
-          <Text style={styles.txt}>เบอร์โทร : </Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeNumber}
-            value={number}
-            placeholder="Telphone"
-            keyboardType="numeric"
-          />
-  
-          <Text style={styles.txt}>วันและเวลานัดหมาย : </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <View style={{ width: "45%" }}>
-              {showdate && (
-                <DateTimePicker
-                  mode="date"
-                  display="spinner"
-                  value={date}
-                  onChange={onchange}
-                  style={styles.datepicker}
-                />
-              )}
-  
-              <Pressable onPress={selectDate}>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChangedatetxt}
-                  value={datetxt}
-                  placeholder="Date"
-                  editable={false}
-                  onPressIn={selectDate}
-                />
-              </Pressable>
-            </View>
-            <View style={{ width: "45%" }}>
-              <DropDownPicker
-                open={opentime}
-                value={valuetime}
-                items={Ontime}
-                setOpen={setOpentime}
-                setValue={setValuetime}
-                setItems={onChangeTime}
-                style={styles.dropdown}
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.header}>จองคิวเข้ารักษา</Text>
+
+      <View style={styles.form}>
+        <Text style={styles.txt}>ชื่อคลินิก : </Text>
+
+        <Text style={styles.txt}>ชื่อ-นามสกุล :</Text>
+        <TextInput
+          style={styles.input}
+          value={Name}
+          onChangeText={onChangeName}
+          placeholder="Name"
+        />
+
+        <Text style={styles.txt}>ชื่อสัตว์เลี้ยง :</Text>
+        <DropDownPicker
+          open={open}
+          value={value}
+          items={Petname}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={onChangePetname}
+          style={styles.dropdown}
+        />
+
+        <Text style={styles.txt}>เบอร์โทร : </Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeNumber}
+          value={number}
+          placeholder="Telphone"
+          keyboardType="numeric"
+        />
+
+        <Text style={styles.txt}>วันและเวลานัดหมาย : </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ width: "45%" }}>
+            {showdate && (
+              <DateTimePicker
+                mode="date"
+                display="spinner"
+                value={date}
+                onChange={onchange}
+                style={styles.datepicker}
               />
-            </View>
+            )}
+
+            <Pressable onPress={selectDate}>
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangedatetxt}
+                value={datetxt}
+                placeholder="Date"
+                editable={false}
+                onPressIn={selectDate}
+              />
+            </Pressable>
+          </View>
+          <View style={{ width: "45%" }}>
+            <DropDownPicker
+              open={opentime}
+              value={valuetime}
+              items={Ontime}
+              setOpen={setOpentime}
+              setValue={setValuetime}
+              setItems={onChangeTime}
+              style={styles.dropdown}
+            />
           </View>
         </View>
-  
-        <View style={{ width: "70%", paddingVertical: 20, borderRadius: 20 }}>
+      </View>
+
+      <View style={{ width: "70%", paddingVertical: 20, borderRadius: 20 }}>
+        {route.params.todo === "editQueue" ? (
+          <Button
+            onPress={() => {
+              storeAppointment(), navigation.navigate("ReminderAppointment");
+            }}
+            title="Submit"
+            color="#87D8C3"
+          />
+        ) : (
           <Button
             onPress={() => {
               storeAppointment(), navigation.navigate("ReminderUser");
@@ -215,12 +222,11 @@ const AppointmentScreen = ({route, navigation}) => {
             title="Submit"
             color="#87D8C3"
           />
-        </View>
+        )}
       </View>
-    );
-  }
-;
-
+    </View>
+  );
+};
 const styles = StyleSheet.create({
   screen: {
     flex: 1,

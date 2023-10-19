@@ -84,13 +84,13 @@ const ReminderAppoint = ({ route, navigation }) => {
 
   const ThirdRoute = () => (
     <View className="flex-1 bg-white-100 items-center">
-       <QueueOwner></QueueOwner>
+       <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="สำเร็จ"></QueueOwner>
     </View>
   );
 
   const FourthRoute = () => (
     <View className="flex-1 bg-white-100 items-center">
-       <QueueOwner></QueueOwner>
+       <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="เลื่อนนัด"></QueueOwner>
     </View>
   );
 
