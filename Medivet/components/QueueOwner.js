@@ -53,7 +53,7 @@ const QueueOwner = (props) => {
 
   const WaitQueue = (prop) => {
     return (
-      <View className="bg-slate-50 my-5 rounded-2xl" style={styles.shadow}>
+      <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
         <View className=" w-72 h-44 rounded-2xl">
           <Text className="text-right text-orange-700 mr-2 mt-2">
             รอการยืนยัน
@@ -87,7 +87,7 @@ const QueueOwner = (props) => {
   const ComingQueue = (prop) => {
     console.log("key " + prop.Key);
     return (
-      <View className="bg-slate-50 my-5 rounded-2xl" style={styles.shadow}>
+      <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
         <View className="flex flex-row justify-around  w-72 h-48 rounded-2xl items-center">
           <View className="w-2/5 items-center">
             <Image
@@ -133,7 +133,7 @@ const QueueOwner = (props) => {
 
   const ChangeQueue = (prop) => {
     return (
-      <View className="bg-slate-50 my-5 rounded-2xl" style={styles.shadow}>
+      <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
         <View className=" w-72 h-52 rounded-2xl">
           <Text className="text-right text-orange-700 mr-2 mt-2">
             เปลี่ยนแปลงนัด

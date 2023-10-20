@@ -114,7 +114,7 @@ const AppointmentScreen = ({ route, navigation }) => {
           Date: datetxt,
           OwnerID: "1",
           PetID: "1",
-          Status: "เลื่อนนัด",
+          Status: "รอการยืนยัน",
           Time: valuetime,
         })
         .then(() => {
