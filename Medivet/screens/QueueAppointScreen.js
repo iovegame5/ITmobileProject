@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState,useEffect} from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
@@ -15,10 +15,11 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { FIREBASE_APP } from "../database/firebaseDB";
+import QueueClinic from "../components/QueueClinic";
 
 
 const QueueAppoint = ({ route, navigation }) => {
-  const [queueowner_list, setQueueownerList] = useState([]);
+  const [queueclinic_list, setQueueclinicList] = useState([]);
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: "first", title: "รอยืนยัน" },
@@ -30,7 +31,7 @@ const QueueAppoint = ({ route, navigation }) => {
   const getCollection = (querySnapshot) => {
     const all_data = [];
     querySnapshot.forEach((res) => {
-      const { ClinicID, Date, OwnerID, PetID, Status, Time } = res.data();
+      const { ClinicID, Date, OwnerID, PetID, Status, StatusClinic, Time } = res.data();
       all_data.push({
         key: res.id,
         ClinicID,
@@ -38,16 +39,17 @@ const QueueAppoint = ({ route, navigation }) => {
         OwnerID,
         PetID,
         Status,
-        Time,
+        StatusClinic,
+        Time
       });
     });
 
-    setQueueownerList(all_data);
+    setQueueclinicList(all_data);
   };
 
   useEffect(() => {
     const unsubscribe = FIREBASE_APP.firestore()
-      .collection("ClinicQueue")
+      .collection("Appointment")
       .onSnapshot(getCollection);
 
     return () => {
@@ -67,28 +69,28 @@ const QueueAppoint = ({ route, navigation }) => {
     );
   };
 
+
   const FirstRoute = () => (
     <View className="flex-1 bg-white-100 items-center">
-          <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="รอการยืนยัน"></QueueOwner>
+      <QueueClinic queuedata={queueclinic_list} navigation={navigation} typeclinicstatus="รอการยืนยัน"/>
     </View>
   );
 
   const SecondRoute = () => (
       <View className="flex-1 bg-white-100 items-center">
-        <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="นัดหมาย"></QueueOwner>
+        <QueueClinic queuedata={queueclinic_list} navigation={navigation} typeclinicstatus="นัดหมาย"/>
       </View>
-    
   );
 
   const ThirdRoute = () => (
     <View className="flex-1 bg-white-100 items-center">
-       <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="สำเร็จ"></QueueOwner>
+      <QueueClinic queuedata={queueclinic_list} navigation={navigation} typeclinicstatus="สำเร็จ"/>
     </View>
   );
 
   const FourthRoute = () => (
     <View className="flex-1 bg-white-100 items-center">
-       <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="เลื่อนนัด"></QueueOwner>
+      <QueueClinic queuedata={queueclinic_list} navigation={navigation} typeclinicstatus="เลื่อนนัด"/>
     </View>
   );
 

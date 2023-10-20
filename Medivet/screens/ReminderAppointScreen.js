@@ -30,7 +30,7 @@ const ReminderAppoint = ({ route, navigation }) => {
   const getCollection = (querySnapshot) => {
     const all_data = [];
     querySnapshot.forEach((res) => {
-      const { ClinicID, Date, OwnerID, PetID, Status, Time } = res.data();
+      const { ClinicID, Date, OwnerID, PetID, Status, Time, StatusClinic } = res.data();
       all_data.push({
         key: res.id,
         ClinicID,
@@ -39,6 +39,7 @@ const ReminderAppoint = ({ route, navigation }) => {
         PetID,
         Status,
         Time,
+        StatusClinic
       });
     });
 
@@ -67,7 +68,6 @@ const ReminderAppoint = ({ route, navigation }) => {
     );
   };
 
-  console.log(queueowner_list)
 
   const FirstRoute = () => (
     <View className="flex-1 bg-white-100 items-center">

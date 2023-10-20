@@ -17,7 +17,6 @@ import { FIREBASE_APP } from "../database/firebaseDB";
 
 const QueueOwner = (props) => {
   const appointmentDB = FIREBASE_APP.firestore().collection("Appointment");
-  const [submitchange, Onsubmitchange] = React.useState(null);
 
   function SubmitChange(prop) {
     const subjDoc = FIREBASE_APP.firestore()
@@ -25,7 +24,6 @@ const QueueOwner = (props) => {
       .doc(prop);
     subjDoc.get().then((res) => {
       if (res.exists) {
-        Onsubmitchange(res.data());
         const updateChangeQueue = FIREBASE_APP.firestore()
           .collection("Appointment")
           .doc(prop);
@@ -37,6 +35,7 @@ const QueueOwner = (props) => {
             PetID: res.data().PetID,
             Status: "นัดหมาย",
             Time: res.data().Time,
+            StatusClinic: "นัดหมาย"
           })
           .then(() => {
             Alert.alert(
@@ -48,7 +47,6 @@ const QueueOwner = (props) => {
         console.log("Document does not exist!!");
       }
     });
-    console.log(submitchange);
   }
 
   const WaitQueue = (prop) => {
@@ -114,6 +112,7 @@ const QueueOwner = (props) => {
                   props.navigation.navigate("FormAppointment", {
                     todo: "editQueue",
                     queueid: prop.Key,
+                    editfrom: "Owner"
                   });
                 }}
                 title="แก้ไข"
@@ -158,14 +157,14 @@ const QueueOwner = (props) => {
               </Text>
               <Text className="text-sm">{prop.PetID}</Text>
               <View className="border-t border-gray-400 mb-1"></View>
-             {/*  <View className="flex flex-row justify-evenly	items-center">
+              <View className="flex flex-row justify-evenly	items-center">
                 <Button
                   onPress={() => SubmitChange(prop.Key)}
                   title="ยืนยัน"
                   color="#379895"
                 />
                 <Button onPress={""} title="ยกเลิก" color="#FD6262" />
-              </View> */}
+              </View>
             </View>
           </View>
         </View>

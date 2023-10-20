@@ -165,6 +165,32 @@ function AppointmentNavigator() {
   );
 }
 
+function QueueClinicNavigator() {
+  return (
+    <Appointment.Navigator>
+      <Appointment.Screen
+        name="ClinicQueue"
+        component={QueueAppoint}
+        options={{
+          title: "คิวการรักษา",
+          headerStyle: {
+            backgroundColor: "#E3F4F4",
+          },
+        }}
+      />
+      <Appointment.Screen
+        name="FormAppointment"
+        component={AppointmentScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: "#E3F4F4",
+          },
+        }}
+      />
+    </Appointment.Navigator>
+  );
+}
+
 function QueueNavigator() {
   return (
     <Queue.Navigator>
@@ -260,6 +286,16 @@ function TabNavigator() {
           },
           headerShown: false,
         }}
+      />
+      <Tab.Screen 
+        name="DoctorQueue"
+        component={QueueClinicNavigator}
+        options={{
+          tabBarIcon: ({ color, size }) => {
+            return <FontAwesome name="calendar" size={24} color="white" />;
+        },
+        headerShown: false
+      }}
       />
     </Tab.Navigator>
   );

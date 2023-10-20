@@ -37,7 +37,6 @@ const AppointmentScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     console.log("route " + route.params.todo);
-    console.log(route.params.queueid);
     const subjDoc = FIREBASE_APP.firestore()
       .collection("Appointment")
       .doc(route.params.queueid);
@@ -51,6 +50,7 @@ const AppointmentScreen = ({ route, navigation }) => {
       }
     });
   }, []);
+
 
   const selectDate = () => {
     setShowdate(!showdate);
@@ -85,16 +85,18 @@ const AppointmentScreen = ({ route, navigation }) => {
     return `${day}/${month}/${year}`;
   };
 
+  
   function storeAppointment() {
     if (route.params.todo === "addQueue") {
       appointmentDB
         .add({
-          ClinicID: `/Clinic/L7Enot90M98NjnAxcb6R`,
+          ClinicID: `L7Enot90M98NjnAxcb6R`,
           Date: datetxt,
           OwnerID: "1",
           PetID: "1",
           Status: "รอการยืนยัน",
           Time: valuetime,
+          StatusClinic: "รอการยืนยัน"
         })
         .then((res) => {
           onChangedatetxt("");
@@ -104,7 +106,7 @@ const AppointmentScreen = ({ route, navigation }) => {
             "New Queue was added!! Pls check your DB!!"
           );
         });
-    } else if (route.params.todo === "editQueue") {
+    } else if (route.params.todo === "editQueue" && route.params.editfrom === "Owner") {
       const updateQueue = FIREBASE_APP.firestore()
         .collection("Appointment")
         .doc(route.params.queueid);
@@ -116,6 +118,27 @@ const AppointmentScreen = ({ route, navigation }) => {
           PetID: "1",
           Status: "รอการยืนยัน",
           Time: valuetime,
+          StatusClinic: "เลื่อนนัด"
+        })
+        .then(() => {
+          Alert.alert(
+            "Updating Alert",
+            "The queue was updated!! Pls check your DB!!"
+          );
+        });
+    } else if (route.params.todo === "editQueue" && route.params.editfrom === "Clinic") {
+      const updateQueue = FIREBASE_APP.firestore()
+        .collection("Appointment")
+        .doc(route.params.queueid);
+      updateQueue
+        .set({
+          ClinicID: `/Clinic/L7Enot90M98NjnAxcb6R`,
+          Date: datetxt,
+          OwnerID: "1",
+          PetID: "1",
+          Status: "เลื่อนนัด",
+          Time: valuetime,
+          StatusClinic: "รอการยืนยัน"
         })
         .then(() => {
           Alert.alert(
