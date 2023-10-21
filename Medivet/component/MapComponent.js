@@ -139,7 +139,7 @@ function MapComponent({ width, height, onLocationSelect, context, locations }, r
     // ไปที่ตำแหน้งปัจจุบันของมือถือ
     getPermissions();
     if (!havePermission) {
-      Alert.alert("Please grant location permissions.");
+      Alert.alert("กรุณาให้อณุญาติสิทธิการใช้การบริการตำแหน่งที่ตั้งในโทรศัพท์ของคุณ");
       return;
     }
 

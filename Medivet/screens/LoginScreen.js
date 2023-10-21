@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,20 +11,60 @@ import {
   ScrollView,
   Keyboard,
 } from "react-native";
+import firebase from "../database/firebase";
+
+const auth = firebase.auth();
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState(null);
+  const[userId, setUserId] = useState(null);
+
+  
+useEffect(()=>{
+ const unsubscribe = auth.onAuthStateChanged(user=>{
+  if(user) {
+    navigation.navigate('all');
+  }
+ }) 
+})
 
   const handleLogin = () => {
-    // Handle login logic here
-    console.log("Login button pressed");
-    // Dismiss the keyboard after login button press
-    navigation.navigate("all");
-    
-    Keyboard.dismiss();
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        fetchOwnerData(user.uid);
+
+      })
+      .catch((error) => {
+        console.log('Login error: ', error);
+        setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
+      });
+  };
   
+  // Inside the fetchOwnerData function after fetching owner data
+  const fetchOwnerData = (uid) => {
+    const db = firebase.firestore();
+    db.collection('Owner')
+      .doc(uid)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const ownerData = doc.data();
+          console.log(ownerData)
+  
+          // Navigate to another page and pass owner data as a parameter
+          // navigation.navigate('homePage', { ownerData });
+        } else {
+          console.log('Owner data not found.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching owner data: ', error);
+      });
   };
 
   return (
@@ -67,10 +107,11 @@ const LoginScreen = ({navigation}) => {
             style={styles.toggleText}
             onPress={() =>   navigation.navigate("RegisterPage")}
           >
-            Don't have an account? Sign Up
+           ยังไม่มียัญชี? สมัตรเลย
           </Text>
         </View>
         <View style={styles.buttonContainer}>
+        {error && <Text style={{ color: "red", justifyContent:"center", alignSelf:"center" }}>{error}</Text>}
           <TouchableOpacity
             style={[styles.loginButton, ]}
             onPress={handleLogin}
