@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import {
   View,
   TouchableOpacity,
@@ -7,6 +13,7 @@ import {
   Text,
   TextInput,
   Button,
+  Image
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
@@ -14,7 +21,10 @@ import { FontAwesome } from "@expo/vector-icons";
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyBGoG5IIsgjqFIejLzoeI2doLphb_xu02Q"; // Replace with your Google Maps API key
 
-function MapComponent({ width, height, onLocationSelect, context, locations }, ref) {
+function MapComponent(
+  { width, height, onLocationSelect, context, locations },
+  ref
+) {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [location, setLocation] = useState(null);
   const mapViewRef = useRef(null);
@@ -80,7 +90,6 @@ function MapComponent({ width, height, onLocationSelect, context, locations }, r
     goToPosition,
   }));
 
-
   const initialRegion = {
     latitude: 13.7,
     longitude: 100.7,
@@ -97,33 +106,29 @@ function MapComponent({ width, height, onLocationSelect, context, locations }, r
     }
   };
 
-  const onMarkerPress = (latitude,longtitude) => {
+  const onMarkerPress = (latitude, longtitude) => {
     // ถ้ากด Marker ให้ไป googlemaps สถานที่นั้น
     console.log("Press");
-      // Ask the user for confirmation
-      Alert.alert(
-        "Open in Google Maps?",
-        "Do you want to open this location in Google Maps?",
-        [
-          {
-            text: "No",
-            style: "cancel",
-          },
-          {
-            text: "Yes",
-            onPress: () => openLocationInGoogleMaps(latitude, longtitude),
-          },
-        ]
-      );
-   
+    // Ask the user for confirmation
+    Alert.alert(
+      "Open in Google Maps?",
+      "Do you want to open this location in Google Maps?",
+      [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () => openLocationInGoogleMaps(latitude, longtitude),
+        },
+      ]
+    );
   };
 
   const openLocationInGoogleMaps = (latitude, longitude) => {
-
-    
-      const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
-      Linking.openURL(url);
-   
+    const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    Linking.openURL(url);
   };
   const goToPosition = (latitude, longitude) => {
     // ย้ายแผนที่ไปที่พิกัดทีี่กำหนด
@@ -139,7 +144,9 @@ function MapComponent({ width, height, onLocationSelect, context, locations }, r
     // ไปที่ตำแหน้งปัจจุบันของมือถือ
     getPermissions();
     if (!havePermission) {
-      Alert.alert("กรุณาให้อณุญาติสิทธิการใช้การบริการตำแหน่งที่ตั้งในโทรศัพท์ของคุณ");
+      Alert.alert(
+        "กรุณาเปิดสิทธ์การใช้บริการตำแหน่งที่ตั้งบนอุปกรณ​์"
+      );
       return;
     }
 
@@ -171,29 +178,44 @@ function MapComponent({ width, height, onLocationSelect, context, locations }, r
         provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         initialRegion={initialRegion}
-        onPress={onMapPress}
+        onPress={()=>{onMapPress()}}
         ref={mapViewRef}
       >
         {/* ถ้ามีข้อมูล locations ส่งผ่าน property มา ให้ทำการ pin Marker ไว้บนแผนที่  */}
         {locations &&
-  locations.map((location, index) => (
-    <Marker
-      key={index}
-      coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-      title={location.location_name}
-    >
-      {/* You can customize the marker's callout here */}
-      <Callout onPress={() => onMarkerPress(location.latitude, location.longitude)}>
-        <View>
-          <Text>เปิดบน google maps? </Text>
-        </View>
-      </Callout>
-    </Marker>
-  ))}
+          locations.map((location, index) => (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: location.address.latitude,
+                longitude: location.address.longitude,
+              }}
+              title={location.name}
+            >
+              {/* You can customize the marker's callout here */}
+              <Callout
+                onPress={() =>
+                  onMarkerPress(
+                    location.address.latitude,
+                    location.address.longitude
+                  )
+                }
+              >
+                <View>
+                  <Text>เปิดบน google maps? </Text>
+                  {/* <Text>{location.clinicImage}</Text> */}
+                  <Image
+                    source={{ uri: location.clinicImage }}
+
+                  />
+                </View>
+              </Callout>
+            </Marker>
+          ))}
         {userLocation && (
           // ถ้ามีพิกัดปัจจุบันของ user ให้เพิ่ม marker สีฟ้า
           <Marker coordinate={userLocation} title="ที่อยู่ของคุณ">
-           <FontAwesome name="map-marker" size={24} color="blue" />
+            <FontAwesome name="map-marker" size={24} color="blue" />
           </Marker>
         )}
         {selectedLocation && (
@@ -203,7 +225,14 @@ function MapComponent({ width, height, onLocationSelect, context, locations }, r
             title="Location"
             // onCalloutPress={onMarkerPress} // This should work on iOS
           >
-            <Callout onPress={()=>onMarkerPress(selectedLocation.latitude, selectedLocation.longitude)}>
+            <Callout
+              onPress={() =>
+                onMarkerPress(
+                  selectedLocation.latitude,
+                  selectedLocation.longitude
+                )
+              }
+            >
               <View>
                 <Text>เลือกที่นี่</Text>
                 <Text>คลิกเพื่อไปที่ google maps</Text>
@@ -235,14 +264,14 @@ function MapComponent({ width, height, onLocationSelect, context, locations }, r
           placeholder="Search for a location"
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <TouchableOpacity style={{ padding: 10 }} onPress={handleSearch}>
+        <TouchableOpacity style={{ padding: 10 }} onPress={()=>{handleSearch()}}>
           <FontAwesome name="search" size={20} color="darkgrey" />
         </TouchableOpacity>
       </View>
 
       <View style={{ position: "absolute", bottom: 20, left: 20 }}>
         <TouchableOpacity
-          onPress={goToCurrentLocation}
+          onPress={()=>{goToCurrentLocation}}
           style={{
             backgroundColor: "white",
             borderRadius: 50,

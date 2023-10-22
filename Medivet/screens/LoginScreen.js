@@ -12,10 +12,12 @@ import {
   Keyboard,
 } from "react-native";
 import firebase from "../database/firebase";
+import { useAuth } from "../Auth/AuthContext";
 
 const auth = firebase.auth();
 
 const LoginScreen = ({navigation}) => {
+  const {login} = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
@@ -23,27 +25,31 @@ const LoginScreen = ({navigation}) => {
   const[userId, setUserId] = useState(null);
 
   
-useEffect(()=>{
- const unsubscribe = auth.onAuthStateChanged(user=>{
-  if(user) {
-    navigation.navigate('all');
-  }
- }) 
-})
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        navigation.navigate('all'); // Navigate to the 'Home' screen when the user is already authenticated
+      }
+    });
+  
+    // Make sure to unsubscribe when the component unmounts
+    return unsubscribe;
+  }, [auth, navigation]);
 
-  const handleLogin = () => {
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        fetchOwnerData(user.uid);
-
-      })
-      .catch((error) => {
-        console.log('Login error: ', error);
-        setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
-      });
-  };
+const handleLogin = (email, password) => {
+  // auth
+  //   .signInWithEmailAndPassword(email, password)
+  //   .then((userCredential) => {
+  //     const user = userCredential.user;
+  //     // Navigate to another screen (e.g., 'Home') after a successful login
+  //     navigation.navigate('all');
+  //   })
+  //   .catch((error) => {
+  //     console.log('Login error: ', error);
+  //     setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
+  //   });
+  login(email, password)
+};
   
   // Inside the fetchOwnerData function after fetching owner data
   const fetchOwnerData = (uid) => {
@@ -114,7 +120,7 @@ useEffect(()=>{
         {error && <Text style={{ color: "red", justifyContent:"center", alignSelf:"center" }}>{error}</Text>}
           <TouchableOpacity
             style={[styles.loginButton, ]}
-            onPress={handleLogin}
+            onPress={()=>{handleLogin(email, password)}}
           >
             <Text style={styles.buttonText}>Sign In</Text>
           </TouchableOpacity>

@@ -11,8 +11,10 @@ import {
   ScrollView,
   Keyboard,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 import firebase from "../database/firebase";
+import * as FileSystem from "expo-file-system";
 import MapComponent from "../component/MapComponent";
 import { FontAwesome5 } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -139,7 +141,7 @@ const RegisterScreen = ({ navigation }) => {
         clinicNameError || // Include Vet section validation checks
         clinicDescriptionError ||
         clinicTelError ||
-        veterinarianNameError||
+        veterinarianNameError ||
         clinicAddressError
       ) {
         setError("กรุณาใส่ข้อมูลให้ครบ");
@@ -152,9 +154,9 @@ const RegisterScreen = ({ navigation }) => {
     if (checked === "Patient") {
       console.log("Owner Register");
       allErrorcheck();
-     if(error){
-      return;
-     }
+      if (error) {
+        return;
+      }
       console.log("Register Button click");
       auth
         .createUserWithEmailAndPassword(email, password)
@@ -194,37 +196,90 @@ const RegisterScreen = ({ navigation }) => {
         });
     } else if (checked === "Vet") {
       console.log("Vet Register");
+      allErrorcheck();
+      if (error) {
+        return;
+      }
+      console.log("กำลังสมัคร");
       auth
         .createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          setError(null);
           const user = userCredential.user;
           const newUserId = user.uid;
           const db = firebase.firestore();
-          const clinicdata = {
-            name:clinicName,
-            address:clinicAddress,
-            addressDescription:ClinicAddressDescription,
-            tel:clinicTel,
-            vetName:veterinarianName,
-            certificate:"test",
-            startTime:formatTime(clinicOpenTime),
-            endTime:formatTime(clinicCloseTime),
-            clinicImage:"testimg",
-            // Add more fields as needed
+          const clinicData = {
+            name: clinicName,
+            address: clinicAddress,
+            addressDescription: ClinicAddressDescription,
+            tel: clinicTel,
+            vetName: veterinarianName,
+            certificate: certificateImage
+              ? certificateImage.substring(
+                  certificateImage.lastIndexOf("/") + 1
+                )
+              : null,
+            startTime: formatTime(clinicOpenTime),
+            endTime: formatTime(clinicCloseTime),
+            clinicImage: clinicImage
+              ? clinicImage.substring(clinicImage.lastIndexOf("/") + 1)
+              : null,
+           
           };
 
-          db.collection("Clinic")
-            .doc(newUserId) // Use the user's UID as the document ID
-            .set(clinicdata)
+   
+          firebase
+            .firestore()
+            .runTransaction(async (transaction) => {
+              try {
+                // Upload media to Firebase Cloud Storage
+                await uploadMedia(certificateImage);
+                await uploadMedia(clinicImage);
+
+                // Add clinic data to Firestore
+                await db.collection("Clinic").doc(newUserId).set(clinicData);
+
+                // Commit the transaction
+                return true;
+              } catch (error) {
+                // Roll back the transaction
+                console.error("Transaction failed. Rolling back.", error);
+
+                
+                await deleteUploadedMedia(certificateImage);
+                await deleteUploadedMedia(clinicImage);
+
+                // Delete the user from Firebase Authentication
+                user
+                  .delete()
+                  .then(() => {
+                    console.log("User deleted from Firebase Authentication.");
+                  })
+                  .catch((error) => {
+                    console.error(
+                      "Error deleting user from Firebase Authentication:",
+                      error
+                    );
+                  });
+
+                // Reject the transaction
+                throw error;
+              }
+            })
             .then(() => {
+              // Transaction successful
+              setClinicImage(null);
+              setCertificateImage(null);
               Alert.alert("สมัครคลินิกสำเร็จ");
               console.log("Registration successful");
               console.log("New User ID:", newUserId);
               Keyboard.dismiss();
             })
-            .catch((e) => {
-              console.error("Error adding data to Firestore: ", e);
+            .catch((error) => {
+              console.error("Transaction failed:", error);
+              if (error.code === "auth/email-already-in-use") {
+                setEmailError("อีเมลล์นี้ถูกใช้แล้ว");
+                setError("กรุณาใส่ข้อมูลให้ถูกต้อง");
+              }
             });
         })
         .catch((e) => {
@@ -234,9 +289,86 @@ const RegisterScreen = ({ navigation }) => {
             setError("กรุณาใส่ข้อมูลให้ถูกต้อง");
           }
         });
-
     }
   };
+  // addImage
+  const [clinicImage, setClinicImage] = useState(null);
+  const [certificateImage, setCertificateImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [clinicImageError, setClinicImageError] = useState(null);
+
+  const handleSelectClinicImage = async () => {
+    console.log("selected image click");
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setClinicImage(result.assets[0].uri);
+      clinicImageValidation();
+    }
+  };
+  const handleSelectCertificateImage = async () => {
+    console.log("selected image click");
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setCertificateImage(result.assets[0].uri);
+      certificateImageValidation();
+    }
+  };
+  const deleteUploadedMedia = async (mediaPath) => {
+    if (mediaPath) {
+      try {
+        const storageRef = firebase.storage().ref();
+        const mediaRef = storageRef.child(mediaPath);
+  
+        // Delete the file from Firebase Cloud Storage
+        await mediaRef.delete();
+  
+        console.log(`Deleted media: ${mediaPath}`);
+      } catch (error) {
+        console.error(`Error deleting media: ${mediaPath}`, error);
+      }
+    }
+  };
+  const uploadMedia = async (image) => {
+    setUploading(true);
+    try {
+      const { uri } = await FileSystem.getInfoAsync(image);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+          resolve(xhr.response);
+        };
+        xhr.onerror = (e) => {
+          reject(new TypeError("Network request"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", uri, true);
+        xhr.send(null);
+      });
+      const filename = image.substring(image.lastIndexOf("/") + 1);
+      const ref = firebase.storage().ref().child(filename);
+
+      await ref.put(blob);
+      setUploading(false);
+      Alert.alert("อัปโหลดภาพเสร็จสิ้น");
+      // setImage(null);
+    } catch (error) {
+      console.error(error);
+      throw error;
+      setUploading(false);
+    }
+  };
+  const clinicImageValidation = () => {};
+  const certificateImageValidation = () => {};
 
   // Validation
   const firstNameValidation = () => {
@@ -246,7 +378,7 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setFirstNameError(null);
     }
-   
+
     // console.log(!firstName);
   };
   const lastNameValidation = () => {
@@ -256,7 +388,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setlastNameError(null);
     }
-  
   };
   const emailValidation = () => {
     // ห้ามว่าง
@@ -265,7 +396,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setEmailError(null);
     }
-   
   };
   const birthDateValidation = () => {
     // ห้ามว่าง
@@ -274,7 +404,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setBirthDateError(null);
     }
-
   };
 
   const phoneValidation = () => {
@@ -286,7 +415,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setPhoneError(null);
     }
-
   };
   const passwordValidation = () => {
     // ไม่ต่ำกว่า 8 ตัวอักษร
@@ -297,7 +425,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setPasswordError(null);
     }
-   
   };
   const confirmPasswwordValidation = () => {
     if (confirmPasswword != password) {
@@ -305,7 +432,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setConfirmPasswordError(null);
     }
-
   };
   const clinicNameValidation = () => {
     if (!clinicName) {
@@ -313,7 +439,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setClinicNameError(null);
     }
- 
   };
 
   const clinicDescriptionValidation = () => {
@@ -322,7 +447,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setClinicDescriptionError(null);
     }
-    
   };
 
   const clinicTelValidation = () => {
@@ -333,7 +457,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setClinicTelError(null);
     }
-    
   };
 
   const veterinarianNameValidation = () => {
@@ -342,7 +465,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setVeterinarianNameError(null);
     }
-    
   };
 
   const clinicAddressValidation = () => {
@@ -351,7 +473,6 @@ const RegisterScreen = ({ navigation }) => {
     } else {
       setClinicAddressError(null);
     }
-   
   };
 
   return (
@@ -528,6 +649,20 @@ const RegisterScreen = ({ navigation }) => {
               {clinicDescriptionError && (
                 <Text style={styles.errorText}>{clinicDescriptionError}</Text>
               )}
+              <TouchableOpacity onPress={handleSelectClinicImage}>
+                <Text>เพิ่มรูปคลินิก</Text>
+              </TouchableOpacity>
+              {clinicImage && (
+                <View>
+                  <Text style={{ fontSize: 36, alignSelf: "center" }}>
+                    รูปคลินิก
+                  </Text>
+                  <Image
+                    source={{ uri: clinicImage }}
+                    style={{ width: 350, height: 200 }}
+                  />
+                </View>
+              )}
 
               <TextInput
                 style={[styles.input2, clinicTelError && styles.inputError]}
@@ -554,8 +689,21 @@ const RegisterScreen = ({ navigation }) => {
               {veterinarianNameError && (
                 <Text style={styles.errorText}>{veterinarianNameError}</Text>
               )}
+              <TouchableOpacity onPress={handleSelectCertificateImage}>
+                <Text>เพิ่มรูปใบหมอ</Text>
+              </TouchableOpacity>
+              {certificateImage && (
+                <View>
+                  <Text style={{ fontSize: 36, alignSelf: "center" }}>
+                    รูปคลินิก
+                  </Text>
+                  <Image
+                    source={{ uri: certificateImage }}
+                    style={{ width: 350, height: 200 }}
+                  />
+                </View>
+              )}
 
-            
               <View></View>
               <Text>รายละเอียดที่อยู่</Text>
               <TextInput
@@ -566,17 +714,20 @@ const RegisterScreen = ({ navigation }) => {
                 onChangeText={(text) => setClinicAddressDescription(text)}
                 value={ClinicAddressDescription}
               />
-               {clinicAddressError&& (
+              {clinicAddressError && (
                 <Text style={styles.errorText}>{clinicAddressError}</Text>
               )}
-             
-              <View style={styles.mapContainer}>
-             
+
+              <View
+                style={[
+                  styles.mapContainer,
+                  clinicAddressError && styles.inputError,
+                ]}
+              >
                 <MapComponent
                   width={350}
                   height={200}
                   onLocationSelect={(location) => {
-               
                     saveClinicAddress(location); // You can choose to save the clinic address immediately or separately
                   }}
                   context="RegisterScreen" // Pass the context prop
@@ -757,6 +908,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     textAlign: "center",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "transparent",
   },
   mapButton: {
     alignSelf: "center",
