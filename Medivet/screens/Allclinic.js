@@ -136,9 +136,9 @@ const Allclinic = ({ navigation }) => {
 
     const fetchData = async () => {
       await getCurrentLocation();
-      await fetchClinics();
     }
     fetchData();
+    fetchClinics();
   }, []);
   
   const updateSearch = (search) => {

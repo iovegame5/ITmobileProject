@@ -80,22 +80,19 @@ export const useAuth = () => {
     //   dispatch({ type: 'LOGOUT' });
   };
   const login = (email, password) => {
-    firebase
+    return firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(async (userCredential) => {
-        const userData = await loadUserData(); // Wait for the asynchronous function to complete
-        console.log("userDataOnAuth", userData);
+        const userData = await loadUserData();
         if (userData) {
-          dispatch({ type: "LOGIN", user: userData.user, role: userData.role });
+          dispatch({ type: 'LOGIN', user: userData.user, role: userData.role });
         }
+        return null; // No error, successful login
       })
       .catch((error) => {
-        console.log("Login error: ", error);
-        //   setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
+        throw error; // Throw the error
       });
-    // For simplicity, we're just dispatching the 'LOGOUT' action without signing out
-    //   dispatch({ type: 'LOGOUT' });
   };
 
   return {

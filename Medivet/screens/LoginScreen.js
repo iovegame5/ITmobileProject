@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Keyboard,
+  Alert,
 } from "react-native";
 import firebase from "../database/firebase";
 import { useAuth } from "../Auth/AuthContext";
@@ -36,19 +37,16 @@ const LoginScreen = ({navigation}) => {
     return unsubscribe;
   }, [auth, navigation]);
 
-const handleLogin = (email, password) => {
-  // auth
-  //   .signInWithEmailAndPassword(email, password)
-  //   .then((userCredential) => {
-  //     const user = userCredential.user;
-  //     // Navigate to another screen (e.g., 'Home') after a successful login
-  //     navigation.navigate('all');
-  //   })
-  //   .catch((error) => {
-  //     console.log('Login error: ', error);
-  //     setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
-  //   });
-  login(email, password)
+const handleLogin = async (email, password) => {
+  
+  try {
+    await login(email, password);
+    // Login was successful, you can navigate to another screen here
+  } catch (error) {
+    // Handle the login error, e.g., show an alert
+    Alert.alert('เข้าสู่ระบบไม่สำเร็จ', "อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
+    setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง")
+  }
 };
   
   // Inside the fetchOwnerData function after fetching owner data
