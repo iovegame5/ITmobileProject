@@ -14,60 +14,58 @@ import {
 } from "react-native";
 import firebase from "../database/firebase";
 import { useAuth } from "../Auth/AuthContext";
+import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 
 const auth = firebase.auth();
 
-const LoginScreen = ({navigation}) => {
-  const {login} = useAuth();
+const LoginScreen = ({ navigation }) => {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState(null);
-  const[userId, setUserId] = useState(null);
 
-  
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        navigation.navigate('all'); // Navigate to the 'Home' screen when the user is already authenticated
+        navigation.navigate("all"); // Navigate to the 'Home' screen when the user is already authenticated
       }
     });
-  
+
     // Make sure to unsubscribe when the component unmounts
     return unsubscribe;
   }, [auth, navigation]);
 
-const handleLogin = async (email, password) => {
-  
-  try {
-    await login(email, password);
-    // Login was successful, you can navigate to another screen here
-  } catch (error) {
-    // Handle the login error, e.g., show an alert
-    Alert.alert('เข้าสู่ระบบไม่สำเร็จ', "อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
-    setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง")
-  }
-};
-  
+  const handleLogin = async (email, password) => {
+    try {
+      await login(email, password);
+      // Login was successful, you can navigate to another screen here
+    } catch (error) {
+      // Handle the login error, e.g., show an alert
+      Alert.alert("เข้าสู่ระบบไม่สำเร็จ", "อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
+      setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
+    }
+  };
+
   // Inside the fetchOwnerData function after fetching owner data
   const fetchOwnerData = (uid) => {
     const db = firebase.firestore();
-    db.collection('Owner')
+    db.collection("Owner")
       .doc(uid)
       .get()
       .then((doc) => {
         if (doc.exists) {
           const ownerData = doc.data();
-          console.log(ownerData)
-  
+          console.log(ownerData);
+
           // Navigate to another page and pass owner data as a parameter
           // navigation.navigate('homePage', { ownerData });
         } else {
-          console.log('Owner data not found.');
+          console.log("Owner data not found.");
         }
       })
       .catch((error) => {
-        console.error('Error fetching owner data: ', error);
+        console.error("Error fetching owner data: ", error);
       });
   };
 
@@ -91,34 +89,62 @@ const handleLogin = async (email, password) => {
           />
         </View>
         <View style={styles.inputField}>
-          <Text style={styles.title}>Login</Text>
-          <Text>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="example@gmail.com"
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-          />
-          <Text>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="********"
-            secureTextEntry
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-          />
+          <Text style={styles.title}>เข้าสู่ระบบ</Text>
+          <View style={styles.inputContainerStyle}>
+            <AntDesign
+              name="user"
+              size={24}
+              color="#378985"
+              style={styles.icon}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="example@gmail.com"
+              onChangeText={(text) => setEmail(text)}
+              value={email}
+            />
+          </View>
+          <View style={styles.inputContainerStyle}>
+            <FontAwesome
+              name="lock"
+              size={24}
+              color="#378985"
+              style={styles.icon}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              secureTextEntry
+              onChangeText={(text) => setPassword(text)}
+              value={password}
+            />
+          </View>
+
           <Text
             style={styles.toggleText}
-            onPress={() =>   navigation.navigate("RegisterPage")}
+            onPress={() => navigation.navigate("RegisterPage")}
           >
-           ยังไม่มียัญชี? สมัตรเลย
+            ยังไม่มียัญชี? สมัตรเลย
           </Text>
         </View>
         <View style={styles.buttonContainer}>
-        {error && <Text style={{ color: "red", justifyContent:"center", alignSelf:"center" }}>{error}</Text>}
+          {error && (
+            <Text
+              style={{
+                color: "red",
+                justifyContent: "center",
+                alignSelf: "center",
+              }}
+            >
+              {error}
+            </Text>
+          )}
           <TouchableOpacity
-            style={[styles.loginButton, ]}
-            onPress={()=>{handleLogin(email, password)}}
+            style={[styles.loginButton]}
+            onPress={() => {
+              handleLogin(email, password);
+            }}
           >
             <Text style={styles.buttonText}>Sign In</Text>
           </TouchableOpacity>
@@ -147,60 +173,66 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     marginBottom: 20,
-    fontWeight:"bold"
+    fontWeight: "bold",
   },
   input: {
-    width: "100%",
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 10,
-    marginLeft: 10,
-    paddingLeft:15,
-    marginTop:15,
+    flex: 1,
   },
   toggleText: {
     marginTop: 10,
-    color: "blue",
-    textDecorationLine: "underline",
-    alignSelf:"flex-end",
-    marginRight:20,
-    marginBottom:40,
-    
+    color: "#378985",
+    // textDecorationLine: "underline",
+    alignSelf: "flex-end",
+    marginRight: 20,
+    marginBottom: 40,
   },
   inputField: {
     // backgroundColor: "yellow",
     flex: 1,
     marginTop: 30,
-   paddingLeft:30,
-   paddingRight:30,
-    width:"100%",
+    paddingLeft: 30,
+    paddingRight: 30,
+    width: "100%",
     // backgroundColor:"red"
   },
-  logoContainer:{
-    alignItems:"center"
-
+  logoContainer: {
+    alignItems: "center",
   },
   loginButton: {
     alignSelf: "center",
     marginTop: 20,
-    width:300,
+    width: 300,
     backgroundColor: "#378985",
     padding: 10,
 
     alignItems: "center",
     borderRadius: 5,
   },
-  buttonContainer:{
-    height:200,
+  buttonContainer: {
+    height: 200,
     // backgroundColor:"green",
-    justifyContent:"flex-start",
-    alignItems:'center,'
+    justifyContent: "flex-start",
+    alignItems: "center,",
   },
-  buttonText:{
-    fontSize:20,
-    color:"white",
-  }
+  buttonText: {
+    fontSize: 20,
+    color: "white",
+  },
+  inputContainerStyle: {
+    flexDirection: "row", // Arrange icon and input horizontally
+    alignItems: "center",
+    width: "100%",
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 40,
+    marginBottom: 10,
+    marginLeft: 10,
+    paddingLeft: 15,
+    marginTop: 15,
+  },
+  icon: {
+    marginRight: 10,
+  },
 });
 export default LoginScreen;

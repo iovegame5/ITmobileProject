@@ -274,7 +274,8 @@ const AddPromotionScreen = () => {
               textAlignVertical="top"
               style={[
                 {
-                  padding: 10,
+                
+                  padding:   10,
                   borderWidth: 1,
                   borderColor: "grey",
                   borderRadius: 10,

@@ -26,18 +26,16 @@ import * as geolib from "geolib";
 import MapComponent from "../component/MapComponent";
 import { useAuth } from "../Auth/AuthContext";
 const Allclinic = ({ navigation }) => {
-
   // Authten !important
-  // 
-  // 
-  // 
+  //
+  //
+  //
   // important มากๆจ้า
-  // 
-  // 
+  //
+  //
   const { user, role, isAuthenticated, login, logout } = useAuth();
 
-
-
+  const [isLoading, setIsLoading] = useState(true);
   const [clinics, setClinics] = useState([]);
   const [search, setSearch] = useState("");
   // const [havePermission, setHavePermission] = useState(false);
@@ -46,7 +44,6 @@ const Allclinic = ({ navigation }) => {
   const mapRef = useRef(null);
   const fetchClinics = async () => {
     try {
-      
       const db = firebase.firestore();
       const clinicsRef = db.collection("Clinic");
 
@@ -70,8 +67,8 @@ const Allclinic = ({ navigation }) => {
             // distance:calculateDistance(userLocation, data.address),
             // Add more fields as needed
           });
-          setClinics(clinicData)
-          console.log(clinics)
+          setClinics(clinicData);
+          console.log(clinics);
         } catch (error) {
           console.error("Error fetching image:", error);
         }
@@ -81,19 +78,20 @@ const Allclinic = ({ navigation }) => {
       await Promise.all(fetchImagePromises);
 
       setClinics(clinicData);
+      setIsLoading(false); // Set isLoading to false here
       // console.log(clinics);
     } catch (error) {
       console.error("Error fetching clinics:", error);
+      setIsLoading(false); // Ensure to set isLoading to false in case of an error
     }
   };
   const goToLocation = (latitude, longitude) => {
     // เป็นฟังชั่นที่เอาไว้เรียกใช้ ฟังก์ชัน goToPosition  ของ map component
     console.log(latitude, longitude);
-    console.log(user)
+    console.log(user);
     // console.log("EIEIEIEIEI")
     mapRef.current.goToPosition(latitude, longitude); // Pass your desired latitude and longitude
   };
-
 
   const calculateDistance = (userLocation, clinicLocation) => {
     if (userLocation && clinicLocation) {
@@ -114,127 +112,160 @@ const Allclinic = ({ navigation }) => {
   };
 
   const getCurrentLocation = async () => {
-
-      try {
-        const currentLocation = await Location.getCurrentPositionAsync({});
-        if (currentLocation) {
-          setUserLocation(currentLocation.coords);
-          console.log("userLocation : ", currentLocation.coords); // Log within this function
-        } else {
-          console.log("Current location not available.");
-        }
-      } catch (error) {
-        console.error("Error getting current location:", error);
+    setIsLoading(true);
+    try {
+      const currentLocation = await Location.getCurrentPositionAsync({});
+      if (currentLocation) {
+        setUserLocation(currentLocation.coords);
+        console.log("userLocation : ", currentLocation.coords); // Log within this function
+      } else {
+        console.log("Current location not available.");
       }
-  
+    } catch (error) {
+      console.error("Error getting current location:", error);
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     // console.log("auth", auth)
     console.log("user:", user);
-    console.log("rold", role)
+    console.log("rold", role);
 
     const fetchData = async () => {
       await getCurrentLocation();
-    }
+      await fetchClinics();
+      console.log(isLoading);
+    };
     fetchData();
-    fetchClinics();
+    setIsLoading(false);
   }, []);
-  
+
   const updateSearch = (search) => {
     setSearch(search);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* <View style={{ width: 380, marginLeft: 20 }}>
-        <SearchBar
-          placeholder="Type Here..."
-          onChangeText={updateSearch}
-          value={search}
-          platform="android"
-        />
-      </View> */}
-      <MapComponent
-        width={"100%"}
-        height={"40%"}
-        locations={clinics}
-        onLocationSelect={() => {}}
-        ref={mapRef}
-      />
-     
-      <View>
-        <FlatList
-          data={clinics}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => {
-            return (
+    <View style={styles.container}>
+      {isLoading ? ( // Show loading indicator when isLoading is true
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={{ fontSize: 20 }}>Loading...</Text>
+        </View>
+      ) : (
+        <View>
+          <MapComponent
+            width={"100%"}
+            height={"50%"}
+            locations={clinics}
+            onLocationSelect={() => {}}
+            ref={mapRef}
+          />
+          <View
+            style={{
+              height: "50%",
+              backgroundColor: "transparent",
+              borderRadius: 50,
+              borderBottomEndRadius: 0,
+              borderBottomStartRadius: 0,
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                height: 60,
+                backgroundColor: "#378985",
+                width: "100%",
+                alignItems: "center",
+                borderRadius: 50,
+                borderBottomEndRadius: 0,
+                borderBottomStartRadius: 0,
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ fontSize: 24, color: "white" }}>
+                คลินิกใกล้ฉัน
+              </Text>
+            </View>
+            <ScrollView>
               <View>
-                <View style={styles.card}>
-                  <View style={{ flexDirection: "row" }}>
-                    <Image
-                      source={{ uri: item.clinicImage }}
-                      style={styles.image}
-                    />
-                    <View style={styles.text}>
-                      <Text style={{ fontSize: 15 }}>
-                        {" "}
-                        ชื่อคลินิก: {item.name}
-                      </Text>
-                      <View style={{ marginTop: 10 }}>
-                        <Text style={{ fontSize: 14 }}>
-                          {" "}
-                          ชื่อหมอ: {item.vetName}
-                        </Text>
+                <FlatList
+                  data={clinics}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => {
+                    return (
+                      <View style={{ backgroundColor: "white" }}>
+                        <View style={styles.card}>
+                          <View style={{ flexDirection: "row" }}>
+                            <Image
+                              source={{ uri: item.clinicImage }}
+                              style={styles.image}
+                            />
+                            <View style={styles.text}>
+                              <Text style={{ fontSize: 15 }}>
+                                {" "}
+                                ชื่อคลินิก: {item.name}
+                              </Text>
+                              <View style={{ marginTop: 10 }}>
+                                <Text style={{ fontSize: 14 }}>
+                                  {" "}
+                                  ชื่อหมอ: {item.vetName}
+                                </Text>
 
-                        <View style={styles.arrow}>
-                          <Pressable
-                            onPress={() => {
-                              navigation.navigate("Clinicdetail");
-                            }}
-                          >
+                                <View style={styles.arrow}>
+                                  <Pressable
+                                    onPress={() => {
+                                      navigation.navigate("Clinicdetail");
+                                    }}
+                                  >
+                                    <Text>
+                                      <Ionicons
+                                        name="arrow-forward"
+                                        size={24}
+                                        color="black"
+                                      />
+                                    </Text>
+                                  </Pressable>
+                                </View>
+                              </View>
+                            </View>
+                          </View>
+                          <View style={styles.distance}>
+                            <TouchableOpacity
+                              style={{ borderWidth: 1 }}
+                              onPress={() => {
+                                goToLocation(
+                                  item.address.latitude,
+                                  item.address.longitude
+                                );
+                              }}
+                            >
+                              <Text>go in maps</Text>
+                            </TouchableOpacity>
                             <Text>
-                              <Ionicons
-                                name="arrow-forward"
-                                size={24}
-                                color="black"
-                              />
+                              {calculateDistance(userLocation, item.address)}
                             </Text>
-                          </Pressable>
+                          </View>
                         </View>
                       </View>
-                    </View>
-                  </View>
-                  <View style={styles.distance}>
-                    <TouchableOpacity
-                      style={{ borderWidth: 1 }}
-                      onPress={() => {
-                        goToLocation(
-                          item.address.latitude,
-                          item.address.longitude
-                        );
-                      }}
-                    >
-                      <Text>go in maps</Text>
-                    </TouchableOpacity>
-                    <Text>{calculateDistance(userLocation, item.address)}</Text>
-                  </View>
-                </View>
+                    );
+                  }}
+                />
               </View>
-            );
-          }}
-        />
-      </View>
-    
-    </SafeAreaView>
+            </ScrollView>
+          </View>
+        </View>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
-    alignItems: "stretch",
+    // paddingTop: StatusBar.currentHeight,
+    // alignItems: "stretch",
   },
   scrollview: {
     padding: 4,

@@ -18,7 +18,7 @@ const loadUserData = async () => {
             uid: user.uid,
             email: user.email,
             address:clinicData.address,
-            certifictte:clinicData.certifictte,
+            certificate:clinicData.certificate,
             name:clinicData.name,
             startTime:clinicData.startTime,
             endTime:clinicData.endTime,

@@ -13,7 +13,7 @@ import {
   Text,
   TextInput,
   Button,
-  Image
+  Image,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
@@ -99,10 +99,12 @@ function MapComponent(
 
   const onMapPress = (e) => {
     // เมื่อคลิกบนแผนที่
-    if (context === "RegisterScreen") {
-      // ถ้า context ทรี่ส่งใสเป็น RegisterScreen ให้ทำฟังก์ชันตามนี้เมื่อกดแแผนที่
-      setSelectedLocation(e.nativeEvent.coordinate);
-      onLocationSelect(e.nativeEvent.coordinate);
+    if (e) {
+      if (context === "RegisterScreen") {
+        // ถ้า context ทรี่ส่งใสเป็น RegisterScreen ให้ทำฟังก์ชันตามนี้เมื่อกดแแผนที่
+        setSelectedLocation(e.nativeEvent.coordinate);
+        onLocationSelect(e.nativeEvent.coordinate);
+      }
     }
   };
 
@@ -141,12 +143,11 @@ function MapComponent(
   };
 
   const goToCurrentLocation = async () => {
+    console.log("gotocurrentclick");
     // ไปที่ตำแหน้งปัจจุบันของมือถือ
     getPermissions();
     if (!havePermission) {
-      Alert.alert(
-        "กรุณาเปิดสิทธ์การใช้บริการตำแหน่งที่ตั้งบนอุปกรณ​์"
-      );
+      Alert.alert("กรุณาเปิดสิทธ์การใช้บริการตำแหน่งที่ตั้งบนอุปกรณ​์");
       return;
     }
 
@@ -178,7 +179,9 @@ function MapComponent(
         provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         initialRegion={initialRegion}
-        onPress={()=>{onMapPress()}}
+        onPress={(e) => {
+          onMapPress(e);
+        }}
         ref={mapViewRef}
       >
         {/* ถ้ามีข้อมูล locations ส่งผ่าน property มา ให้ทำการ pin Marker ไว้บนแผนที่  */}
@@ -201,13 +204,17 @@ function MapComponent(
                   )
                 }
               >
-                <View>
-                  <Text>เปิดบน google maps? </Text>
-                  {/* <Text>{location.clinicImage}</Text> */}
-                  <Image
-                    source={{ uri: location.clinicImage }}
-
-                  />
+                <View styles={{ flexDirection: "row" }}>
+                  <Text>ชื่อคลิกนิก: {location.name}</Text>
+                  <Text>eieieiei</Text>
+                  <Text>Test</Text>
+                  <Text>
+                    <Image
+                      source={{ uri: location.clinicImage }}
+                      resizeMode="cover"
+                      style={{ height: 100, width: 100 }}
+                    />
+                  </Text>
                 </View>
               </Callout>
             </Marker>
@@ -215,12 +222,13 @@ function MapComponent(
         {userLocation && (
           // ถ้ามีพิกัดปัจจุบันของ user ให้เพิ่ม marker สีฟ้า
           <Marker coordinate={userLocation} title="ที่อยู่ของคุณ">
-            <FontAwesome name="map-marker" size={24} color="blue" />
+            <FontAwesome name="map-marker" size={24} color="#378985" />
           </Marker>
         )}
         {selectedLocation && (
           // ถ้ามีพิกีดที่เลือกไว้ให้ มี marker สีแดง
           <Marker
+  
             coordinate={selectedLocation}
             title="Location"
             // onCalloutPress={onMarkerPress} // This should work on iOS
@@ -261,24 +269,31 @@ function MapComponent(
             borderRadius: 5,
             padding: 10,
           }}
-          placeholder="Search for a location"
+          placeholder="ค้นหาสถานที่"
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <TouchableOpacity style={{ padding: 10 }} onPress={()=>{handleSearch()}}>
+        <TouchableOpacity
+          style={{ padding: 10 }}
+          onPress={() => {
+            handleSearch();
+          }}
+        >
           <FontAwesome name="search" size={20} color="darkgrey" />
         </TouchableOpacity>
       </View>
 
       <View style={{ position: "absolute", bottom: 20, left: 20 }}>
         <TouchableOpacity
-          onPress={()=>{goToCurrentLocation}}
+          onPress={() => {
+            goToCurrentLocation();
+          }}
           style={{
             backgroundColor: "white",
             borderRadius: 50,
             padding: 10,
           }}
         >
-          <FontAwesome name="location-arrow" size={24} color="blue" />
+          <FontAwesome name="location-arrow" size={24} color="#378985" />
         </TouchableOpacity>
       </View>
     </View>

@@ -19,6 +19,7 @@ import MapComponent from "../component/MapComponent";
 import { FontAwesome5 } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { RadioButton } from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const RegisterScreen = ({ navigation }) => {
   // Owner senction
@@ -32,6 +33,7 @@ const RegisterScreen = ({ navigation }) => {
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const[uploading, setUploading] = useState(false);
 
   // Clinic Section
   const [clinicOpenTime, setClinicOpenTime] = useState(null);
@@ -132,6 +134,8 @@ const RegisterScreen = ({ navigation }) => {
       clinicNameValidation();
       clinicDescriptionValidation();
       clinicTelValidation();
+      certificateValidation();
+      clinicImageValidation();
       veterinarianNameValidation();
       clinicAddressValidation();
       if (
@@ -155,6 +159,7 @@ const RegisterScreen = ({ navigation }) => {
       console.log("Owner Register");
       allErrorcheck();
       if (error) {
+       Alert.alert("กรอกข้อมูลให้ถูกต้อง")
         return;
       }
       console.log("Register Button click");
@@ -223,10 +228,8 @@ const RegisterScreen = ({ navigation }) => {
             clinicImage: clinicImage
               ? clinicImage.substring(clinicImage.lastIndexOf("/") + 1)
               : null,
-           
           };
 
-   
           firebase
             .firestore()
             .runTransaction(async (transaction) => {
@@ -244,7 +247,6 @@ const RegisterScreen = ({ navigation }) => {
                 // Roll back the transaction
                 console.error("Transaction failed. Rolling back.", error);
 
-                
                 await deleteUploadedMedia(certificateImage);
                 await deleteUploadedMedia(clinicImage);
 
@@ -269,9 +271,19 @@ const RegisterScreen = ({ navigation }) => {
               // Transaction successful
               setClinicImage(null);
               setCertificateImage(null);
+              setEmail(null),
+              setPassword(null),
+              setConfirmPassword(null),
+              setClinicName(null),
+              setClinicDescription(null),
+              setClinicTel(null),
+              setClinicOpenTime(null),
+              setClinicCloseTime(null),
+              setClinicAddressDescription(null)
               Alert.alert("สมัครคลินิกสำเร็จ");
               console.log("Registration successful");
               console.log("New User ID:", newUserId);
+
               Keyboard.dismiss();
             })
             .catch((error) => {
@@ -294,8 +306,8 @@ const RegisterScreen = ({ navigation }) => {
   // addImage
   const [clinicImage, setClinicImage] = useState(null);
   const [certificateImage, setCertificateImage] = useState(null);
-  const [uploading, setUploading] = useState(false);
   const [clinicImageError, setClinicImageError] = useState(null);
+  const [certificateError, setCertificateError] = useState(null);
 
   const handleSelectClinicImage = async () => {
     console.log("selected image click");
@@ -320,7 +332,7 @@ const RegisterScreen = ({ navigation }) => {
     });
     if (!result.canceled) {
       setCertificateImage(result.assets[0].uri);
-      certificateImageValidation();
+      certificateValidation();
     }
   };
   const deleteUploadedMedia = async (mediaPath) => {
@@ -328,10 +340,10 @@ const RegisterScreen = ({ navigation }) => {
       try {
         const storageRef = firebase.storage().ref();
         const mediaRef = storageRef.child(mediaPath);
-  
+
         // Delete the file from Firebase Cloud Storage
         await mediaRef.delete();
-  
+
         console.log(`Deleted media: ${mediaPath}`);
       } catch (error) {
         console.error(`Error deleting media: ${mediaPath}`, error);
@@ -359,7 +371,6 @@ const RegisterScreen = ({ navigation }) => {
 
       await ref.put(blob);
       setUploading(false);
-      Alert.alert("อัปโหลดภาพเสร็จสิ้น");
       // setImage(null);
     } catch (error) {
       console.error(error);
@@ -367,8 +378,21 @@ const RegisterScreen = ({ navigation }) => {
       setUploading(false);
     }
   };
-  const clinicImageValidation = () => {};
-  const certificateImageValidation = () => {};
+  const clinicImageValidation = () => {
+    // ห้ามว่าง
+    if (!clinicImage) {
+      setClinicImageError("เพิ่มรูปคลินิก");
+    } else {
+      setClinicImageError(null);
+    }
+  };
+  const certificateValidation = () => {
+    if (!certificateImage) {
+      setCertificateError("เพิ่มรูปใบหมอ");
+    } else {
+      setCertificateError(null);
+    }
+  };
 
   // Validation
   const firstNameValidation = () => {
@@ -496,7 +520,7 @@ const RegisterScreen = ({ navigation }) => {
               flexDirection: "row",
               width: "100%",
               height: 50,
-              borderBottomWidth: 1,
+              marginBottom:20,
             }}
           >
             <TouchableOpacity
@@ -505,14 +529,21 @@ const RegisterScreen = ({ navigation }) => {
                 textAlign: "center",
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor:
-                  checked === "Patient" ? "green" : "transparent",
+                borderColor: "#378985",
+                borderBottomWidth: checked === "Patient" ? 5 : 0,
               }}
               onPress={() => {
                 setChecked("Patient");
               }}
             >
-              <Text>เจ้าของสัตว์เลี้ยง</Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: checked === "Patient" ? "#378985" : "black",
+                }}
+              >
+                เจ้าของสัตว์เลี้ยง
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{
@@ -520,13 +551,21 @@ const RegisterScreen = ({ navigation }) => {
                 textAlign: "center",
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: checked === "Vet" ? "green" : "transparent",
+                borderColor: "#378985",
+                borderBottomWidth: checked === "Vet" ? 5 : 0,
               }}
               onPress={() => {
                 setChecked("Vet");
               }}
             >
-              <Text>คลินิก</Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: checked === "Vet" ? "#378985" : "black",
+                }}
+              >
+                คลินิก
+              </Text>
             </TouchableOpacity>
           </View>
           {/* <Text>ชื่อ</Text> */}
@@ -649,20 +688,44 @@ const RegisterScreen = ({ navigation }) => {
               {clinicDescriptionError && (
                 <Text style={styles.errorText}>{clinicDescriptionError}</Text>
               )}
-              <TouchableOpacity onPress={handleSelectClinicImage}>
-                <Text>เพิ่มรูปคลินิก</Text>
-              </TouchableOpacity>
-              {clinicImage && (
-                <View>
-                  <Text style={{ fontSize: 36, alignSelf: "center" }}>
-                    รูปคลินิก
-                  </Text>
+              <Text
+                style={[
+                  { color: "black" },
+                  clinicImageError && styles.errorText,
+                ]}
+              >
+                เพิ่มรูปคลินิก
+              </Text>
+
+              <View
+                style={[
+                  styles.imageContainer,
+                  clinicImageError && { borderWidth: 2, borderColor: "red" },
+                ]}
+              >
+                {!clinicImage && (
+                  <Image
+                    source={require("../assets/placeholderIMG.png")}
+                    style={{ width: 350, height: 200 }}
+                  />
+                )}
+                {clinicImage && (
                   <Image
                     source={{ uri: clinicImage }}
                     style={{ width: 350, height: 200 }}
                   />
-                </View>
-              )}
+                )}
+                <TouchableOpacity
+                  style={styles.addImgBtn}
+                  onPress={handleSelectClinicImage}
+                >
+                  <MaterialCommunityIcons
+                    name="image-plus"
+                    size={30}
+                    color="grey"
+                  />
+                </TouchableOpacity>
+              </View>
 
               <TextInput
                 style={[styles.input2, clinicTelError && styles.inputError]}
@@ -689,31 +752,46 @@ const RegisterScreen = ({ navigation }) => {
               {veterinarianNameError && (
                 <Text style={styles.errorText}>{veterinarianNameError}</Text>
               )}
-              <TouchableOpacity onPress={handleSelectCertificateImage}>
-                <Text>เพิ่มรูปใบหมอ</Text>
-              </TouchableOpacity>
-              {certificateImage && (
-                <View>
-                  <Text style={{ fontSize: 36, alignSelf: "center" }}>
-                    รูปคลินิก
-                  </Text>
+              <Text
+                style={[
+                  { color: "black" },
+                  certificateError && styles.errorText,
+                ]}
+              >
+                เพิ่มรูปใบหมอ
+              </Text>
+              <View
+                style={[
+                  styles.imageContainer,
+                  certificateError && { borderWidth: 2, borderColor: "red" },
+                ]}
+              >
+                {!certificateImage && (
+                  <Image
+                    source={require("../assets/placeholderIMG.png")}
+                    style={{ width: 350, height: 200 }}
+                  />
+                )}
+                {certificateImage && (
                   <Image
                     source={{ uri: certificateImage }}
                     style={{ width: 350, height: 200 }}
                   />
-                </View>
-              )}
+                )}
+                <TouchableOpacity
+                  style={styles.addImgBtn}
+                  onPress={handleSelectCertificateImage}
+                >
+                  <MaterialCommunityIcons
+                    name="image-plus"
+                    size={30}
+                    color="grey"
+                  />
+                </TouchableOpacity>
+              </View>
 
               <View></View>
-              <Text>รายละเอียดที่อยู่</Text>
-              <TextInput
-                style={styles.inputArea}
-                numberOfLines={4}
-                multiline
-                placeholder="Clinic Address"
-                onChangeText={(text) => setClinicAddressDescription(text)}
-                value={ClinicAddressDescription}
-              />
+
               {clinicAddressError && (
                 <Text style={styles.errorText}>{clinicAddressError}</Text>
               )}
@@ -739,6 +817,14 @@ const RegisterScreen = ({ navigation }) => {
                     <Text>ยืนยันที่อยู่</Text>
                   </TouchableOpacity> */}
               </View>
+              <TextInput
+                style={styles.inputArea}
+                numberOfLines={4}
+                multiline
+                placeholder="รายละเอียดที่อยู่"
+                onChangeText={(text) => setClinicAddressDescription(text)}
+                value={ClinicAddressDescription}
+              />
 
               <View
                 style={{
@@ -834,16 +920,16 @@ const styles = StyleSheet.create({
   },
   input2: {
     // width: "97%",
-    height: 40,
+    height: 50,
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 10,
-    marginBottom: 2,
+    borderRadius: 40,
+    marginBottom: 5,
     marginLeft: 10,
     marginRight: 30,
-    paddingLeft: 10,
+    paddingLeft: 20,
     marginTop: 10,
-    fontSize: 18,
+    fontSize: 16,
   },
   toggleText: {
     marginTop: 10,
@@ -888,13 +974,17 @@ const styles = StyleSheet.create({
     color: "white",
   },
   inputArea: {
+    textAlignVertical: "top",
     borderColor: "gray",
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 40,
     marginBottom: 10,
-    marginLeft: 5,
-    paddingLeft: 10,
+    marginLeft: 10,
+    paddingTop: 10,
+    paddingLeft: 30,
     marginTop: 5,
+    marginTop: 10,
+    fontSize: 18,
   },
   inputError: {
     borderColor: "red", // Change border color to red for validation error
@@ -903,6 +993,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginLeft: 20,
+    marginBottom: 5,
   },
   mapContainer: {
     justifyContent: "center",
@@ -926,6 +1017,20 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 10,
     marginVertical: 10,
+  },
+  addImgBtn: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    borderWidth: 1,
+    borderRadius: 25,
+    padding: 5,
+    backgroundColor: "darkgrey",
+  },
+  imageContainer: {
+    marginVertical: 20,
+    alignItems: "center",
+    borderWidth: 1,
   },
 });
 export default RegisterScreen;
