@@ -34,6 +34,7 @@ function MapComponent(
 
   const handleSearch = async () => {
     // ส่ง api ไป googlemaps แล้วรีเทินข้อมูลสถานที่มา
+    console.log("search")
     if (searchQuery) {
       try {
         const requestURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchQuery}&key=${GOOGLE_MAPS_API_KEY}`;
@@ -51,15 +52,16 @@ function MapComponent(
           // ถ้าเจอข้อมูลให้ pin map แล้วก็เลื่อนไปตรงนั้น
           const firstResult = data.results[0];
           const { lat, lng } = firstResult.geometry.location;
-          setSelectedLocation({ latitude: lat, longitude: lng });
-          mapViewRef.current.animateToRegion({
-            latitude: lat,
-            longitude: lng,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
+          goToPosition(lat, lng);
+          // mapViewRef.current.animateToRegion({
+          //   latitude: lat,
+          //   longitude: lng,
+          //   latitudeDelta: 0.0022,
+          //   longitudeDelta: 0.0421,
+          // });
         } else {
           console.log("Location not found.");
+          Alert.alert("ไม่พบสถานที่นี้")
         }
       } catch (error) {
         console.error("Error searching for location:", error);
@@ -137,8 +139,8 @@ function MapComponent(
     mapViewRef.current.animateToRegion({
       latitude,
       longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
+      latitudeDelta: 0.0022,
+      longitudeDelta: 0.00221,
     });
   };
 
@@ -204,15 +206,13 @@ function MapComponent(
                   )
                 }
               >
-                <View styles={{ flexDirection: "row" }}>
-                  <Text>ชื่อคลิกนิก: {location.name}</Text>
-                  <Text>eieieiei</Text>
-                  <Text>Test</Text>
+                <View style={{ flexDirection: "column", backgroundColor:"red", }}>
+                  <Text style={{fontSize:14}}>ชื่อคลิกนิก: {location.name}</Text>
                   <Text>
                     <Image
                       source={{ uri: location.clinicImage }}
                       resizeMode="cover"
-                      style={{ height: 100, width: 100 }}
+
                     />
                   </Text>
                 </View>
@@ -222,13 +222,12 @@ function MapComponent(
         {userLocation && (
           // ถ้ามีพิกัดปัจจุบันของ user ให้เพิ่ม marker สีฟ้า
           <Marker coordinate={userLocation} title="ที่อยู่ของคุณ">
-            <FontAwesome name="map-marker" size={24} color="#378985" />
+            <FontAwesome name="map-marker" size={36} color="#378985" />
           </Marker>
         )}
         {selectedLocation && (
           // ถ้ามีพิกีดที่เลือกไว้ให้ มี marker สีแดง
           <Marker
-  
             coordinate={selectedLocation}
             title="Location"
             // onCalloutPress={onMarkerPress} // This should work on iOS
@@ -253,7 +252,7 @@ function MapComponent(
         style={{
           position: "absolute",
           top: 20,
-          left: 20,
+          left: 75,
           right: 20,
           flexDirection: "row",
           alignItems: "center",
@@ -282,7 +281,7 @@ function MapComponent(
         </TouchableOpacity>
       </View>
 
-      <View style={{ position: "absolute", bottom: 20, left: 20 }}>
+      <View style={{ position: "absolute", top: 20, left: 20 }}>
         <TouchableOpacity
           onPress={() => {
             goToCurrentLocation();
