@@ -1,4 +1,4 @@
-import React, { Component, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,38 +6,35 @@ import {
   Image,
   SafeAreaView,
   ScrollView,
-  Button,
-  Touchable,
   Linking,
-  Alert
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import firebase from "../database/firebase";
-import MapComponent from "../component/MapComponent";
+
+import Promotion from "../component/PromotionComponent";
 import { Callout, Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-class ClinicDetail extends Component {
-  constructor() {
-    super();
+const ClinicDetail = ({ route, navigation }) => {
+  const [clinicData, setClinicData] = useState({
+    id: "",
+    Name: "",
+    clinicImage: "",
+    vetName: "",
+    tel: "",
+    startTime: "",
+    endTime: "",
+    certificate: "",
+    addressDescription: "",
+    address: "",
+  });
+  const [promotions, setPromotions] = useState(null);
+  const [currentPromotion, setCurrentPromotion] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-    this.state = {
-      id: "",
-      Name: "",
-      clinicImage: "",
-      vetName: "",
-      tel: "",
-      startTime: "",
-      endTime: "",
-      certificate: "",
-      addressDescription: "",
-      address: "",
-    };
-    this.mapRef = React.createRef();
-    this.unsubscribe = null;
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     const {
       id,
       Name,
@@ -49,8 +46,7 @@ class ClinicDetail extends Component {
       endTime,
       certificate,
       addressDescription,
-    } = this.props.route.params;
-
+    } = route.params;
 
     // Initialize a reference to the Firestore document using the provided 'id'
     const subjDoc = firebase.firestore().collection("Clinic").doc(id);
@@ -58,7 +54,7 @@ class ClinicDetail extends Component {
     subjDoc.get().then((res) => {
       if (res.exists) {
         const subj = res.data();
-        this.setState({
+        setClinicData({
           id,
           Name,
           clinicImage,
@@ -68,25 +64,83 @@ class ClinicDetail extends Component {
           endTime,
           certificate,
           addressDescription,
-          address
+          address,
         });
       } else {
         console.log("Document does not exist!!");
       }
     });
-  }
+  }, []);
 
-  // Add any other logic or methods you need for your ClinicDetail component
+  useEffect(() => {
+    fetchPromotions();
+  }, [clinicData]);
+  const fetchPromotions = async () => {
+    setIsLoading(true);
+    try {
+      const promotionsRef = firebase.firestore().collection("Promotions");
+      const querySnapshot = await promotionsRef
+        .where("clinic_id", "==", clinicData.id)
+        .get();
+      // console.log(querySnapshot);
+      const promotionsData = [];
 
-  render() {
+      const fetchImagePromises = querySnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        // console.log(data);
+        const storageRef = firebase.storage().ref().child(data.imageFilename);
+        try {
+          const url = await storageRef.getDownloadURL();
+          promotionsData.push({
+            id: doc.id,
+            clinic_id: data.clinic_id,
+            imageFilename: url,
+            promotionDetails: data.promotionDetails,
+            startDate: data.startDate,
+            endDate: data.endDate,
+
+            // Add more fields as needed
+          });
+        } catch (error) {
+          console.error("Error fetching image:", error);
+          setIsLoading(false);
+        }
+      });
+      await Promise.all(fetchImagePromises);
+
+      setPromotions(promotionsData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching promotions:", error);
+    }
+  };
+  const renderPromotionCard = ({ item }) => {
+    const startDate = item.startDate.toDate().toLocaleDateString();
+    const endDate = item.endDate.toDate().toLocaleDateString();
+
     return (
-      <SafeAreaView style={styles.center}>
+      <View style={styles.promotionCard}>
+        <Image
+          style={styles.promotionImage}
+          source={{ uri: item.imageFilename }}
+        />
+        <Text style={styles.promotionTitle}>{item.promotionDetails}</Text>
+        <Text>Start Date: {startDate.toString()}</Text>
+        <Text>End Date: {endDate.toString()}</Text>
+        {/* Render other promotion details as needed */}
+      </View>
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.center}>
+      {!isLoading ? (
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.img}>
               <Image
-                style={{ width: 350, height: 200,resizeMode: "contain" }}
-                source={{ uri: this.state.clinicImage }}
+                style={{ width: 350, height: 200, resizeMode: "contain" }}
+                source={{ uri: clinicData.clinicImage }}
               />
             </View>
 
@@ -96,71 +150,71 @@ class ClinicDetail extends Component {
                   style={{ fontSize: 28, fontWeight: "bold", marginTop: 10 }}
                 >
                   {" "}
-                  ชื่อคลินิก: {this.state.Name}
+                  ชื่อคลินิก: {clinicData.Name}
                 </Text>
                 <Text
                   style={{ fontSize: 18, fontWeight: "normal", marginTop: 10 }}
                 >
                   {" "}
-                  ที่อยู่: {this.state.addressDescription}
+                  ที่อยู่: {clinicData.addressDescription}
                 </Text>
                 <Text
                   style={{ fontSize: 18, fontWeight: "normal", marginTop: 10 }}
                 >
                   {" "}
-                  เบอร์โทร: {this.state.tel}
+                  เบอร์โทร: {clinicData.tel}
                 </Text>
-                {this.state.address&&(
-                <View style={{justifyContent:"center", alignItems:"center"}}>
+                {clinicData.address && (
+                  <View
+                    style={{ justifyContent: "center", alignItems: "center" }}
+                  >
                     <MapView
-                    scrollEnabled={false}
+                      scrollEnabled={false}
                       style={{ height: 200, width: 300 }}
                       initialRegion={{
-                        latitude: this.state.address.latitude,
-                        longitude: this.state.address.longitude,
+                        latitude: clinicData.address.latitude,
+                        longitude: clinicData.address.longitude,
                         latitudeDelta: 0.00422,
                         longitudeDelta: 0.00421,
                       }}
                     >
                       <Marker
                         coordinate={{
-                          latitude: this.state.address.latitude,
-                          longitude: this.state.address.longitude,
+                          latitude: clinicData.address.latitude,
+                          longitude: clinicData.address.longitude,
                         }}
-                        title={this.state.Name}
+                        title={clinicData.Name}
                         description="คลิกเพื่อเปิดไป google maps"
-                    
                       >
-                        <Callout     onPress={() => {
-                          Alert.alert(
-                            "เปิดใน google maps?",
-                            "ต้องการหาเส้นทางไปคลินิกด้วย google maps ใช่หรือไม่?",
-                            [
-                              {
-                                text: "ไม่",
-                                style: "cancel",
-                              },
-                              {
-                                text: "ใช่",
-                                onPress: () => {
-                                  const lat = this.state.latitude;
-                                  const lng = this.state.longitude;
-                                  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-                                  Linking.openURL(url);
+                        <Callout
+                          onPress={() => {
+                            Alert.alert(
+                              "เปิดใน google maps?",
+                              "ต้องการหาเส้นทางไปคลินิกด้วย google maps ใช่หรือไม่?",
+                              [
+                                {
+                                  text: "ไม่",
+                                  style: "cancel",
                                 },
-                              },
-                            ]
-                          );
-                        }}> 
-                          
-                        </Callout>
+                                {
+                                  text: "ใช่",
+                                  onPress: () => {
+                                    const lat = clinicData.latitude;
+                                    const lng = clinicData.longitude;
+                                    const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+                                    Linking.openURL(url);
+                                  },
+                                },
+                              ]
+                            );
+                          }}
+                        ></Callout>
                       </Marker>
                     </MapView>
                   </View>
-       )}
-
-                {/* Render other details using this.state properties */}
-                {/* For example, you can render this.state.addressDescription, this.state.vetName, etc. */}
+                )}
+                {/* Render other details using clinicData properties */}
+                {/* For example, you can render clinicData.addressDescription, clinicData.vetName, etc. */}
                 <View
                   style={{
                     borderBottomColor: "black",
@@ -173,24 +227,20 @@ class ClinicDetail extends Component {
                   style={{ fontSize: 20, fontWeight: "normal", marginTop: 10 }}
                 >
                   {" "}
-                  ชื่อสัตว์แพทย์: {this.state.vetName}
+                  ชื่อสัตว์แพทย์: {clinicData.vetName}
                 </Text>
                 <Text
                   style={{ fontSize: 18, fontWeight: "bold", marginTop: 10 }}
                 >
                   {" "}
-
                   ใบอนุญาติการทำงาน:
                 </Text>
                 <View style={styles.cer}>
                   <Image
                     style={{ width: 300, height: 250, resizeMode: "contain" }}
-                    source={{ uri: this.state.certificate }}
+                    source={{ uri: clinicData.certificate }}
                   />
                 </View>
-       
-                
-             
                 <View
                   style={{
                     borderBottomColor: "black",
@@ -205,9 +255,6 @@ class ClinicDetail extends Component {
                   {" "}
                   เวลาทำการ:
                 </Text>
-                {/* Render clinic timings */}
-                {/* For example, Mon-Fri Morning 8.00 am - 2.00 am */}
-                {/* Add similar code to render other details */}
                 <View style={{ flexDirection: "row", width: 200 }}>
                   <Text
                     style={{ fontSize: 15, marginLeft: 10, marginTop: 10 }}
@@ -220,25 +267,35 @@ class ClinicDetail extends Component {
                       marginLeft: 30,
                     }}
                   >
-                    {this.state.startTime} - {this.state.endTime}
+                    {clinicData.startTime} - {clinicData.endTime}
                   </Text>
                 </View>
+                <View
+                  style={{
+                    borderBottomColor: "black",
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    width: 385,
+                    marginTop: 20,
+                  }}
+                />
+                <Text
+                  style={{ fontSize: 18, fontWeight: "bold", marginTop: 10 }}
+                >
+                  {" "}
+                  โปรโมชั่น
+                </Text>
+                {promotions ? (
+                  <Promotion promotions={promotions} />
+                ) : (
+                  <Text>ไม่มีโปรโมชั่น</Text>
+                )}
 
                 <View>
-                  {/* <Button
-                    color="#87D8C3"
-                    title="จองคิว"
-                    onPress={() =>
-                      this.props.navigation.navigate("FormAppointment", {
-                        todo: "addQueue",
-                      })
-                    }
-                  /> */}
                   <TouchableOpacity style={styles.buttonContainer}>
                     <Text
-                      style={{fontSize:20, color:"white"}}
+                      style={{ fontSize: 20, color: "white" }}
                       onPress={() =>
-                        this.props.navigation.navigate("FormAppointment", {
+                        navigation.navigate("FormAppointment", {
                           todo: "addQueue",
                         })
                       }
@@ -251,22 +308,28 @@ class ClinicDetail extends Component {
             </SafeAreaView>
           </View>
         </ScrollView>
-      </SafeAreaView>
-    );
-  }
-}
+      ) : (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#3498db" />
+          <Text style={styles.loadingText}>รอซักครู่...</Text>
+        </View>
+      )}
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     backgroundColor: "#FAF1E4",
+    justifyContent: "center",
   },
   img: {
     marginTop: 70,
     justifyContent: "center",
     alignItems: "center",
-    elevation:5,
+    elevation: 5,
     resizeMode: "contain",
   },
   cer: {
@@ -278,35 +341,56 @@ const styles = StyleSheet.create({
   layout: {
     backgroundColor: "white",
     width: 420,
-    // height: 800,
     marginTop: 10,
     borderRadius: 30,
     alignItems: "stretch",
-    elevation:5
+    elevation: 5,
   },
   form: {
-    // width: 380,
-    // height: 500,
-
     marginRight: 10,
-    // marginTop: 10,
     padding: 20,
   },
   center: {
     alignItems: "center",
   },
-  buttonContainer:{
-    width:100,
-    height:70,
-    backgroundColor:"#87D8C3" ,
-    alignItems:"center",
-    justifyContent:"center",
-    alignSelf:"center",
-    margin:10,
-    borderRadius:40,
-    elevation:5
-    
-  }
+  buttonContainer: {
+    width: 100,
+    height: 70,
+    backgroundColor: "#87D8C3",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    margin: 10,
+    borderRadius: 40,
+    elevation: 5,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+  },
+  promotionCard: {
+    width: 320,
+    padding: 10,
+    margin: 10,
+    backgroundColor: "white",
+    borderRadius: 10,
+    elevation: 5,
+  },
+  promotionImage: {
+    width: 300,
+    height: 200,
+    resizeMode: "cover",
+    borderRadius: 10,
+  },
+  promotionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
 });
 
 export default ClinicDetail;
