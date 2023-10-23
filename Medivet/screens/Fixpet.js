@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Image,
   Button,
   TextInput,
@@ -15,6 +14,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import firebase from "../database/firebase";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import { ScrollView } from 'react-native-virtualized-view'
 
 const formatDateForTextInput = (date) => {
   if (date instanceof Date && !isNaN(date)) {
@@ -134,14 +134,14 @@ const Fixpet = ({ route, navigation }) => {
             Type: value,
           });
 
-        Alert.alert("สำเร็จ!!", "เปลี่ยนข้อมูลสัตว์เลี้ยงเสร็จสิ้น", [
-          {
-            text: "OK",
-            onPress: () => {
-              navigation.navigate("MyPet"); // Navigate back to the pet list
+          Alert.alert("สำเร็จ!!", "เปลี่ยนข้อมูลสัตว์เลี้ยงเสร็จสิ้น", [
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.navigate("MyPet"); // Navigate back to the pet list
+              },
             },
-          },
-        ]);
+          ]);
         } else {
           Alert.alert("อัปเดตไม่สำเร็จ ไม่พบข้อมูลสัตว์เลี้ยง");
         }
@@ -269,138 +269,146 @@ const Fixpet = ({ route, navigation }) => {
   }, [route.params]);
 
   return (
-    <ScrollView style={styles.container2}>
-      <View style={styles.container}>
-        <View style={styles.img}>
-          <View style={styles.imageContainer}>
-            {image && (
-              <Image
-                source={{ uri: image }}
-                style={{ width: 350, height: 200 }}
-              />
-            )}
+      <View style={styles.container2}>
+        <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.img}>
+            <View style={styles.imageContainer}>
+              {image && (
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: 350, height: 200, borderRadius: 25 }}
+                />
+              )}
+            </View>
+            <Button title="เพิ่ม" onPress={handleSelectImage} />
           </View>
-          <Button title="เพิ่ม" onPress={handleSelectImage} />
-        </View>
-        <View style={styles.layout}>
-          <View style={styles.form}>
-            <Text style={{ fontSize: 20, marginTop: 12, marginLeft: 5 }}>
-              ประเภท
-            </Text>
-            <DropDownPicker
-              open={opentype}
-              value={pettype}
-              items={type}
-              setOpen={setOpentype}
-              setValue={setpettype}
-              setItems={onChangetype}
-              style={styles.dropdown}
-              placeholder="ประเภทของสัตว์เลี้ยง"
-            />
-            <Text style={{ fontSize: 20, marginTop: 20, marginLeft: 5 }}>
-              ชื่อ
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="ชื่อสัตว์เลี้ยง"
-            />
-            <Text style={{ fontSize: 20, marginTop: 20, marginLeft: 5 }}>
-              เพศ
-            </Text>
-            <DropDownPicker
-              open={opensex}
-              value={sex}
-              items={Sex}
-              setOpen={setOpensex}
-              setValue={setSex}
-              setItems={onChangeSex}
-              style={styles.dropdown}
-              placeholder="เพศของสัตว์เลี้ยง"
-            />
-            <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
-              น้ำหนัก
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={weight.toString()}
-              onChangeText={(text) => {
-                if (text === "" || !isNaN(text)) {
-                  setWeight(text === "" ? 0 : parseInt(text));
-                }
-              }}
-              placeholder="น้ำหนักสัตว์เลี้ยง"
-              keyboardType="numeric"
-            />
 
-            <Text
-              style={{
-                fontSize: 20,
-                marginTop: 10,
-
-                marginLeft: 5,
-              }}
-            >
-              พันธุ์
-            </Text>
-
-            <DropDownPicker
-              open={open}
-              value={value}
-              items={Specie}
-              setOpen={setOpen}
-              setValue={setValue}
-              setItems={onChangeSpecie}
-              placeholder="พันธ์ของสัตว์เลี้ยง"
-              style={styles.dropdown}
-            />
-            <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
-              วันเกิด
-            </Text>
-            {showDate && (
-              <DateTimePicker
-                mode="date"
-                display="spinner"
-                value={date}
-                onChange={(event, selectedDate) => {
-                  setShowDate(false);
-                  if (selectedDate) {
-                    setDate(selectedDate);
-                    onChangedatetxt(formatDateForTextInput(selectedDate));
-                  }
-                }}
-                style={styles.datepicker}
-              />
-            )}
-            <Pressable onPress={toggleDatePicker}>
+          <View style={styles.layout}>
+            <View style={styles.form}>
+              <Text style={{ fontSize: 20, marginTop: 20, marginLeft: 5 }}>
+                ชื่อ
+              </Text>
               <TextInput
                 style={styles.input}
-                onChangeText={onChangedatetxt}
-                value={datetxt}
-                placeholder="Date"
-                editable={false}
+                value={name}
+                onChangeText={setName}
+                placeholder="ชื่อสัตว์เลี้ยง"
               />
-            </Pressable>
-            <Text style={{ fontSize: 20, marginTop: 20, marginLeft: 5 }}>
-              ข้อมูลเพิ่มเติม
-            </Text>
-            <TextInput
-              style={styles.inputarea}
-              value={detail}
-              onChangeText={setDetail}
-              placeholder="ข้อมูลเพิ่มเติม"
-              multiline={true}
-              numberOfLines={4}
-            />
-            <View style={{ marginTop: 10 }}>
-              <Button title="เพิ่ม" onPress={storeSubject} />
-              <Button title="ลบ" onPress={deletePet} />
+              
+                  <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
+                    ประเภท
+                  </Text>
+                  <DropDownPicker
+                    open={opentype}
+                    value={pettype}
+                    items={type}
+                    setOpen={setOpentype}
+                    setValue={setpettype}
+                    setItems={onChangetype}
+                    style={styles.dropdown}
+                    placeholder="ประเภทของสัตว์เลี้ยง"
+                  />
+                  <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
+                    เพศ
+                  </Text>
+                  <DropDownPicker
+                    open={opensex}
+                    value={sex}
+                    items={Sex}
+                    setOpen={setOpensex}
+                    setValue={setSex}
+                    setItems={onChangeSex}
+                    style={styles.dropdown}
+                    placeholder="เพศของสัตว์เลี้ยง"
+                  />
+
+                <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
+                  น้ำหนัก
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  value={weight.toString()}
+                  onChangeText={(text) => {
+                    if (text === "" || !isNaN(text)) {
+                      setWeight(text === "" ? 0 : parseInt(text));
+                    }
+                  }}
+                  placeholder="น้ำหนักสัตว์เลี้ยง"
+                  keyboardType="numeric"
+                />
+
+                <Text
+                  style={{
+                    fontSize: 20,
+                    marginTop: 10,
+
+                    marginLeft: 5,
+                  }}
+                >
+                  พันธุ์
+                </Text>
+
+                <DropDownPicker
+                  open={open}
+                  value={value}
+                  items={Specie}
+                  setOpen={setOpen}
+                  setValue={setValue}
+                  setItems={onChangeSpecie}
+                  placeholder="พันธ์ของสัตว์เลี้ยง"
+                  style={styles.dropdown}
+                />
+              <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
+                วันเกิด
+              </Text>
+              {showDate && (
+                <DateTimePicker
+                  mode="date"
+                  display="spinner"
+                  value={date}
+                  onChange={(event, selectedDate) => {
+                    setShowDate(false);
+                    if (selectedDate) {
+                      setDate(selectedDate);
+                      onChangedatetxt(formatDateForTextInput(selectedDate));
+                    }
+                  }}
+                  style={styles.datepicker}
+                />
+              )}
+              <Pressable onPress={toggleDatePicker}>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangedatetxt}
+                  value={datetxt}
+                  placeholder="Date"
+                  editable={false}
+                />
+              </Pressable>
+              <Text style={{ fontSize: 20, marginTop: 20, marginLeft: 5 }}>
+                ข้อมูลเพิ่มเติม
+              </Text>
+              <TextInput
+                style={styles.inputarea}
+                value={detail}
+                onChangeText={setDetail}
+                placeholder="ข้อมูลเพิ่มเติม"
+                multiline={true}
+                numberOfLines={4}
+              />
+              <View style={{ marginTop: 10 }}>
+                <Button title="เพิ่ม" onPress={storeSubject} />
+                <Button title="ลบ" onPress={deletePet} />
+              </View>
             </View>
           </View>
         </View>
+        </ScrollView>
+       
       </View>
-    </ScrollView>
+
+
   );
 };
 
@@ -416,7 +424,7 @@ const styles = StyleSheet.create({
   img: {
     width: 250,
     height: 260,
-    marginTop: 70,
+    marginTop: 20,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -433,7 +441,6 @@ const styles = StyleSheet.create({
     margin: 4,
     borderWidth: 0.5,
     padding: 10,
-    width: 190,
     borderRadius: 10,
   },
   form: {
@@ -447,6 +454,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 10,
     marginVertical: 10,
+    width: 160
   },
   inputarea: {
     height: 150,
