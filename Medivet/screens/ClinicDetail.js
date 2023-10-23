@@ -111,15 +111,15 @@ class ClinicDetail extends Component {
                   เบอร์โทร: {this.state.tel}
                 </Text>
                 {this.state.address&&(
-                <View>
+                <View style={{justifyContent:"center", alignItems:"center"}}>
                     <MapView
                     scrollEnabled={false}
                       style={{ height: 200, width: 300 }}
                       initialRegion={{
                         latitude: this.state.address.latitude,
                         longitude: this.state.address.longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
+                        latitudeDelta: 0.00422,
+                        longitudeDelta: 0.00421,
                       }}
                     >
                       <Marker

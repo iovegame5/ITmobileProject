@@ -66,7 +66,7 @@ useEffect(()=>{
           <Text style={styles.header}>Common illnesses</Text>
           <Text
             style={{ color: "blue"}}
-            onPress={() => Linking.openURL("http://google.com")}
+            onPress={() =>{}}
           >
             {" "}
             all illnesses{" "}
