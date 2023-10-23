@@ -271,15 +271,15 @@ const RegisterScreen = ({ navigation }) => {
               // Transaction successful
               setClinicImage(null);
               setCertificateImage(null);
-              setEmail(null),
-              setPassword(null),
-              setConfirmPassword(null),
-              setClinicName(null),
-              setClinicDescription(null),
-              setClinicTel(null),
-              setClinicOpenTime(null),
-              setClinicCloseTime(null),
-              setClinicAddressDescription(null)
+              setEmail(null);
+              setPassword(null);
+              setConfirmPassword(null);
+              setClinicName(null);
+              setClinicDescription(null);
+              setClinicTel(null);
+              setClinicOpenTime(null);
+              setClinicCloseTime(null);
+              setClinicAddressDescription(null);
               Alert.alert("สมัครคลินิกสำเร็จ");
               console.log("Registration successful");
               console.log("New User ID:", newUserId);
@@ -722,7 +722,7 @@ const RegisterScreen = ({ navigation }) => {
                   <MaterialCommunityIcons
                     name="image-plus"
                     size={30}
-                    color="grey"
+                    color="#378985"
                   />
                 </TouchableOpacity>
               </View>
@@ -785,7 +785,7 @@ const RegisterScreen = ({ navigation }) => {
                   <MaterialCommunityIcons
                     name="image-plus"
                     size={30}
-                    color="grey"
+                    color="#378985"
                   />
                 </TouchableOpacity>
               </View>
@@ -874,9 +874,9 @@ const RegisterScreen = ({ navigation }) => {
           )}
           <TouchableOpacity
             style={[styles.loginButton, { width: 200 }]}
-            onPress={handleRegister}
+            onPress={()=>{handleRegister()}}
           >
-            <Text style={styles.buttonText}>Create account</Text>
+            <Text style={styles.buttonText}>สมัครสมาชิก</Text>
           </TouchableOpacity>
           <Text
             style={styles.toggleText}
@@ -1022,10 +1022,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 10,
     right: 10,
-    borderWidth: 1,
+
     borderRadius: 25,
     padding: 5,
-    backgroundColor: "darkgrey",
+
   },
   imageContainer: {
     marginVertical: 20,

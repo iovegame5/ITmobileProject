@@ -198,7 +198,7 @@ function MapComponent(
               title={location.name}
             >
               {/* You can customize the marker's callout here */}
-              <Callout
+              <Callout 
                 onPress={() =>
                   onMarkerPress(
                     location.address.latitude,
@@ -206,15 +206,10 @@ function MapComponent(
                   )
                 }
               >
-                <View style={{ flexDirection: "column", backgroundColor:"red", }}>
-                  <Text style={{fontSize:14}}>ชื่อคลิกนิก: {location.name}</Text>
-                  <Text>
-                    <Image
-                      source={{ uri: location.clinicImage }}
-                      resizeMode="cover"
-
-                    />
-                  </Text>
+                <View>
+                  <Text style={{fontSize:24}}>ชื่อคลิกนิก: {location.name}</Text>
+                  <Text>เปิดบน google maps?</Text>
+            
                 </View>
               </Callout>
             </Marker>
@@ -251,7 +246,7 @@ function MapComponent(
       <View
         style={{
           position: "absolute",
-          top: 20,
+          top: 50,
           left: 75,
           right: 20,
           flexDirection: "row",
@@ -281,7 +276,7 @@ function MapComponent(
         </TouchableOpacity>
       </View>
 
-      <View style={{ position: "absolute", top: 20, left: 20 }}>
+      <View style={{ position: "absolute", top: 50, left: 20 }}>
         <TouchableOpacity
           onPress={() => {
             goToCurrentLocation();

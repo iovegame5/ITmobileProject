@@ -39,11 +39,14 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async (email, password) => {
     try {
       await login(email, password);
+      setEmail(null);
+      setPassword(null);
       // Login was successful, you can navigate to another screen here
     } catch (error) {
       // Handle the login error, e.g., show an alert
       Alert.alert("เข้าสู่ระบบไม่สำเร็จ", "อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
       setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
+      setPassword(null);
     }
   };
 
@@ -165,7 +168,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 250, // Adjust the width as needed
-    height: 200, // Adjust the height as needed
+    height: 150, // Adjust the height as needed
     resizeMode: "contain",
     marginTop: 70,
     // backgroundColor: "red",
@@ -197,6 +200,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: "center",
+    justifyContent:"center"
   },
   loginButton: {
     alignSelf: "center",

@@ -17,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import firebase from "../database/firebase";
 import * as FileSystem from "expo-file-system";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAuth } from "../Auth/AuthContext";
 
 //select data from firebase
 
@@ -42,7 +43,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 //   };
 
 const AddPromotionScreen = () => {
-  const auth = firebase.auth();
+  const { user, role, isAuthenticated, login, logout } = useAuth();
+  console.log(user, role, isAuthenticated);
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [promotionDetails, setPromotionDetails] = useState("");
@@ -131,7 +133,7 @@ const AddPromotionScreen = () => {
 
       await ref.put(blob);
       setUploading(false);
-      Alert.alert("upload image!!");
+      Alert.alert("เพิ่มสำเสร็จ");
       setImage(null);
     } catch (error) {
       console.error(error);
@@ -154,7 +156,7 @@ const AddPromotionScreen = () => {
         console.log("กำลังอัปข้อมูล");
         // Create a new document in the "Promotions" collection
         const docRef = await db.collection("Promotions").add({
-          clinic_id: auth.currentUser.uid,
+          clinic_id: user.uid,
           startDate,
           endDate,
           promotionDetails,
@@ -274,11 +276,10 @@ const AddPromotionScreen = () => {
               textAlignVertical="top"
               style={[
                 {
-                
-                  padding:   10,
+                  padding: 10,
                   borderWidth: 1,
                   borderColor: "grey",
-                  borderRadius: 10,
+                  borderRadius: 30,
                   width: 300,
                 },
                 detailError && styles.inputError,

@@ -176,12 +176,7 @@ const Allclinic = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {isLoading ? ( // Show loading indicator when isLoading is true
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#3498db" />
-          <Text style={styles.loadingText}>รอซักครู่...</Text>
-        </View>
-      ) : (
+    
         <View>
           <MapComponent
             width={"100%"}
@@ -203,14 +198,22 @@ const Allclinic = ({ navigation }) => {
           >
             <View
               style={{
+                // marginTop:-40,
                 height: 60,
                 backgroundColor: "#378985",
                 width: "100%",
                 alignItems: "center",
-                borderRadius: 50,
+                borderRadius: 40,
                 borderBottomEndRadius: 0,
                 borderBottomStartRadius: 0,
                 justifyContent: "center",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: -5,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
               }}
             >
               <Text style={{ fontSize: 24, color: "white" }}>
@@ -219,6 +222,12 @@ const Allclinic = ({ navigation }) => {
             </View>
 
             <View style={{ padding: 10 }}>
+            {isLoading ? ( // Show loading indicator when isLoading is true
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#378985" />
+          <Text style={styles.loadingText}>รอซักครู่...</Text>
+        </View>
+      ) : (
               <FlatList
                 data={clinics}
                 keyExtractor={(item) => item.id}
@@ -242,21 +251,6 @@ const Allclinic = ({ navigation }) => {
                                 ชื่อหมอ: {item.vetName}
                               </Text>
 
-                              <View style={styles.arrow}>
-                                <Pressable
-                                  onPress={() => {
-                                    navigation.navigate("Clinicdetail", {id:item.id});
-                                  }}
-                                >
-                                  <Text>
-                                    <Ionicons
-                                      name="arrow-forward"
-                                      size={24}
-                                      color="black"
-                                    />
-                                  </Text>
-                                </Pressable>
-                              </View>
                             </View>
                           </View>
                         </View>
@@ -279,16 +273,33 @@ const Allclinic = ({ navigation }) => {
                           <Text>
                             {calculateDistance(userLocation, item.address)}
                           </Text>
+                          
+                          <View style={styles.arrow}>
+                                <Pressable
+                                  onPress={() => {
+                                    navigation.navigate("Clinicdetail", {id:item.id});
+                                  }}
+                                >
+                                  <Text>
+                                    <Ionicons
+                                      name="arrow-forward"
+                                      size={24}
+                                      color="#378985"
+                                    />
+                                  </Text>
+                                </Pressable>
+                              </View>
                         </View>
                       </View>
                     </View>
                   );
                 }}
               />
+      )}
             </View>
           </View>
         </View>
-      )}
+
     </View>
   );
 };
@@ -331,6 +342,13 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   card: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
     width: 360,
     height: 130,
     backgroundColor: "#F9F9F9",
