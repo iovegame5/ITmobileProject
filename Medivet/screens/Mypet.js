@@ -15,6 +15,7 @@ import React, { Component } from "react";
 import { AntDesign } from '@expo/vector-icons';
 import firebase from "../database/firebase";
 
+
 function calculateAge(dateString) {
   if (!dateString || typeof dateString !== 'string') {
     return 0; // or some default value if date is not available
@@ -142,8 +143,8 @@ class Mypet extends Component {
                           อายุ: {item.Age} ปี
                         </Text>
                       </View>
-                      <View style={{ marginTop: 10 }}>
-                        <Button title="แก้ไขข้อมูล"  onPress={ () => { navigation.navigate("Edit animal information", {key:item.key, Name: item.Name, Detail: item.Detail,  Gender: item.Gender, Image: item.Image, PetType : item.PetType,  Type : item.Type, DateofBirth: item.DateofBirth, Weight : item.Weight}); } } />
+                      <View style={{ marginTop: 10, marginLeft: 40 }}>
+                        <Button title="แก้ไขข้อมูล"   color="blue"onPress={ () => { navigation.navigate("Edit pet information", {key:item.key, Name: item.Name, Detail: item.Detail,  Gender: item.Gender, Image: item.Image, PetType : item.PetType,  Type : item.Type, DateofBirth: item.DateofBirth, Weight : item.Weight}); } } />
                       </View>
                     </View>
                   </View>
@@ -156,7 +157,7 @@ class Mypet extends Component {
           keyExtractor={(item) => item.key}
         />
        <View style={styles.centeredButtonContainer}>
-            <Pressable
+            <TouchableOpacity
               style={styles.centeredButton}
               onPress={() => {
                 navigation.navigate("AddPet");
@@ -164,7 +165,7 @@ class Mypet extends Component {
             >
               <AntDesign name="pluscircle" size={50} color="black" />
             
-            </Pressable>
+            </TouchableOpacity>
           </View>
           <View style={{height:75}}></View>
       </SafeAreaView>
@@ -186,6 +187,8 @@ const styles = StyleSheet.create({
   text: {
     marginLeft: 10,
     marginTop: 30,
+    width: 130,
+    
   },
   card: {
     width: 380,
@@ -207,7 +210,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position:"absolute",
     bottom:-10,
-    right:-10
+    right:-10,
+    zIndex: 1
   },
   centeredButton: {
     backgroundColor: 'black',
@@ -220,6 +224,7 @@ const styles = StyleSheet.create({
     alignItems:"center",
     justifyContent:"center",
     backgroundColor: 'transparent',
+    zIndex: 1,
   },
   cardContainer:{
     // backgroundColor:"red"
