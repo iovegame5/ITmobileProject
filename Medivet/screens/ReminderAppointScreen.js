@@ -48,48 +48,46 @@ const ReminderAppoint = ({ route, navigation }) => {
     setQueueownerList(all_data);
   };
 
-  console.log(queueowner_list[0])
 
   useEffect(() => {
     const unsubscribe = firebase.firestore()
       .collection("Appointment")
       .onSnapshot(getCollection);
     
-      getDatatoShow();
-
-    
     return () => {
       unsubscribe();
     };
   }, []);
 
-  function getDatatoShow() {
+  if (queueowner_list.length > 0) {
     const clinicName = firebase.firestore()
-      .collection("Clinic")
-      .doc(queueowner_list[0].ClinicID);
-      clinicName.get().then((res) => {
-      if (res.exists) {
-        const clinicname = res.data();
-        setDbclinic(clinicname.name);
-        console.log(dbclinic)
-      } else {
-        console.log("Document does not exist!!");
-      }
-    });
-  
-    const PetName = firebase.firestore()
-    .collection("Pet")
-    .doc(queueowner_list[0].PetID);
-    PetName.get().then((res) => {
+    .collection("Clinic")
+    .doc(queueowner_list[0].ClinicID);
+    clinicName.get().then((res) => {
     if (res.exists) {
-      const petname = res.data();
-      setDbpet(petname.Name);
-      console.log(dbpet)
+      const clinicname = res.data();
+      setDbclinic(clinicname.name);
+      console.log(dbclinic)
     } else {
       console.log("Document does not exist!!");
     }
   });
+
+  const PetName = firebase.firestore()
+  .collection("Pet")
+  .doc(queueowner_list[0].PetID);
+  PetName.get().then((res) => {
+  if (res.exists) {
+    const petname = res.data();
+    setDbpet(petname.Name);
+    console.log(dbpet)
+  } else {
+    console.log("Document does not exist!!");
   }
+});
+  }
+
+
 
   
 
@@ -106,30 +104,35 @@ const ReminderAppoint = ({ route, navigation }) => {
   };
 
 
-  const FirstRoute = () => (
+  const FirstRoute = () => {
+  return (
     <View className="flex-1 bg-white-100 items-center">
       <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="รอการยืนยัน"></QueueOwner>
     </View>
   );
-
-  const SecondRoute = () => (
+}
+  const SecondRoute = () =>{
+  return (
     <View className="flex-1 bg-white-100 items-center">
       <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="นัดหมาย"></QueueOwner>
     </View>
 
-  );
+  );}
 
-  const ThirdRoute = () => (
+  const ThirdRoute = () => {
+  return (
     <View className="flex-1 bg-white-100 items-center">
       <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="สำเร็จ"></QueueOwner>
     </View>
   );
-
-  const FourthRoute = () => (
+}
+  const FourthRoute = () => {
+  return (
     <View className="flex-1 bg-white-100 items-center">
       <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="เลื่อนนัด"></QueueOwner>
     </View>
   );
+}
 
   const layout = useWindowDimensions();
 
