@@ -22,7 +22,7 @@ function CustomDrawerContent(props) {
     <DrawerContentScrollView {...props}>
       <DrawerItemList {...props} />
       <View style={styles.signOutContainer}>
-        <Button title="Sign Out" onPress={() => handleSignOut()} />
+        <Button title="ออกจากระบบ" onPress={() => handleSignOut()} />
       </View>
     </DrawerContentScrollView>
   );

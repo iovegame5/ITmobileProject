@@ -1,6 +1,6 @@
 
 import { View, Animated, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,CommonActions } from '@react-navigation/native';
 
 import React, { useRef } from "react";
 import { Easing } from 'react-native-reanimated';
@@ -20,7 +20,12 @@ const HomePageScreen = ({navigation}) => {
     fadeIn();
        // Set a timeout to navigate to the Login screen after 4 seconds
        const navigationTimeout = setTimeout(() => {
-        navigation.navigate("LoginPage"); // Replace "Login" with your actual Login screen name
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'LoginPage' }] // Navigate to LoginPage and reset the stack
+          })
+        );
       }, 1500); // 4 seconds in milliseconds
   
       // Clear the timeout when the component unmounts (cleanup)

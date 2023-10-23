@@ -66,7 +66,7 @@ const ClinicDetail = ({ route, navigation }) => {
           addressDescription,
           address,
         });
-        console.log(id)
+        console.log(id);
       } else {
         console.log("Document does not exist!!");
       }
@@ -85,9 +85,9 @@ const ClinicDetail = ({ route, navigation }) => {
         .get();
       // console.log(querySnapshot);
       const promotionsData = [];
-
       const fetchImagePromises = querySnapshot.docs.map(async (doc) => {
         const data = doc.data();
+        console.log(data);
         // console.log(data);
         const storageRef = firebase.storage().ref().child(data.imageFilename);
         try {
@@ -109,7 +109,13 @@ const ClinicDetail = ({ route, navigation }) => {
       });
       await Promise.all(fetchImagePromises);
 
-      setPromotions(promotionsData);
+      if (promotionsData.length > 0) {
+      
+        setPromotions(promotionsData);
+      } else {
+      
+      }
+      console.log(promotions)
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching promotions:", error);
@@ -285,10 +291,10 @@ const ClinicDetail = ({ route, navigation }) => {
                   {" "}
                   โปรโมชั่น
                 </Text>
-                {promotions ? (
-                  <Promotion promotions={promotions} />
+                {promotions && promotions.length > 0 ? (
+                  <Promotion promotions={promotions}/>
                 ) : (
-                  <Text>ไม่มีโปรโมชั่น</Text>
+                  <Text> ไม่มีโปรโมชั่น </Text>
                 )}
 
                 <View>
@@ -296,7 +302,7 @@ const ClinicDetail = ({ route, navigation }) => {
                     <Text
                       style={{ fontSize: 20, color: "white" }}
                       onPress={() =>
-                        this.props.navigation.navigate("FormAppointment", {
+                        navigation.navigate("FormAppointment", {
                           todo: "addQueue",
                         })
                       }
@@ -348,8 +354,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   form: {
-    marginRight: 10,
-    padding: 20,
+    // marginRight: 10,
+    padding: 10,
   },
   center: {
     alignItems: "center",

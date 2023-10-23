@@ -8,13 +8,14 @@ import {
   TextInput,
   Alert,
   Pressable,
+  ScrollView
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import firebase from "../database/firebase";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-import { ScrollView } from 'react-native-virtualized-view'
+
 
 const formatDateForTextInput = (date) => {
   if (date instanceof Date && !isNaN(date)) {
@@ -28,6 +29,36 @@ const formatDateForTextInput = (date) => {
 };
 
 const Fixpet = ({ route, navigation }) => {
+  const [species, setSpecies] = useState("");
+
+  const Speciedog = [
+    { label: "เชา เชา", value: "เชา เชา" },
+    { label: "ไซบีเรียน ฮัสกี้", value: "ไซบีเรียน ฮัสกี้" },
+    { label: "คอลลี่", value: "คอลลี่" },
+    { label: "เซนต์เบอร์นาร์ด", value: "เซนต์เบอร์นาร์ด" },
+    { label: "ชิวาวา", value: "ชิวาวา" },
+    { label: "โกลเด้น รีทรีฟเวอร์", value: "โกลเด้น รีทรีฟเวอร์" },
+    { label: "ซามอยด์", value: "ซามอยด์" },
+    { label: "ร็อตไวเลอร์", value: "ร็อตไวเลอร์" },
+    { label: "ชิสุ", value: "ชิสุ" },
+    // Add more species options here
+  ];
+  const Speciecat = [
+    { label: "บริติช ช็อตแฮร์", value: "บริติช ช็อตแฮร์" },
+    { label: "อะบิสซิเนียน", value: "อะบิสซิเนียน" },
+    { label: "เอ็กซ์โซติก ช็อตแฮร์", value: "เอ็กซ์โซติก ช็อตแฮร์" },
+    { label: "แมวขาวมณี", value: "แมวขาวมณี" },
+    { label: "สก๊อตทิช โฟลด์", value: "สก๊อตทิช โฟลด์" },
+    { label: "แมวเปอร์เซีย", value: "แมวเปอร์เซีย" },
+    { label: "แมววิเชียรมาศ", value: "แมววิเชียรมาศ" },
+    { label: "แมวนอร์วีเจียน ฟอเรสต์", value: "แมวนอร์วีเจียน ฟอเรสต์" },
+    { label: "อเมริกันช็อตแฮร์", value: "อเมริกันช็อตแฮร์" },
+    
+    // Add more species options here
+  ];
+
+
+  const [speciesOptions, setSpeciesOptions] = useState([]);
   const [userId, setUserId] = useState(null);
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -112,10 +143,35 @@ const Fixpet = ({ route, navigation }) => {
     fetchUserData();
   }, []);
 
+  const handlePetTypeChange = (petType) => {
+    setpettype(petType);
+    // Dynamically set the species options based on the selected pet type
+    if (petType === "Dog") {
+      setSpeciesOptions(Speciedog);
+      setSpecies(Speciedog[0].value); // Set a default value for dog species
+    } else if (petType === "Cat") {
+      setSpeciesOptions(Speciecat);
+      setSpecies(Speciecat[0].value); // Set a default value for cat species
+    }
+  };
+
+  useEffect(() => {
+    if (route.params) {
+      const { PetType } = route.params;
+      setpettype(PetType); // Make sure to set the pet type
+      if (PetType === "Cat") {
+        setSpeciesOptions(Speciecat);
+      } else {
+        setSpeciesOptions(Speciedog);
+      }
+    }
+  }, [route.params]);
+  
+
   const storeSubject = async () => {
     try {
-      if (!datetxt || !name || !sex || !weight || !value) {
-        Alert.alert("Please fill in all required fields.");
+      if (!datetxt || !name || !sex || !weight || !species) {
+        Alert.alert("โปรดกรอกข้อมูลให้ครบ");
         return;
       }
 
@@ -131,10 +187,10 @@ const Fixpet = ({ route, navigation }) => {
             Name: name,
             PetType: pettype,
             Weight: weight,
-            Type: value,
+            Type: species,
           });
 
-          Alert.alert("สำเร็จ!!", "เปลี่ยนข้อมูลสัตว์เลี้ยงเสร็จสิ้น", [
+          Alert.alert("สำเร็จ!!", "ัอัปเดตข้อมูลสัตว์เลี้ยงเสร็จสิ้น", [
             {
               text: "OK",
               onPress: () => {
@@ -179,11 +235,11 @@ const Fixpet = ({ route, navigation }) => {
             Name: name,
             PetType: pettype,
             Weight: weight,
-            Type: value,
+            Type: species,
           });
 
           setUploading(false);
-          Alert.alert("Success", "Pet data updated successfully", [
+          Alert.alert("แก้ไขเสร็จเรียบร้อย", "ข้อมูลสัตว์เลี้ยงถุกอัปเดตเรียบร้อย", [
             {
               text: "OK",
               onPress: () => {
@@ -219,7 +275,7 @@ const Fixpet = ({ route, navigation }) => {
         // Delete the pet data from Firestore
         await subjCollection.doc(route.params.key).delete();
 
-        Alert.alert("Success", "Pet deleted successfully", [
+        Alert.alert("สำเร็จ", "ข้อมูลสัตว์เลี้ยงถูกลบแล้ว", [
           {
             text: "OK",
             onPress: () => {
@@ -256,10 +312,11 @@ const Fixpet = ({ route, navigation }) => {
     setName(Name);
     setSex(Gender);
     onChangedatetxt(DateofBirth);
-    setValue(Type);
+    setSpecies(Type);
     setDate(DateofBirth);
     setImage(Image);
     setWeight(Weight);
+    setDetail(Detail)
     const parsedDate = new Date(DateofBirth);
 
     if (!isNaN(parsedDate.getTime())) {
@@ -281,11 +338,45 @@ const Fixpet = ({ route, navigation }) => {
                 />
               )}
             </View>
-            <Button title="เพิ่ม" onPress={handleSelectImage} />
+            <Button title="เปลี่ยนรูป" onPress={handleSelectImage} />
           </View>
 
           <View style={styles.layout}>
             <View style={styles.form}>
+            <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
+                    ประเภท
+                  </Text>
+                  <DropDownPicker
+      open={opentype}
+      value={pettype}
+      items={type}
+      setOpen={setOpentype}
+      setValue={handlePetTypeChange}
+      setItems={onChangetype}
+      style={{
+        container: {
+          width: 100,
+          marginBottom: 10,
+        },
+        item: {
+          justifyContent: 'flex-start',
+        },
+        dropDownContainer: {
+
+          borderRadius: 10,
+        },
+        labelStyle: {
+          fontSize: 16,
+        },
+        selectedLabelStyle: {
+          fontSize: 16,
+        },
+        style: {
+          backgroundColor: 'white',
+        },
+      }}
+      placeholder="ประเภทของสัตว์เลี้ยง"
+                  />
               <Text style={{ fontSize: 20, marginTop: 20, marginLeft: 5 }}>
                 ชื่อ
               </Text>
@@ -296,19 +387,7 @@ const Fixpet = ({ route, navigation }) => {
                 placeholder="ชื่อสัตว์เลี้ยง"
               />
               
-                  <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
-                    ประเภท
-                  </Text>
-                  <DropDownPicker
-                    open={opentype}
-                    value={pettype}
-                    items={type}
-                    setOpen={setOpentype}
-                    setValue={setpettype}
-                    setItems={onChangetype}
-                    style={styles.dropdown}
-                    placeholder="ประเภทของสัตว์เลี้ยง"
-                  />
+                 
                   <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
                     เพศ
                   </Text>
@@ -319,7 +398,28 @@ const Fixpet = ({ route, navigation }) => {
                     setOpen={setOpensex}
                     setValue={setSex}
                     setItems={onChangeSex}
-                    style={styles.dropdown}
+                    style={{
+                      container: {
+                        width: 100,
+                        marginBottom: 10,
+                      },
+                      item: {
+                        justifyContent: 'flex-start',
+                      },
+                      dropDownContainer: {
+              
+                        borderRadius: 10,
+                      },
+                      labelStyle: {
+                        fontSize: 16,
+                      },
+                      selectedLabelStyle: {
+                        fontSize: 16,
+                      },
+                      style: {
+                        backgroundColor: 'white',
+                      },
+                    }}
                     placeholder="เพศของสัตว์เลี้ยง"
                   />
 
@@ -350,14 +450,35 @@ const Fixpet = ({ route, navigation }) => {
                 </Text>
 
                 <DropDownPicker
-                  open={open}
-                  value={value}
-                  items={Specie}
-                  setOpen={setOpen}
-                  setValue={setValue}
-                  setItems={onChangeSpecie}
-                  placeholder="พันธ์ของสัตว์เลี้ยง"
-                  style={styles.dropdown}
+                  items={speciesOptions}
+                open={open}
+                value={species}
+                setOpen={setOpen}
+                setValue={setSpecies}
+                setItems={onChangeSpecie}
+                placeholder="พันธ์ของสัตว์เลี้ยง"
+                style={{
+                  container: {
+                    width: 100,
+                    marginBottom: 10,
+                  },
+                  item: {
+                    justifyContent: 'flex-start',
+                  },
+                  dropDownContainer: {
+        
+                    borderRadius: 10,
+                  },
+                  labelStyle: {
+                    fontSize: 16,
+                  },
+                  selectedLabelStyle: {
+                    fontSize: 16,
+                  },
+                  style: {
+                    backgroundColor: 'white',
+                  },
+                }}
                 />
               <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
                 วันเกิด
@@ -397,9 +518,13 @@ const Fixpet = ({ route, navigation }) => {
                 multiline={true}
                 numberOfLines={4}
               />
-              <View style={{ marginTop: 10 }}>
+              <View style={{ marginTop: 10, width: 100 }}>
                 <Button title="เพิ่ม" onPress={storeSubject} />
-                <Button title="ลบ" onPress={deletePet} />
+                {/* <Button title="ลบ" onPress={deletePet} /> */}
+              </View>
+              <View style={{ marginTop: 10, width: 100 }}>
+             
+                <Button title="ลบ" color={"red"} onPress={deletePet} />
               </View>
             </View>
           </View>
@@ -439,9 +564,10 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     margin: 4,
-    borderWidth: 0.5,
+    borderWidth: 1,
     padding: 10,
     borderRadius: 10,
+    width: 150
   },
   form: {
     width: 200,
@@ -451,10 +577,11 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: 40,
-    borderWidth: 0.5,
+
     borderRadius: 10,
     marginVertical: 10,
-    width: 160
+    width: 160,
+    marginLeft:20
   },
   inputarea: {
     height: 150,

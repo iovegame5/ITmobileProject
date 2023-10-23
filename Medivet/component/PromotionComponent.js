@@ -16,6 +16,7 @@ const Promotion = ({ promotions }) => {
           source={{ uri: item.imageFilename }}
         />
         <Text style={styles.promotionTitle}>{item.promotionDetails}</Text>
+        <Text>{item.clinicName}</Text>
         <Text>Start Date: {startDate.toString()}</Text>
         <Text>End Date: {endDate.toString()}</Text>
         {/* Render other promotion details as needed */}
@@ -29,7 +30,7 @@ const Promotion = ({ promotions }) => {
         layout={"default"}
         data={promotions}
         sliderWidth={350}
-        itemWidth={330}
+        itemWidth={320}
         renderItem={renderPromotionCard}
       />
     </View>
@@ -42,12 +43,13 @@ const styles = {
     height: 350,
     padding: 20,
     margin: 10,
-    marginLeft: 25,
+
     backgroundColor: "white",
     borderRadius: 10,
     elevation: 5,
   },
   promotionImage: {
+    alignSelf:"center",
     width: 300,
     height: 200,
     resizeMode: "cover",

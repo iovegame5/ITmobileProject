@@ -48,7 +48,7 @@ const Allclinic = ({ navigation }) => {
   const [test, setTest] = useState("before");
   const mapRef = useRef(null);
   const fetchClinics = async () => {
-    console.log("fetching clinics function call");
+    console.log("fetching clinics function cal");
     try {
       setIsLoading(true);
 
@@ -151,9 +151,11 @@ const Allclinic = ({ navigation }) => {
     try {
       console.log("get Location Current");
       if(!userLocation){
-      const currentLocation = await Location.getCurrentPositionAsync({});
+        console.log("ไม่เจอ user location เลยขอท่อยู่")
+      const currentLocation =  Location.getCurrentPositionAsync({});
       if (currentLocation) {
         setUserLocation(currentLocation.coords);
+        console.log("ไม่เจอ user location เลยขอท่อยู่")
         if(!userLocation){
         }
       } else {
@@ -171,9 +173,11 @@ const Allclinic = ({ navigation }) => {
     getCurrentLocation();
   }, []);
   useEffect(() => {
+ 
     if (userLocation) {
       fetchClinics();
-    } else {
+    } 
+    if(!userLocation){
       getCurrentLocation();
     }
   }, [userLocation]); // Add a new useEffect to log userLocation when it changes

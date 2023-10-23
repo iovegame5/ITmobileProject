@@ -143,7 +143,13 @@ const Addpet = () => {
   };
 
   const confirmIosDate = () => {
-    onChangedateText(formatDate(date));
+    // Call the formatDate function to format the date
+    const formattedDate = formatDate(date);
+  
+    // Update the date text using onChangedateText
+    onChangedatetxt(formattedDate);
+  
+    // Close the date picker
     toggleDatePicker();
   };
 
@@ -225,12 +231,12 @@ const Addpet = () => {
   const storeSubject = async () => {
     try {
       if (!image) {
-        Alert.alert("Please select an image.");
+        Alert.alert("โปรดเลือกรูปภาพ");
         return;
       }
 
-      if (!datetxt || !name || !sex || !weight || !value) {
-        Alert.alert("Please fill in all required fields.");
+      if (!datetxt || !name || !sex || !weight || !species || !pettype) {
+        Alert.alert("โปรดกรอกข้อมูลให้ครบ");
         return;
       }
 
@@ -264,13 +270,21 @@ const Addpet = () => {
         OwnerID: userId,
         PetID: 2,
         PetType: pettype,
-        Type: value,
+        Type: species,
         Weight: weight,
       });
       
 
       setUploading(false);
-      Alert.alert("Success", "Pet and image uploaded successfully!");
+     
+      Alert.alert("สำเร็จ", "ข้อมูลสัตตว์เลี่ยงถูกเพิ่มเรียบร้อยแล้ว", [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.navigate("MyPet"); // Navigate back to the pet list
+          },
+        },
+      ]);
 
       // Reset the form fields
       onChangedatetxt("");
@@ -282,10 +296,10 @@ const Addpet = () => {
       setImage(null);
       setpettype("")
     } catch (error) {
-      console.error("Error adding pet: ", error);
+      console.error("เพิ่มข้อมูลสัตว์เลี้ยงไม่สำเร็จ: ", error);
       setUploading(false);
       Alert.alert(
-        "Error",
+        "ไม่สำเร็จ",
         "An error occurred while uploading the pet and image."
       );
     }
@@ -381,34 +395,15 @@ const Addpet = () => {
 <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
           พันธุ์
         </Text>
-        <TouchableOpacity onPress={toggleSpeciesModal}>
-          <Text style={styles.input}>
-            {selectedSpecies ? selectedSpecies.label : "Select Species"}
-          </Text>
-        </TouchableOpacity>
-       <Modal
-  animationType="slide"
-  transparent={true}
-  visible={speciesModalVisible}
->
-  <View style={styles.centeredView}>
-    <View style={styles.modalView}>
-      <ScrollView style={{maxHeight: 300}}>
-        <FlatList
-          data={speciesList}
-          keyExtractor={(item) => item.value}
-          renderItem={renderSpeciesItem}
-        />
-      </ScrollView>
-      <TouchableOpacity
-        style={styles.closeButton}
-        onPress={toggleSpeciesModal}
-      >
-        <Text style={styles.closeButtonText}>X</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal> 
+  <DropDownPicker
+  open={open}
+  value={species}
+  items={speciesList}
+  setOpen={setOpen}
+  setValue={setSpecies} // Update selectedSpecies state when an item is selected
+  style={styles.dropdown}
+  placeholder="เลือกพันธุ์"
+/>
               <Text
                 style={{
                   fontSize: 20,
