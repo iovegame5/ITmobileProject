@@ -161,8 +161,8 @@ const AppointmentScreen =  ({ route, navigation }) => {
         .set({
           ClinicID: `/Clinic/L7Enot90M98NjnAxcb6R`,
           Date: datetxt,
-          OwnerID: "1",
-          PetID: "1",
+          OwnerID: user.uid,
+          PetID: value,
           Status: "เลื่อนนัด",
           Time: valuetime,
           StatusClinic: "รอการยืนยัน"
