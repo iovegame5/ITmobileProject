@@ -16,9 +16,11 @@ import { AntDesign } from "@expo/vector-icons";
 import firebase from "../database/firebase";
 import * as Location from "expo-location";
 import Promotion from "../component/PromotionComponent";
+import { useNavigation } from "@react-navigation/native";
 
 const auth = firebase.auth();
 const HomeScreen = (props) => {
+  const navigation = useNavigation();
   const [promotions, setPromotions] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -92,24 +94,24 @@ const HomeScreen = (props) => {
   
 
   console.log(auth.currentUser.uid);
-  const renderMealItem = (itemData) => {
-    return (
-      //เขียนโค้ดเพิ่ม
-      <MealItem
-        title={itemData.item.title}
-        duration={itemData.item.duration}
-        complexity={itemData.item.complexity}
-        affordability={itemData.item.affordability}
-        image={itemData.item.imageUrl}
-        onSelectMeal={() => {
-          props.navigation.navigate("MealDetail", {
-            foodmenu: itemData.item.title,
-            howto: itemData.item.steps,
-          });
-        }}
-      />
-    );
-  };
+  // const renderMealItem = (itemData) => {
+  //   return (
+  //     //เขียนโค้ดเพิ่ม
+  //     <MealItem
+  //       title={itemData.item.title}
+  //       duration={itemData.item.duration}
+  //       complexity={itemData.item.complexity}
+  //       affordability={itemData.item.affordability}
+  //       image={itemData.item.imageUrl}
+  //       onSelectMeal={() => {
+  //         props.navigation.navigate("MealDetail", {
+  //           foodmenu: itemData.item.title,
+  //           howto: itemData.item.steps,
+  //         });
+  //       }}
+  //     />
+  //   );
+  // };
 
   return (
     <View style={{ flex: 1 }}>
@@ -154,7 +156,7 @@ const HomeScreen = (props) => {
                 }}
               >
                 <Text style={styles.header}>Common illnesses</Text>
-                <Text style={{ color: "blue" }} onPress={() => {}}>
+                <Text style={{ color: "blue" }} onPress={() => {navigation.navigate("Allillness")}}>
                   {" "}
                   all illnesses{" "}
                 </Text>

@@ -6,11 +6,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 // import screen ที่เกี่ยวข้อง
 import HomeScreen from "../screens/HomeScreen";
 import AppointmentScreen from "../screens/AppointmentScreen";
@@ -29,43 +30,42 @@ import FixpetScreen from "../screens/Fixpet";
 import AllclinicScreen from "../screens/Allclinic";
 import ClinicDetailScreen from "../screens/ClinicDetail";
 import Allillness from "../screens/Allillness";
-import IllnessDetail from "../screens/illnessDetail"
+import IllnessDetail from "../screens/illnessDetail";
 import CustomDrawerContent from "../component/CustomDrawerContent";
 import AddPromotionScreen from "../screens/AddPromotion";
 
-
+import { useAuth } from "../Auth/AuthContext";
 const Stack = createNativeStackNavigator();
 const Appointment = createNativeStackNavigator();
 const Queue = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
-
 function LogoTitle() {
+  const { user } = useAuth();
   return (
     <View
       style={{
         flexDirection: "row",
-        justifyContent: "space-between",
-        width: "100%",
+        flex: 1,
+        justifyContent: "flex-end", // Center vertically
         alignItems: "center",
       }}
     >
-      <Image
-        style={{ width: 70, height: 50 }}
-        source={require("../pics/logo.png")}
-      />
       <View
         style={{
           flexDirection: "row",
+          justifyContent: "flex-end",
           alignItems: "center",
-          marginRight: "5%",
+          marginRight: 40,
         }}
       >
         <Image
           style={{ width: 50, height: 50, borderRadius: 25 }}
           source={require("../pics/userpic.jpeg")}
         />
-        <Text style={{ marginLeft: "5%" }}>Anpanprang</Text>
+        <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
+          {user.firstName} {user.lastName}
+        </Text>
       </View>
       {/* <Text style={{ marginRight: '8%' }}>Log out</Text> */}
     </View>
@@ -83,7 +83,7 @@ function LoginNavigator() {
       <Stack.Screen
         name="LoginPage"
         component={LoginScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: true, headerBackVisible: false }}
       />
       <Stack.Screen name="RegisterPage" component={RegisterScreen} />
     </Stack.Navigator>
@@ -91,6 +91,7 @@ function LoginNavigator() {
 }
 
 function HomeNavigator() {
+  const navigation = useNavigation();
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -101,16 +102,40 @@ function HomeNavigator() {
           headerStyle: {
             backgroundColor: "#E3F4F4",
           },
+          headerLeft: () => (
+            <Ionicons
+              name="menu"
+              size={24}
+              color="black"
+              onPress={() => navigation.openDrawer()}
+            />
+          ),
         }}
       />
     </Stack.Navigator>
   );
 }
 
+
 function Petnavigate() {
+  const navigation = useNavigation();
   return (
     <Stack.Navigator initialRouteName="MyPet">
-      <Stack.Screen name="MyPet" component={MypetScreen} />
+      <Stack.Screen
+        name="MyPet"
+        component={MypetScreen}
+        options={({ route }) => ({
+          headerShown: true, // Show the Stack header for this screen
+          headerLeft: () => (
+            <Ionicons
+              name="menu"
+              size={24}
+              color="black"
+              onPress={() => navigation.openDrawer()}
+            />
+          ),
+        })}
+      />
       <Stack.Screen name="AddPet" component={Addpet} />
       <Stack.Screen name="Edit animal information" component={FixpetScreen} />
     </Stack.Navigator>
@@ -118,26 +143,48 @@ function Petnavigate() {
 }
 
 function Illnessnavigate() {
+  const navigation = useNavigation();
   return (
     <Stack.Navigator initialRouteName="Allillness">
-      <Stack.Screen name="Allillness" component={Allillness} />
+      <Stack.Screen
+        name="Allillness"
+        component={Allillness}
+        options={{
+          headerLeft: () => (
+            <Ionicons
+              name="menu"
+              size={24}
+              color="black"
+              onPress={() => navigation.openDrawer()}
+            />
+          ),
+          headerTitle: "โรคที่พบได้ทั่วไป",
+        }}
+      />
       <Stack.Screen name="IllnessDetail" component={IllnessDetail} />
-
     </Stack.Navigator>
   );
 }
 
-
 function Profiles() {
+  const navigation = useNavigation();
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Profile-user"
+        name="โปรไฟล์"
         component={ProfileScreen}
         options={{
           headerStyle: {
             backgroundColor: "#E3F4F4",
           },
+          headerLeft: () => (
+            <Ionicons
+              name="menu"
+              size={24}
+              color="black"
+              onPress={() => navigation.openDrawer()}
+            />
+          ),
         }}
       />
       <Stack.Screen
@@ -188,7 +235,7 @@ function QueueNavigator() {
           headerStyle: {
             backgroundColor: "#E3F4F4",
           },
-          headerShown:false
+          headerShown: false,
         }}
       />
       <Queue.Screen
@@ -200,7 +247,7 @@ function QueueNavigator() {
           },
         }}
       />
-       <Queue.Screen
+      <Queue.Screen
         name="FormAppointment"
         component={AppointmentScreen}
         options={{
@@ -223,6 +270,7 @@ function QueueNavigator() {
 }
 
 function TabNavigator() {
+  const { user, role, isAuthenticated, login, logout } = useAuth();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -242,16 +290,18 @@ function TabNavigator() {
           headerShown: false,
         }}
       />
-      <Tab.Screen
-        name="MyPet"
-        component={Petnavigate}
-        options={{
-          tabBarIcon: ({ color, size }) => {
-            return <MaterialIcons name="pets" size={24} color="white" />;
-          },
-          headerShown: false,
-        }}
-      />
+      {!role || role !== "Clinic" ? (
+        <Tab.Screen
+          name="MyPet"
+          component={Petnavigate}
+          options={{
+            tabBarIcon: ({ color, size }) => {
+              return <MaterialIcons name="pets" size={24} color="white" />;
+            },
+            headerShown: false,
+          }}
+        />
+      ) : null}
       <Tab.Screen
         name="Clinic"
         component={QueueNavigator}
@@ -286,7 +336,6 @@ function DrawerNavigator() {
         drawerInactiveTintColor: "gray",
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />} // Use the custom drawer content component
-      
     >
       <Drawer.Screen
         name="homie"
@@ -296,14 +345,14 @@ function DrawerNavigator() {
           headerShown: false,
         }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="profile"
         component={Profiles}
         options={{
           drawerLabel: "Profile",
           headerShown: false,
         }}
-      />
+      /> */}
       <Drawer.Screen
         name="pet"
         component={Petnavigate}
@@ -320,15 +369,40 @@ function DrawerNavigator() {
           headerShown: false,
         }}
       />
-       <Drawer.Screen
+      <Drawer.Screen
         name="addPromotion"
         component={AddPromotionScreen}
         options={{
-        
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "เพิ่มโปรโมชั่น",
         }}
       />
     </Drawer.Navigator>
+  );
+}
+function MyPetScreen() {
+  const navigation = useNavigation();
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MyPet"
+        component={MypetScreen}
+        options={({ route }) => ({
+          headerShown: true,
+          headerLeft: () => (
+            <Ionicons
+              name="menu"
+              size={24}
+              color="black"
+              onPress={() => navigation.openDrawer()}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen name="AddPet" component={Addpet} />
+      <Stack.Screen name="Edit animal information" component={FixpetScreen} />
+    </Stack.Navigator>
   );
 }
 
@@ -343,7 +417,9 @@ function MainNavigator() {
       <Stack.Screen
         name="all"
         component={DrawerNavigator}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   );

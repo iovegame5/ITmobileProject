@@ -16,6 +16,7 @@ import firebase from "../database/firebase";
 import { useAuth } from "../Auth/AuthContext";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { CommonActions } from "@react-navigation/native";
 
 const auth = firebase.auth();
 
@@ -28,7 +29,12 @@ const LoginScreen = ({ navigation }) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        navigation.navigate("all"); // Navigate to the 'Home' screen when the user is already authenticated
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'all' }] 
+          })
+        );
       }
     });
 
