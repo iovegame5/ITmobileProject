@@ -353,6 +353,7 @@ const Fixpet = ({ route, navigation }) => {
       setOpen={setOpentype}
       setValue={handlePetTypeChange}
       setItems={onChangetype}
+
       style={{
         container: {
           width: 100,
@@ -456,6 +457,8 @@ const Fixpet = ({ route, navigation }) => {
                 setOpen={setOpen}
                 setValue={setSpecies}
                 setItems={onChangeSpecie}
+
+          
                 placeholder="พันธ์ของสัตว์เลี้ยง"
                 style={{
                   container: {
@@ -466,8 +469,8 @@ const Fixpet = ({ route, navigation }) => {
                     justifyContent: 'flex-start',
                   },
                   dropDownContainer: {
-        
                     borderRadius: 10,
+                    maxHeight: 200, // You can adjust the max height as needed
                   },
                   labelStyle: {
                     fontSize: 16,
@@ -478,6 +481,9 @@ const Fixpet = ({ route, navigation }) => {
                   style: {
                     backgroundColor: 'white',
                   },
+                }}
+                scrollViewProps={{ // Add this prop
+                  persistentScrollbar: true, // Enable persistent scrollbar
                 }}
                 />
               <Text style={{ fontSize: 20, marginTop: 10, marginLeft: 5 }}>
