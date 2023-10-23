@@ -32,10 +32,13 @@ const Allclinic = ({ navigation }) => {
   //
   //
   //
+
   // important มากๆจ้า
   //
   //
+
   const { user, role, isAuthenticated, login, logout } = useAuth();
+
 
   const [isLoading, setIsLoading] = useState(true);
   const [clinics, setClinics] = useState([]);
@@ -45,7 +48,6 @@ const Allclinic = ({ navigation }) => {
   const [test, setTest] = useState("before");
   const mapRef = useRef(null);
   const fetchClinics = async () => {
-    console.log("fetch clinics");
     try {
       setIsLoading(true);
 
@@ -63,8 +65,10 @@ const Allclinic = ({ navigation }) => {
         const data = doc.data();
         // console.log(data);
         const storageRef = firebase.storage().ref().child(data.clinicImage);
+        const storageRef2 = firebase.storage().ref().child(data.certificate);
         try {
           const url = await storageRef.getDownloadURL();
+          const url2 = await storageRef2.getDownloadURL();
           clinicData.push({
             id: doc.id,
             name: data.name,
@@ -72,6 +76,12 @@ const Allclinic = ({ navigation }) => {
             clinicImage: url,
             vetName: data.vetName,
             distance: calculateDistance(userLocation, data.address),
+            tel: data.tel,
+            startTime: data.startTime,
+            endTime: data.endTime,
+            certificate: url2,
+            addressDescription: data.addressDescription,
+
             // Add more fields as needed
           });
         } catch (error) {
@@ -85,10 +95,7 @@ const Allclinic = ({ navigation }) => {
       console.log("fetching clinics");
 
       const sortedClinics = clinicData.slice().sort((clinicA, clinicB) => {
-        console.log("clinic A:", clinicA.address);
-        console.log("clinic B:", clinicB.address);
-        console.log("User:", userLocation);
-        console.log("User:", userLocation.latitude);
+  
         const distanceA = geolib.getDistance(
           {
             latitude: clinicA.address.latitude,
@@ -106,8 +113,6 @@ const Allclinic = ({ navigation }) => {
         return distanceA - distanceB;
       });
       setClinics(sortedClinics);
-
-      console.log(clinics);
     } catch (error) {
       console.error("Error fetching clinics:", error);
       setIsLoading(false);
@@ -140,12 +145,15 @@ const Allclinic = ({ navigation }) => {
   };
 
   const getCurrentLocation = async () => {
-    console.log("get Location Current");
     setIsLoading(true);
     try {
       const currentLocation = await Location.getCurrentPositionAsync({});
       if (currentLocation) {
+        console.log("get Location Current");
         setUserLocation(currentLocation.coords);
+        if(!userLocation){
+          getCurrentLocation();
+        }
         console.log("userLocatio : ", userLocation); // Log within this function
       } else {
         console.log("Error Current location not available.");
@@ -157,6 +165,8 @@ const Allclinic = ({ navigation }) => {
   };
 
   useEffect(() => {
+    console.log("user: ", user);
+    console.log("role:", role)
     getCurrentLocation();
   }, []);
   useEffect(() => {
@@ -165,7 +175,6 @@ const Allclinic = ({ navigation }) => {
     } else {
       getCurrentLocation();
     }
-    console.log("userLocation:", userLocation);
   }, [userLocation]); // Add a new useEffect to log userLocation when it changes
 
   // เรียงตามระยะ
@@ -176,58 +185,49 @@ const Allclinic = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-    
-        <View>
-          <MapComponent
-            width={"100%"}
-            height={"50%"}
-            locations={clinics}
-            onLocationSelect={() => {}}
-            ref={mapRef}
-          />
+      <View>
+        <MapComponent
+          width={"100%"}
+          height={"50%"}
+          locations={clinics}
+          search={true}
+          currentPosition={true}
+          searchBarPosition={50}
+          onLocationSelect={() => {}}
+          ref={mapRef}
+        />
+        <View
+          style={{
+            height: "45%",
+            width: "100%",
+            backgroundColor: "transparent",
+            borderRadius: 50,
+            borderBottomEndRadius: 0,
+            borderBottomStartRadius: 0,
+            alignItems: "center",
+          }}
+        >
           <View
             style={{
-              height: "45%",
+              height: 60,
+              backgroundColor: "#378985",
               width: "100%",
-              backgroundColor: "transparent",
+              alignItems: "center",
               borderRadius: 50,
               borderBottomEndRadius: 0,
               borderBottomStartRadius: 0,
-              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <View
-              style={{
-                // marginTop:-40,
-                height: 60,
-                backgroundColor: "#378985",
-                width: "100%",
-                alignItems: "center",
-                borderRadius: 40,
-                borderBottomEndRadius: 0,
-                borderBottomStartRadius: 0,
-                justifyContent: "center",
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: -5,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-              }}
-            >
-              <Text style={{ fontSize: 24, color: "white" }}>
-                คลินิกใกล้ฉัน
-              </Text>
+            <Text style={{ fontSize: 24, color: "white" }}>คลินิกใกล้ฉัน</Text>
+          </View>
+          {isLoading ? ( // Show loading indicator when isLoading is true
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#3498db" />
+              <Text style={styles.loadingText}>รอซักครู่...</Text>
             </View>
-
+          ) : (
             <View style={{ padding: 10 }}>
-            {isLoading ? ( // Show loading indicator when isLoading is true
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#378985" />
-          <Text style={styles.loadingText}>รอซักครู่...</Text>
-        </View>
-      ) : (
               <FlatList
                 data={clinics}
                 keyExtractor={(item) => item.id}
@@ -251,6 +251,33 @@ const Allclinic = ({ navigation }) => {
                                 ชื่อหมอ: {item.vetName}
                               </Text>
 
+                              <View style={styles.arrow}>
+                                <Pressable
+                                  onPress={() => {
+                                    navigation.navigate("Clinicdetail", {
+                                      id: item.id,
+                                      addressDescription:
+                                        item.addressDescription,
+                                      certificate: item.certificate,
+                                      clinicImage: item.clinicImage,
+                                      endTime: item.endTime,
+                                      startTime: item.startTime,
+                                      tel: item.tel,
+                                      vetName: item.vetName,
+                                      Name: item.name,
+                                      address: item.address,
+                                    });
+                                  }}
+                                >
+                                  <Text>
+                                    <Ionicons
+                                      name="arrow-forward"
+                                      size={24}
+                                      color="black"
+                                    />
+                                  </Text>
+                                </Pressable>
+                              </View>
                             </View>
                           </View>
                         </View>
@@ -273,33 +300,16 @@ const Allclinic = ({ navigation }) => {
                           <Text>
                             {calculateDistance(userLocation, item.address)}
                           </Text>
-                          
-                          <View style={styles.arrow}>
-                                <Pressable
-                                  onPress={() => {
-                                    navigation.navigate("Clinicdetail", {id:item.id});
-                                  }}
-                                >
-                                  <Text>
-                                    <Ionicons
-                                      name="arrow-forward"
-                                      size={24}
-                                      color="#378985"
-                                    />
-                                  </Text>
-                                </Pressable>
-                              </View>
                         </View>
                       </View>
                     </View>
                   );
                 }}
               />
-      )}
             </View>
-          </View>
+          )}
         </View>
-
+      </View>
     </View>
   );
 };
@@ -342,13 +352,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   card: {
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
     width: 360,
     height: 130,
     backgroundColor: "#F9F9F9",
@@ -369,9 +372,9 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: 10,
     flexDirection: "row",
-    justifyContent:"center",
-    alignItems:"center",
-    gap:10,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
   },
   loadingContainer: {
     flex: 1,

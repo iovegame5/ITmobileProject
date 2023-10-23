@@ -18,11 +18,21 @@ import {
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
 import { FontAwesome } from "@expo/vector-icons";
+import { SearchBar } from "react-native-screens";
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyBGoG5IIsgjqFIejLzoeI2doLphb_xu02Q"; // Replace with your Google Maps API key
 
 function MapComponent(
-  { width, height, onLocationSelect, context, locations },
+  {
+    width,
+    height,
+    onLocationSelect,
+    context,
+    locations,
+    search,
+    currentPosition,
+    searchBarPosition,
+  },
   ref
 ) {
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -34,7 +44,7 @@ function MapComponent(
 
   const handleSearch = async () => {
     // ส่ง api ไป googlemaps แล้วรีเทินข้อมูลสถานที่มา
-    console.log("search")
+    console.log("search");
     if (searchQuery) {
       try {
         const requestURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchQuery}&key=${GOOGLE_MAPS_API_KEY}`;
@@ -61,7 +71,7 @@ function MapComponent(
           // });
         } else {
           console.log("Location not found.");
-          Alert.alert("ไม่พบสถานที่นี้")
+          Alert.alert("ไม่พบสถานที่นี้");
         }
       } catch (error) {
         console.error("Error searching for location:", error);
@@ -198,7 +208,7 @@ function MapComponent(
               title={location.name}
             >
               {/* You can customize the marker's callout here */}
-              <Callout 
+              <Callout
                 onPress={() =>
                   onMarkerPress(
                     location.address.latitude,
@@ -207,9 +217,10 @@ function MapComponent(
                 }
               >
                 <View>
-                  <Text style={{fontSize:24}}>ชื่อคลิกนิก: {location.name}</Text>
+                  <Text style={{ fontSize: 24 }}>
+                    ชื่อคลิกนิก: {location.name}
+                  </Text>
                   <Text>เปิดบน google maps?</Text>
-            
                 </View>
               </Callout>
             </Marker>
@@ -243,53 +254,57 @@ function MapComponent(
           </Marker>
         )}
       </MapView>
-      <View
-        style={{
-          position: "absolute",
-          top: 50,
-          left: 75,
-          right: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: "#fff9",
-          borderWidth: 0.3,
-        }}
-      >
-        <TextInput
+      {search ? (
+        <View
           style={{
-            flex: 1,
-            height: 40,
-            borderColor: "gray",
-            borderRadius: 5,
-            padding: 10,
-          }}
-          placeholder="ค้นหาสถานที่"
-          onChangeText={(text) => setSearchQuery(text)}
-        />
-        <TouchableOpacity
-          style={{ padding: 10 }}
-          onPress={() => {
-            handleSearch();
+            position: "absolute",
+            top: searchBarPosition,
+            left: 75,
+            right: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "#fff9",
+            borderWidth: 0.3,
           }}
         >
-          <FontAwesome name="search" size={20} color="darkgrey" />
-        </TouchableOpacity>
-      </View>
+          <TextInput
+            style={{
+              flex: 1,
+              height: 40,
+              borderColor: "gray",
+              borderRadius: 5,
+              padding: 10,
+            }}
+            placeholder="ค้นหาสถานที่"
+            onChangeText={(text) => setSearchQuery(text)}
+          />
 
-      <View style={{ position: "absolute", top: 50, left: 20 }}>
-        <TouchableOpacity
-          onPress={() => {
-            goToCurrentLocation();
-          }}
-          style={{
-            backgroundColor: "white",
-            borderRadius: 50,
-            padding: 10,
-          }}
-        >
-          <FontAwesome name="location-arrow" size={24} color="#378985" />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={{ padding: 10 }}
+            onPress={() => {
+              handleSearch();
+            }}
+          >
+            <FontAwesome name="search" size={20} color="darkgrey" />
+          </TouchableOpacity>
+        </View>
+      ) : null}
+      {currentPosition ? (
+        <View style={{ position: "absolute", top: searchBarPosition, left: 20 }}>
+          <TouchableOpacity
+            onPress={() => {
+              goToCurrentLocation();
+            }}
+            style={{
+              backgroundColor: "white",
+              borderRadius: 50,
+              padding: 10,
+            }}
+          >
+            <FontAwesome name="location-arrow" size={24} color="#378985" />
+          </TouchableOpacity>
+        </View>
+      ) : null}
     </View>
   );
 }
