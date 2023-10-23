@@ -5,6 +5,16 @@ import firebase from "../database/firebase";
 
 const ExampleMap = () => {
   const mapRef = useRef(null);
+  const [clinics, setClinics] = useState([
+    {
+      address: { latitude: 37.41330556511386, longitude: -122.12723068892957 },
+      clinicImage:
+        "https://firebasestorage.googleapis.com/v0/b/medivet-db13a.appspot.com/o/3dcac2da-2082-400b-95ac-9e865f2d12f6.jpeg?alt=media&token=7e6fd525-633e-4a08-b7a6-72fe296b5c1c",
+      id: "nFQYdn56bJUxiJrIBwqU3V0xVlm2",
+      name: "eee",
+      vetName: "Mr.asd",
+    },
+  ]);
   const [locations, setLocations] = useState([
     {
       location_name: "Location A",
@@ -31,18 +41,22 @@ const ExampleMap = () => {
       <MapComponent
         width={"100%"}
         height={"40%"}
-        locations={locations}
+        locations={clinics}
         onLocationSelect={() => {}}
         ref={mapRef}
       />
-      {locations.map((location, index) => (
-        <TouchableOpacity style={styles.goButton}
+      {clinics.map((location, index) => (
+        <TouchableOpacity
+          style={styles.goButton}
           key={index}
-          onPress={() => goToLocation(location.latitude, location.longitude)}
+          onPress={() => goToLocation(location.address.latitude, location.address.longitude)}
         >
-          <Text style={{color:"white"}}>กดเพื่อไปที่ {location.location_name}</Text>
+          <Text style={{ color: "white" }}>
+            กดเพื่อไปที่ {location.name}
+          </Text>
         </TouchableOpacity>
       ))}
+
       {/* เลือกสถานที่ในแมปส่งในฟอร์ม */}
       <MapComponent
         width={"100%"}
@@ -51,7 +65,7 @@ const ExampleMap = () => {
           // setClinicLocation(location);
           // saveClinicAddress(location); // You can choose to save the clinic address immediately or separately
         }}
-        context="RegisterScreen" 
+        context="RegisterScreen"
       />
     </View>
   );
@@ -63,12 +77,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  goButton:{
-    backgroundColor:"black",
-    borderWidth:1,
-    marginBottom:5,
-    height:20,
-  }
+  goButton: {
+    backgroundColor: "black",
+    borderWidth: 1,
+    marginBottom: 5,
+    height: 20,
+  },
 });
 
 export default ExampleMap;

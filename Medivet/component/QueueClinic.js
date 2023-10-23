@@ -13,11 +13,7 @@ import {
   FlatList
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-<<<<<<< HEAD
-=======
-
->>>>>>> 0fe3b954c84319ca55d16ef7d17156678122a074
-import firebases from "../database/firebase";
+import firebase from "../database/firebase";
 
 const QueueClinic = (props) => {
   const [submitchange, Onsubmitchange] = React.useState(null);

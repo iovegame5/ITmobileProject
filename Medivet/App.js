@@ -2,17 +2,24 @@ import React from "react";
 import { StyleSheet } from "react-native";
 
 // import คอมโพเนนต์ที่จำเป็น
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 
 import MyNavigator from "./navigation/MyNavigator.js";
 
-
+import Allclinic from "./screens/Allclinic.js";
+import { AuthProvider } from "./Auth/AuthContext.js";
 
 export default function App() {
   // เพิ่มโค้ดส่วนนี้ เพื่อจัดการ Stack Navigation
-  return(
-  <MyNavigator/>
+  return (
+
+    <AuthProvider>
+      <MyNavigator></MyNavigator>
+         
+      {/* <QueueAppoint/> */}
+      {/* <Allclinic></Allclinic> */}
+  
+    </AuthProvider>
 
   );
 }
