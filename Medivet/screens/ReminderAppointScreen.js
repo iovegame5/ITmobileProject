@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
@@ -9,167 +9,107 @@ import {
   Linking,
   ScrollView,
   Button,
+  useWindowDimensions,
+  TouchableOpacity,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import QueueOwner from "../components/QueueOwner";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import { FIREBASE_APP } from "../database/firebaseDB";
 
 const ReminderAppoint = ({ route, navigation }) => {
-  const renderMealItem = (itemData) => {
+  const [queueowner_list, setQueueownerList] = useState([]);
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: "first", title: "รอยืนยัน" },
+    { key: "second", title: "นัดหมาย" },
+    { key: "third", title: "ประวัติ" },
+    { key: "fourth", title: "เลื่อนนัด" },
+  ]);
+
+  const getCollection = (querySnapshot) => {
+    const all_data = [];
+    querySnapshot.forEach((res) => {
+      const { ClinicID, Date, OwnerID, PetID, Status, Time, StatusClinic } = res.data();
+      all_data.push({
+        key: res.id,
+        ClinicID,
+        Date,
+        OwnerID,
+        PetID,
+        Status,
+        Time,
+        StatusClinic
+      });
+    });
+
+    setQueueownerList(all_data);
+  };
+
+  useEffect(() => {
+    const unsubscribe = FIREBASE_APP.firestore()
+      .collection("Appointment")
+      .onSnapshot(getCollection);
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const renderTabBar = (props) => {
     return (
-      //เขียนโค้ดเพิ่ม
-      <MealItem
-        title={itemData.item.title}
-        duration={itemData.item.duration}
-        complexity={itemData.item.complexity}
-        affordability={itemData.item.affordability}
-        image={itemData.item.imageUrl}
-        onSelectMeal={() => {
-          props.navigation.navigate("MealDetail", {
-            foodmenu: itemData.item.title,
-            howto: itemData.item.steps,
-          });
-        }}
+      <TabBar
+        {...props}
+        indicatorStyle={{ backgroundColor: "#379895" }}
+        style={{ backgroundColor: "white" }}
+        labelStyle={{ color: "black" }}
+        activeColor="#379895"
       />
     );
   };
 
+
+  const FirstRoute = () => (
+    <View className="flex-1 bg-white-100 items-center">
+          <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="รอการยืนยัน"></QueueOwner>
+    </View>
+  );
+
+  const SecondRoute = () => (
+      <View className="flex-1 bg-white-100 items-center">
+        <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="นัดหมาย"></QueueOwner>
+      </View>
+    
+  );
+
+  const ThirdRoute = () => (
+    <View className="flex-1 bg-white-100 items-center">
+       <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="สำเร็จ"></QueueOwner>
+    </View>
+  );
+
+  const FourthRoute = () => (
+    <View className="flex-1 bg-white-100 items-center">
+       <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="เลื่อนนัด"></QueueOwner>
+    </View>
+  );
+
+  const layout = useWindowDimensions();
+
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          {/* // upcoming appointment */}
-          <Text style={styles.header}>คิวเข้ารักษา</Text>
-          <View style={styles.alllist}>
-            <View style={styles.eachbox}>
-              <View style={styles.upcoming_box}>
-                <View style={styles.picappoint}>
-                  <Image
-                    source={require("../pics/promo1.jpeg")}
-                    style={styles.piconappoint}
-                  />
-                </View>
-                <View style={styles.infoappoint}>
-                  <Text style={styles.txtinfoappoint}>ชื่อสัตว์เลี้ยง</Text>
-                  <Text style={styles.txtinfoappoint}>ชื่อคลินิก</Text>
-                  <Text style={styles.txtinfoappoint}>ชื่อสัตว์แแพทย์</Text>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <AntDesign name="calendar" size={20} color="black" />
-                    <Text style={styles.txtinfoappoint}>
-                      {" "}
-                      30th July, 9.00 am
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.container_button}>
-                <Button
-                  onPress={() => {
-                    navigation.navigate("FormAppointment");
-                  }}
-                  title="Edit"
-                  color="#76655A"
-                />
-                <Button onPress={""} title="Delete" color="#E0A7BB" />
-              </View>
-            </View>
-            <View style={styles.eachbox}>
-              <View style={styles.upcoming_box}>
-                <View style={styles.picappoint}>
-                  <Image
-                    source={require("../pics/promo2.jpeg")}
-                    style={styles.piconappoint}
-                  />
-                </View>
-                <View style={styles.infoappoint}>
-                  <Text style={styles.txtinfoappoint}>ชื่อสัตว์เลี้ยง</Text>
-                  <Text style={styles.txtinfoappoint}>ชื่อคลินิก</Text>
-                  <Text style={styles.txtinfoappoint}>ชื่อสัตว์แแพทย์</Text>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <AntDesign name="calendar" size={20} color="black" />
-                    <Text style={styles.txtinfoappoint}>
-                      {" "}
-                      30th July, 9.00 am
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.container_button}>
-                <Button
-                  onPress={() => {
-                    navigation.navigate("FormAppointment");
-                  }}
-                  title="Edit"
-                  color="#76655A"
-                />
-                <Button onPress={""} title="Delete" color="#E0A7BB" />
-              </View>
-            </View>
-            <View style={styles.eachbox}>
-              <View style={styles.upcoming_box}>
-                <View style={styles.picappoint}>
-                  <Image
-                    source={require("../pics/promo3.jpeg")}
-                    style={styles.piconappoint}
-                  />
-                </View>
-                <View style={styles.infoappoint}>
-                  <Text style={styles.txtinfoappoint}>ชื่อสัตว์เลี้ยง</Text>
-                  <Text style={styles.txtinfoappoint}>ชื่อคลินิก</Text>
-                  <Text style={styles.txtinfoappoint}>ชื่อสัตว์แแพทย์</Text>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <AntDesign name="calendar" size={20} color="black" />
-                    <Text style={styles.txtinfoappoint}>
-                      {" "}
-                      30th July, 9.00 am
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.container_button}>
-                <Button
-                  onPress={() => {
-                    navigation.navigate("FormAppointment");
-                  }}
-                  title="Edit"
-                  color="#76655A"
-                />
-                <Button onPress={""} title="Delete" color="#E0A7BB" />
-              </View>
-            </View>
-            <View style={styles.eachbox}>
-              <View style={styles.upcoming_box}>
-                <View style={styles.picappoint}>
-                  <Image
-                    source={require("../pics/promo4.jpeg")}
-                    style={styles.piconappoint}
-                  />
-                </View>
-                <View style={styles.infoappoint}>
-                  <Text style={styles.txtinfoappoint}>ชื่อสัตว์เลี้ยง</Text>
-                  <Text style={styles.txtinfoappoint}>ชื่อคลินิก</Text>
-                  <Text style={styles.txtinfoappoint}>ชื่อสัตว์แแพทย์</Text>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <AntDesign name="calendar" size={20} color="black" />
-                    <Text style={styles.txtinfoappoint}>
-                      {" "}
-                      30th July, 9.00 am
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.container_button}>
-                <Button
-                  onPress={() => {
-                    navigation.navigate("FormAppointment");
-                  }}
-                  title="Edit"
-                  color="#76655A"
-                />
-                <Button onPress={""} title="Delete" color="#E0A7BB" />
-              </View>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={SceneMap({
+          first: FirstRoute,
+          second: SecondRoute,
+          third: ThirdRoute,
+          fourth: FourthRoute,
+        })}
+        onIndexChange={setIndex}
+        renderTabBar={renderTabBar}
+        initialLayout={{ width: layout.width }}
+      />
     </View>
   );
 };
@@ -180,59 +120,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-  },
-  upcoming_box: {
-    flexDirection: "row",
-    borderRadius: 20,
-    height: 150,
-    padding: 10,
-    alignItems: "center",
-    width: "90%",
-  },
-  alllist: {
-    width: "100%",
-    alignItems: "center",
-  },
-  infoappoint: {
-    flex: 7,
-    paddingLeft: 10,
-  },
-  picappoint: {
-    flex: 5,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    paddingRight: 5,
-  },
-  piconappoint: {
-    width: "auto",
-    height: "85%",
-  },
-  txtinfoappoint: {
-    lineHeight: 24,
-    paddingVertical: 4,
-  },
-  container_button: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    marginBottom: 20,
-    alignContent: "center",
-  },
-  eachbox: {
-    backgroundColor: "#F9F9F9",
-    marginVertical: 20,
-    borderRadius: 20,
-    elevation: 10
-  },
-  logo: {
-    width: 150,
-    height: 200,
-    marginBottom: 0,
-    objectFit: "contain",
-  },
-  header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginVertical: 10
   },
 });
 
