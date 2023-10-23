@@ -128,7 +128,7 @@ const LoginScreen = ({ navigation }) => {
             style={styles.toggleText}
             onPress={() => navigation.navigate("RegisterPage")}
           >
-            ยังไม่มียัญชี? สมัตรเลย
+            ยังไม่มีบัญชี? สมัครเลย
           </Text>
         </View>
         <View style={styles.buttonContainer}>
@@ -149,7 +149,7 @@ const LoginScreen = ({ navigation }) => {
               handleLogin(email, password);
             }}
           >
-            <Text style={styles.buttonText}>Sign In</Text>
+            <Text style={styles.buttonText}>เข้าสู๋ระบบ</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

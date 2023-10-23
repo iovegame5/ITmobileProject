@@ -24,13 +24,15 @@ import ProfileClinicScreen from "../screens/ProfileClinic";
 // import RegisterVet from "../screens/RegisterVetScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import MypetScreen from "../screens/Mypet";
-import AddpetScreen from "../screens/Addpet";
+import Addpet from "../screens/Addpet";
 import FixpetScreen from "../screens/Fixpet";
 import AllclinicScreen from "../screens/Allclinic";
 import ClinicDetailScreen from "../screens/ClinicDetail";
 import Allillness from "../screens/Allillness";
+import IllnessDetail from "../screens/illnessDetail"
 import CustomDrawerContent from "../component/CustomDrawerContent";
-import AddPromotionScreen from "../screens/AddPromotion";
+
+
 const Stack = createNativeStackNavigator();
 const Appointment = createNativeStackNavigator();
 const Queue = createNativeStackNavigator();
@@ -108,11 +110,22 @@ function Petnavigate() {
   return (
     <Stack.Navigator initialRouteName="MyPet">
       <Stack.Screen name="MyPet" component={MypetScreen} />
-      <Stack.Screen name="AddPet" component={AddpetScreen} />
+      <Stack.Screen name="AddPet" component={Addpet} />
       <Stack.Screen name="Edit animal information" component={FixpetScreen} />
     </Stack.Navigator>
   );
 }
+
+function Illnessnavigate() {
+  return (
+    <Stack.Navigator initialRouteName="Allillness">
+      <Stack.Screen name="Allillness" component={Allillness} />
+      <Stack.Screen name="IllnessDetail" component={IllnessDetail} />
+
+    </Stack.Navigator>
+  );
+}
+
 
 function Profiles() {
   return (
@@ -173,9 +186,8 @@ function QueueNavigator() {
         options={{
           headerStyle: {
             backgroundColor: "#E3F4F4",
-            
           },
-          headerShown:false,
+          headerShown:false
         }}
       />
       <Queue.Screen
@@ -187,7 +199,7 @@ function QueueNavigator() {
           },
         }}
       />
-      <Queue.Screen
+       <Queue.Screen
         name="FormAppointment"
         component={AppointmentScreen}
         options={{
@@ -268,12 +280,13 @@ function TabNavigator() {
 function DrawerNavigator() {
   return (
     <Drawer.Navigator
-    screenOptions={{
-      drawerActiveTintColor: "green",
-      drawerInactiveTintColor: "gray",
-    }}
-    drawerContent={(props) => <CustomDrawerContent {...props} />}
-  >
+      screenOptions={{
+        drawerActiveTintColor: "green",
+        drawerInactiveTintColor: "gray",
+      }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />} // Use the custom drawer content component
+      
+    >
       <Drawer.Screen
         name="homie"
         component={TabNavigator}
@@ -299,21 +312,8 @@ function DrawerNavigator() {
         }}
       />
       <Drawer.Screen
-        name="addPromotion"
-        component={AddPromotionScreen}
-        options={{
-          drawerLabel: "",
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#378985', // Change the header background color
-            elevation:0
-          },
-          headerTitle:""
-        }}
-      />
-      <Drawer.Screen
         name="ill"
-        component={Allillness}
+        component={Illnessnavigate}
         options={{
           drawerLabel: "All illness",
           headerShown: false,
@@ -329,7 +329,7 @@ function MainNavigator() {
       <Stack.Screen
         name="Main"
         component={LoginNavigator}
-        options={{ headerShown: false ,}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="all"
@@ -338,33 +338,11 @@ function MainNavigator() {
       />
     </Stack.Navigator>
   );
-
 }
-// function TestNavigator() {
-//   return (
-//     <Stack.Navigator>
-//       <Stack.Screen
-//         name="loginPage"
-//         component={LoginScreen}
-//         options={{ headerShown: false }}
-//       />
-//       <Stack.Screen
-//         name="registerPage"
-//         component={RegisterScreen}
-//         options={{ headerShown: false }}
-//       />
-//       <Stack.Screen
-//         name="homePage"
-//         component={HomeScreen}
-//         options={{ headerShown: false }}
-//       />
-//     </Stack.Navigator>
-//   );
-// }
 export default function MyNavigator() {
   return (
     <NavigationContainer>
-      <MainNavigator/>
+      <MainNavigator />
     </NavigationContainer>
   );
 }

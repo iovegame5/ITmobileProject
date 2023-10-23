@@ -1,131 +1,260 @@
-// import แบบ react-native
+import React, { Component, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Image,
-  TouchableOpacity,
-  FlatList,
-  Button,
-  TextInput,
-  Pressable,
-  Platform,
   SafeAreaView,
+  ScrollView,
+  Button,
+  Touchable,
+  Linking,
+  Alert
 } from "react-native";
-import React, { useState } from "react";
-import Dropdown from "react-native-input-select";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import firebase from "../database/firebase";
+import MapComponent from "../component/MapComponent";
+import { Callout, Marker } from "react-native-maps";
+import MapView from "react-native-maps";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-const Clinicdetail = ({route, navigation}) => {
-  const [dateOfbirth, setDateOfBirth] = useState("");
-  const [country, setCountry] = React.useState();
-  const [date, setDate] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
+class ClinicDetail extends Component {
+  constructor() {
+    super();
 
-  const toggleDatepicker = () => {
-    setShowPicker(!showPicker);
-  };
-  const onChange = ({ type }, selectedDate) => {
-    if (type == "set") {
-      const currentDate = selectedDate;
-      setDate(currentDate);
+    this.state = {
+      id: "",
+      Name: "",
+      clinicImage: "",
+      vetName: "",
+      tel: "",
+      startTime: "",
+      endTime: "",
+      certificate: "",
+      addressDescription: "",
+      address: "",
+    };
+    this.mapRef = React.createRef();
+    this.unsubscribe = null;
+  }
 
-      if (Platform.OS === "android") {
-        toggleDatepicker();
-        setDateOfBirth(currentDate.toDateString());
+  componentDidMount() {
+    const {
+      id,
+      Name,
+      address,
+      clinicImage,
+      vetName,
+      tel,
+      startTime,
+      endTime,
+      certificate,
+      addressDescription,
+    } = this.props.route.params;
+
+
+    // Initialize a reference to the Firestore document using the provided 'id'
+    const subjDoc = firebase.firestore().collection("Clinic").doc(id);
+
+    subjDoc.get().then((res) => {
+      if (res.exists) {
+        const subj = res.data();
+        this.setState({
+          id,
+          Name,
+          clinicImage,
+          vetName,
+          tel,
+          startTime,
+          endTime,
+          certificate,
+          addressDescription,
+          address
+        });
+      } else {
+        console.log("Document does not exist!!");
       }
-    } else {
-      toggleDatepicker();
-    }
-  };
+    });
+  }
 
-  return (
-    <SafeAreaView style={styles.center}>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.img}>
-            <Image
-              style={{ width: 250, height: 250 }}
-              source={require("../pics/channels4_profile.jpg")}
-            />
-          </View>
+  // Add any other logic or methods you need for your ClinicDetail component
 
-          <SafeAreaView style={styles.layout}>
-            <View style={styles.form}>
-              <Text style={{ fontSize: 30, fontWeight: "bold", marginTop: 10 }}>
-                {" "}
-                ชื่อคลนิก:{" "}
-              </Text>
-              <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-                {" "}
-                ที่อยู่:{" "}
-              </Text>
-              <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-                {" "}
-                เบอร์โทร:{" "}
-              </Text>
-              <View
-                style={{
-                  borderBottomColor: "black",
-                  borderBottomWidth: StyleSheet.hairlineWidth,
-                  width: 385,
-                  marginTop: 20,
-                }}
+  render() {
+    return (
+      <SafeAreaView style={styles.center}>
+        <ScrollView>
+          <View style={styles.container}>
+            <View style={styles.img}>
+              <Image
+                style={{ width: 350, height: 200,resizeMode: "contain" }}
+                source={{ uri: this.state.clinicImage }}
               />
-              <Text style={{ fontSize: 30, fontWeight: "bold", marginTop: 10 }}>
-                {" "}
-                ชื่อสัตว์แพทย์:{" "}
-              </Text>
-              <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-                {" "}
-                ประวัติการศึกษา:{" "}
-              </Text>
-              <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-                {" "}
-                อายุ:{" "}
-              </Text>
-              <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-                {" "}
-                ประสบการณ์:{" "}
-              </Text>
-              <View
-                style={{
-                  borderBottomColor: "black",
-                  borderBottomWidth: StyleSheet.hairlineWidth,
-                  width: 385,
-                  marginTop: 20,
-                }}
-              />
-              <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-                {" "}
-                เวลาทำการ:{" "}
-              </Text>
-              <View style={{flexDirection: "row", width: 200}}>
-              <Text style={{fontSize: 15, marginLeft: 10, marginTop: 10}}>Mon-Fri</Text>
-              <Text style={{fontSize: 13, marginLeft: 15, marginTop: 13, marginLeft: 30}}>Morning 8.00 am -2.00 am </Text>
-              </View>
-              <Text style={{fontSize: 13,  marginTop: 10, marginLeft : 90}}>Evening  6.00 am -10.00 am </Text>
-              <View
-                style={{
-                  borderBottomColor: "black",
-                  borderBottomWidth: StyleSheet.hairlineWidth,
-                  width: 385,
-                  marginTop: 20,
-                }}
-              />
-              <View style={{marginTop: 10}}>
-              <Button  color="#87D8C3" title="Book an Appointment" onPress={() => navigation.navigate("FormAppointment")} />
-              </View>
             </View>
-            
-            
-          </SafeAreaView>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+
+            <SafeAreaView style={styles.layout}>
+              <View style={styles.form}>
+                <Text
+                  style={{ fontSize: 28, fontWeight: "bold", marginTop: 10 }}
+                >
+                  {" "}
+                  ชื่อคลินิก: {this.state.Name}
+                </Text>
+                <Text
+                  style={{ fontSize: 18, fontWeight: "normal", marginTop: 10 }}
+                >
+                  {" "}
+                  ที่อยู่: {this.state.addressDescription}
+                </Text>
+                <Text
+                  style={{ fontSize: 18, fontWeight: "normal", marginTop: 10 }}
+                >
+                  {" "}
+                  เบอร์โทร: {this.state.tel}
+                </Text>
+                {this.state.address&&(
+                <View style={{justifyContent:"center", alignItems:"center"}}>
+                    <MapView
+                    scrollEnabled={false}
+                      style={{ height: 200, width: 300 }}
+                      initialRegion={{
+                        latitude: this.state.address.latitude,
+                        longitude: this.state.address.longitude,
+                        latitudeDelta: 0.00422,
+                        longitudeDelta: 0.00421,
+                      }}
+                    >
+                      <Marker
+                        coordinate={{
+                          latitude: this.state.address.latitude,
+                          longitude: this.state.address.longitude,
+                        }}
+                        title={this.state.Name}
+                        description="คลิกเพื่อเปิดไป google maps"
+                    
+                      >
+                        <Callout     onPress={() => {
+                          Alert.alert(
+                            "เปิดใน google maps?",
+                            "ต้องการหาเส้นทางไปคลินิกด้วย google maps ใช่หรือไม่?",
+                            [
+                              {
+                                text: "ไม่",
+                                style: "cancel",
+                              },
+                              {
+                                text: "ใช่",
+                                onPress: () => {
+                                  const lat = this.state.latitude;
+                                  const lng = this.state.longitude;
+                                  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+                                  Linking.openURL(url);
+                                },
+                              },
+                            ]
+                          );
+                        }}> 
+                          
+                        </Callout>
+                      </Marker>
+                    </MapView>
+                  </View>
+       )}
+
+                {/* Render other details using this.state properties */}
+                {/* For example, you can render this.state.addressDescription, this.state.vetName, etc. */}
+                <View
+                  style={{
+                    borderBottomColor: "black",
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    width: 385,
+                    marginTop: 20,
+                  }}
+                />
+                <Text
+                  style={{ fontSize: 20, fontWeight: "normal", marginTop: 10 }}
+                >
+                  {" "}
+                  ชื่อสัตว์แพทย์: {this.state.vetName}
+                </Text>
+                <Text
+                  style={{ fontSize: 18, fontWeight: "bold", marginTop: 10 }}
+                >
+                  {" "}
+
+                  ใบอนุญาติการทำงาน:
+                </Text>
+                <View style={styles.cer}>
+                  <Image
+                    style={{ width: 300, height: 250, resizeMode: "contain" }}
+                    source={{ uri: this.state.certificate }}
+                  />
+                </View>
+       
+                
+             
+                <View
+                  style={{
+                    borderBottomColor: "black",
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    width: 385,
+                    marginTop: 20,
+                  }}
+                />
+                <Text
+                  style={{ fontSize: 18, fontWeight: "bold", marginTop: 10 }}
+                >
+                  {" "}
+                  เวลาทำการ:
+                </Text>
+                {/* Render clinic timings */}
+                {/* For example, Mon-Fri Morning 8.00 am - 2.00 am */}
+                {/* Add similar code to render other details */}
+                <View style={{ flexDirection: "row", width: 200 }}>
+                  <Text
+                    style={{ fontSize: 15, marginLeft: 10, marginTop: 10 }}
+                  ></Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      marginLeft: 15,
+                      marginTop: 13,
+                      marginLeft: 30,
+                    }}
+                  >
+                    {this.state.startTime} - {this.state.endTime}
+                  </Text>
+                </View>
+
+                <View>
+                  {/* <Button
+                    color="#87D8C3"
+                    title="จองคิว"
+                    onPress={() =>
+                      this.props.navigation.navigate("FormAppointment", {
+                        todo: "addQueue",
+                      })
+                    }
+                  /> */}
+                  <TouchableOpacity style={styles.buttonContainer}>
+                    <Text
+                      style={{fontSize:20, color:"white"}}
+                      onPress={() =>
+                        this.props.navigation.navigate("FormAppointment", {
+                          todo: "addQueue",
+                        })
+                      }
+                    >
+                      จองคิว
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </SafeAreaView>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -134,37 +263,50 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF1E4",
   },
   img: {
-    width: 250,
-    height: 260,
     marginTop: 70,
     justifyContent: "center",
     alignItems: "center",
+    elevation:5,
+    resizeMode: "contain",
+  },
+  cer: {
+    marginTop: 10,
+    alignItems: "center",
+    resizeMode: "contain",
+    justifyContent: "center",
   },
   layout: {
     backgroundColor: "white",
     width: 420,
-    height: 550,
+    // height: 800,
     marginTop: 10,
-    borderRadius: 20,
+    borderRadius: 30,
     alignItems: "stretch",
-  },
-  input: {
-    height: 40,
-    margin: 4,
-    borderWidth: 1,
-    padding: 10,
-    width: 190,
+    elevation:5
   },
   form: {
-    width: 380,
-    height: 500,
-    backgroundColor: "white",
-    marginLeft: 10,
-    marginTop: 10,
+    // width: 380,
+    // height: 500,
+
+    marginRight: 10,
+    // marginTop: 10,
+    padding: 20,
   },
   center: {
     alignItems: "center",
   },
+  buttonContainer:{
+    width:100,
+    height:70,
+    backgroundColor:"#87D8C3" ,
+    alignItems:"center",
+    justifyContent:"center",
+    alignSelf:"center",
+    margin:10,
+    borderRadius:40,
+    elevation:5
+    
+  }
 });
 
-export default Clinicdetail;
+export default ClinicDetail;

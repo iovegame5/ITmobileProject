@@ -183,9 +183,10 @@ const RegisterScreen = ({ navigation }) => {
             .doc(newUserId) // Use the user's UID as the document ID
             .set(ownerData)
             .then(() => {
-              Alert.alert("Register Success!!");
+              Alert.alert("สมัครบัญชีเจ้าชองสัตว์เลี้ยงสำเร็จ !!");
               console.log("Registration successful");
               console.log("New User ID:", newUserId);
+              navigation.navigate("LoginPage");
               Keyboard.dismiss();
             })
             .catch((e) => {
@@ -281,8 +282,10 @@ const RegisterScreen = ({ navigation }) => {
               setClinicCloseTime(null);
               setClinicAddressDescription(null);
               Alert.alert("สมัครคลินิกสำเร็จ");
-              console.log("Registration successful");
+              
+  
               console.log("New User ID:", newUserId);
+              navigation.navigate("LoginPage");
 
               Keyboard.dismiss();
             })
@@ -803,7 +806,10 @@ const RegisterScreen = ({ navigation }) => {
                 ]}
               >
                 <MapComponent
-                  width={350}
+                search={true}
+                currentPosition={true}
+                searchBarPosition={10}
+                width={350}
                   height={200}
                   onLocationSelect={(location) => {
                     saveClinicAddress(location); // You can choose to save the clinic address immediately or separately
