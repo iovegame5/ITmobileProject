@@ -10,9 +10,10 @@ import {
   ScrollView,
   Button,
   Alert,
+  FlatList
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { FlatList } from "react-native-gesture-handler";
+
 import firebases from "../database/firebase";
 
 const QueueClinic = (props) => {
