@@ -13,16 +13,19 @@ import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import firebase from "../database/firebase";
+import { useAuth } from "../Auth/AuthContext";
 
-const AppointmentScreen = ({ route, navigation }) => {
+
+const AppointmentScreen =  ({ route, navigation }) => {
   const appointmentDB = firebase.firestore().collection("Appointment");
+  const { user, role, isAuthenticated, login, logout } = useAuth();
 
   const [Name, onChangeName] = React.useState("");
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [Petname, onChangePetname] = useState([
-    { label: "Apple", value: "apple" },
-    { label: "Banana", value: "banana" },
+   /*  { label: "Apple", value: "apple" },
+    { label: "Banana", value: "banana" }, */
   ]);
   const [number, onChangeNumber] = React.useState("");
   const [date, setDate] = useState(new Date());
@@ -34,6 +37,24 @@ const AppointmentScreen = ({ route, navigation }) => {
     { label: "13:00 - 14:00", value: "13:00 - 14:00" },
     { label: "17:00 - 18:00", value: "17:00 - 18:00" },
   ]);
+
+  const getCollection = (querySnapshot) => {
+    const all_data = [];
+    querySnapshot.forEach((res) => {
+      const { Name, OwnerID, PetID} = res.data();
+      if (OwnerID === user.uid) {
+        all_data.push({
+          label: Name,
+          value: res.id
+        });
+      }
+    });
+
+    onChangePetname(all_data);
+  };
+
+  console.log("------------------------------")
+  console.log("PetSelect " + value)
 
   useEffect(() => {
     console.log("route " + route.params.todo);
@@ -49,7 +70,13 @@ const AppointmentScreen = ({ route, navigation }) => {
         console.log("Document does not exist!!");
       }
     });
+    onChangeName(user.firstName + ' ' + user.lastName)
+    onChangeNumber(user.phone)
+    const unsubscribe = firebase.firestore()
+      .collection("Pet")
+      .onSnapshot(getCollection);
   }, []);
+        
 
 
   const selectDate = () => {
@@ -92,8 +119,8 @@ const AppointmentScreen = ({ route, navigation }) => {
         .add({
           ClinicID: `L7Enot90M98NjnAxcb6R`,
           Date: datetxt,
-          OwnerID: "1",
-          PetID: "1",
+          OwnerID: user.uid,
+          PetID: value,
           Status: "รอการยืนยัน",
           Time: valuetime,
           StatusClinic: "รอการยืนยัน"
@@ -114,8 +141,8 @@ const AppointmentScreen = ({ route, navigation }) => {
         .set({
           ClinicID: `/Clinic/L7Enot90M98NjnAxcb6R`,
           Date: datetxt,
-          OwnerID: "1",
-          PetID: "1",
+          OwnerID: user.uid,
+          PetID: value,
           Status: "รอการยืนยัน",
           Time: valuetime,
           StatusClinic: "เลื่อนนัด"
@@ -134,8 +161,8 @@ const AppointmentScreen = ({ route, navigation }) => {
         .set({
           ClinicID: `/Clinic/L7Enot90M98NjnAxcb6R`,
           Date: datetxt,
-          OwnerID: "1",
-          PetID: "1",
+          OwnerID: user.uid,
+          PetID: value,
           Status: "เลื่อนนัด",
           Time: valuetime,
           StatusClinic: "รอการยืนยัน"
