@@ -16,6 +16,8 @@ import { AntDesign } from "@expo/vector-icons";
 import QueueOwner from "../component/QueueOwner";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import firebase from "../database/firebase";
+import { useAuth } from "../Auth/AuthContext";
+
 
 const ReminderAppoint = ({ route, navigation }) => {
   const [queueowner_list, setQueueownerList] = useState([]);
@@ -28,21 +30,25 @@ const ReminderAppoint = ({ route, navigation }) => {
     { key: "third", title: "ประวัติ" },
     { key: "fourth", title: "เลื่อนนัด" },
   ]);
+  const { user, role, isAuthenticated, login, logout } = useAuth();
+  console.log(user.uid)
 
   const getCollection = (querySnapshot) => {
     const all_data = [];
     querySnapshot.forEach((res) => {
       const { ClinicID, Date, OwnerID, PetID, Status, Time, StatusClinic } = res.data();
-      all_data.push({
-        key: res.id,
-        ClinicID,
-        Date,
-        OwnerID,
-        PetID,
-        Status,
-        Time,
-        StatusClinic
-      });
+      if (OwnerID === user.uid) {
+        all_data.push({
+          key: res.id,
+          ClinicID,
+          Date,
+          OwnerID,
+          PetID,
+          Status,
+          Time,
+          StatusClinic
+        });
+      }
     });
 
     setQueueownerList(all_data);
