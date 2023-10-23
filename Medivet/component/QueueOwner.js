@@ -13,18 +13,18 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { FlatList } from "react-native-gesture-handler";
-import { FIREBASE_APP } from "../database/firebaseDB";
+import firebases from "../database/firebase";
 
 const QueueOwner = (props) => {
-  const appointmentDB = FIREBASE_APP.firestore().collection("Appointment");
+  const appointmentDB = firebases.firestore().collection("Appointment");
 
   function SubmitChange(prop) {
-    const subjDoc = FIREBASE_APP.firestore()
+    const subjDoc = firebases.firestore()
       .collection("Appointment")
       .doc(prop);
     subjDoc.get().then((res) => {
       if (res.exists) {
-        const updateChangeQueue = FIREBASE_APP.firestore()
+        const updateChangeQueue = firebases.firestore()
           .collection("Appointment")
           .doc(prop);
         updateChangeQueue
