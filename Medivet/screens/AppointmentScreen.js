@@ -68,7 +68,9 @@ const AppointmentScreen =  ({ route, navigation }) => {
         onChangedatetxt(subj.Date);
         setValuetime(subj.Time);
         if (role === "Clinic") {
-          console.log("Ownername" + route.params.ownerName)
+          console.log(route.params.PetID)
+          onChangeName(route.params.Fullname)
+          console.log("Ownername" + route.params.Fullname)
         } else {
           onChangeName(user.firstName + ' ' + user.lastName)
           onChangeNumber(user.phone)
@@ -167,7 +169,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
           ClinicID: route.params.clinicID,
           Date: datetxt,
           OwnerID: route.params.ownerID,
-          PetID: value,
+          PetID: route.params.PetID,
           Status: "เลื่อนนัด",
           Time: valuetime,
           StatusClinic: "รอการยืนยัน"
@@ -194,6 +196,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
           value={Name}
           onChangeText={onChangeName}
           placeholder="Name"
+          editable={role === "Clinic" ? false : true}
         />
 
         <Text style={styles.txt}>ชื่อสัตว์เลี้ยง :</Text>
@@ -205,6 +208,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
           setValue={setValue}
           setItems={onChangePetname}
           style={styles.dropdown}
+          disabled={role === "Clinic" ? true : false}
         />
 
         <Text style={styles.txt}>เบอร์โทร : </Text>
@@ -214,6 +218,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
           value={number}
           placeholder="Telphone"
           keyboardType="numeric"
+          editable={role === "Clinic" ? false : true}
         />
 
         <Text style={styles.txt}>วันและเวลานัดหมาย : </Text>

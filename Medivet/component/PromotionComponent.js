@@ -47,6 +47,8 @@ const styles = {
     backgroundColor: "white",
     borderRadius: 10,
     elevation: 5,
+    alignItems: "center",
+    justifyItems: "center"
   },
   promotionImage: {
     alignSelf:"center",

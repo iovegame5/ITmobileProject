@@ -40,8 +40,11 @@ const Appointment = createNativeStackNavigator();
 const Queue = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+
+
 function LogoTitle() {
   const { user } = useAuth();
+  console.log("user" + user)
   return (
     <View
       style={{
@@ -63,9 +66,14 @@ function LogoTitle() {
           style={{ width: 50, height: 50, borderRadius: 25 }}
           source={require("../pics/userpic.jpeg")}
         />
-        <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
-          {user.firstName} {user.lastName}
-        </Text>
+        {user === null ? (
+           <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
+         </Text>
+        ) : (
+          <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
+            {user.firstName} {user.lastName}
+         </Text>
+        )}
       </View>
       {/* <Text style={{ marginRight: '8%' }}>Log out</Text> */}
     </View>
@@ -201,9 +209,22 @@ function Profiles() {
 }
 
 function AppointmentNavigator() {
+  const { user, role, isAuthenticated, login, logout } = useAuth();
+  console.log(role)
   return (
+
     <Appointment.Navigator>
+      {role === "Clinic" ? (
       <Appointment.Screen
+        name="DoctorAppointment"
+        component={QueueAppoint}
+        options={{
+          headerStyle: {
+            backgroundColor: "#E3F4F4",
+          },
+        }}
+      /> ) : (
+        <Appointment.Screen
         name="ReminderAppointment"
         component={ReminderAppoint}
         options={{
@@ -211,8 +232,9 @@ function AppointmentNavigator() {
             backgroundColor: "#E3F4F4",
           },
         }}
-      />
-      <Appointment.Screen
+      /> 
+      )}
+       <Appointment.Screen
         name="FormAppointment"
         component={AppointmentScreen}
         options={{

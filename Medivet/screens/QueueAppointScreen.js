@@ -14,9 +14,9 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import firebase from "../database/firebase";
 import QueueClinic from "../component/QueueClinic";
 import { useAuth } from "../Auth/AuthContext";
+import firebase from "../database/firebase";
 
 
 
