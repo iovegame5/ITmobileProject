@@ -14,9 +14,13 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import firebase from "../database/firebase";
+import { useAuth } from "../Auth/AuthContext";
+
 
 const QueueClinic = (props) => {
   const [submitchange, Onsubmitchange] = React.useState(null);
+  const { user, role, isAuthenticated, login, logout } = useAuth();
+  console.log(user)
 
   function SubmitChange(prop) {
     const subjDoc = firebase.firestore()
@@ -37,6 +41,37 @@ const QueueClinic = (props) => {
             Status: "นัดหมาย",
             Time: res.data().Time,
             StatusClinic: "นัดหมาย"
+          })
+          .then(() => {
+            Alert.alert(
+              "Updating Alert",
+              "The queue was updated!! Pls check your DB!!"
+            );
+          });
+      } else {
+        console.log("Document does not exist!!");
+      }
+    });
+  }
+
+  function abortAppointment(prop) {
+    const subjDoc = firebase.firestore()
+      .collection("Appointment")
+      .doc(prop);
+    subjDoc.get().then((res) => {
+      if (res.exists) {
+        const updateChangeQueue = firebase.firestore()
+          .collection("Appointment")
+          .doc(prop);
+        updateChangeQueue
+          .set({
+            ClinicID: res.data().ClinicID,
+            Date: res.data().Date,
+            OwnerID: res.data().OwnerID,
+            PetID: res.data().PetID,
+            Status: "ยกเลิก",
+            Time: res.data().Time,
+            StatusClinic: "ยกเลิก"
           })
           .then(() => {
             Alert.alert(
@@ -87,7 +122,7 @@ const QueueClinic = (props) => {
                 title="ยืนยัน"
                 color="#379895"
               />
-              <Button onPress={""} title="ยกเลิก" color="#FD6262" />
+              <Button onPress={() => abortAppointment(prop.Info.key)} title="ยกเลิก" color="#FD6262" />
             </View>
             </View>
           </View>
@@ -107,7 +142,7 @@ const QueueClinic = (props) => {
             />
           </View>
           <View className="w-3/6 gap-1 ">
-            <Text className=" text-base font-semibold">{prop.Info.OwnerID}</Text>
+            <Text className=" text-base font-semibold">{prop.Ownername}</Text>
             <View className="flex flex-row items-center">
               <AntDesign name="calendar" size={20} color="rgb(14 116 144)" />
               <Text className="text-sm text-blue-700 font-semibold">
@@ -117,8 +152,8 @@ const QueueClinic = (props) => {
             <Text className="text-sm text-blue-700 font-semibold">
               {prop.Info.Time}
             </Text>
-            <Text className="text-sm">รายละเอียดน้อนๆ</Text>
-            <Text className="text-sm">เบอร์โทร</Text>
+            <Text className="text-sm">{"พันธุ์ : " + prop.Typeof}</Text>
+            <Text className="text-sm">{prop.Ownerphone}</Text>
             <View className="border-t border-gray-400 mb-1"></View>
             <View className="flex flex-row justify-evenly	items-center">
               <Button
@@ -126,13 +161,17 @@ const QueueClinic = (props) => {
                   props.navigation.navigate("FormAppointment", {
                     todo: "editQueue",
                     queueid: prop.Info.key,
-                    editfrom: "Clinic"
+                    editfrom: "Clinic",
+                    clinicName: user.name,
+                    clinicID: prop.Info.ClinicID,
+                    ownerName: prop.Ownername,
+                    ownerID: prop.Info.OwnerID
                   });
                 }}
                 title="แก้ไข"
                 color="#379895"
               />
-              <Button onPress={""} title="ยกเลิก" color="#FD6262" />
+              <Button onPress={() => abortAppointment(prop.Info.key)} title="ยกเลิก" color="#FD6262" />
             </View>
           </View>
         </View>
@@ -147,7 +186,7 @@ const QueueClinic = (props) => {
   const ChangeQueue = (prop) => {
     return (
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
-        <View className=" w-72 h-52 rounded-2xl">
+        <View className=" w-80 h-52 rounded-2xl">
           <Text className="text-right text-orange-700 mr-2 mt-2">
             เปลี่ยนแปลงนัด
           </Text>
@@ -159,7 +198,7 @@ const QueueClinic = (props) => {
               />
             </View>
             <View className="w-3/6 gap-1">
-              <Text className=" text-base font-semibold">{prop.Info.OwnerID}</Text>
+              <Text className=" text-base font-semibold">{prop.Ownername}</Text>
               <View className="flex flex-row items-center">
                 <AntDesign name="calendar" size={20} color="rgb(14 116 144)" />
                 <Text className="text-sm text-blue-700 font-semibold">
@@ -169,8 +208,8 @@ const QueueClinic = (props) => {
               <Text className="text-sm text-blue-700 font-semibold">
                 {prop.Info.Time}
               </Text>
-              <Text className="text-sm">รายละเอียดน้อนๆ</Text>
-            <Text className="text-sm">เบอร์โทร</Text>
+              <Text className="text-sm">{"พันธุ์ : " + prop.Typeof}</Text>
+            <Text className="text-sm">{prop.Ownerphone}</Text>
               <View className="border-t border-gray-400 mb-1"></View>
               <View className="flex flex-row justify-evenly	items-center">
                 <Button
@@ -193,6 +232,11 @@ const QueueClinic = (props) => {
         //เขียนโค้ดเพิ่ม
         <ComingQueue
           Info={itemData.item}
+          Ownername={props.ownername}
+          Ownerphone={props.ownerphone}
+          CatorDog={props.pettypecatordog}
+          Typeof={props.typeof}
+          Detailpet={props.detailpet}
         />
       );
     } else if (
@@ -202,6 +246,11 @@ const QueueClinic = (props) => {
       return (
         <WaitQueue
           Info={itemData.item}
+          Ownername={props.ownername}
+          Ownerphone={props.ownerphone}
+          CatorDog={props.pettypecatordog}
+          Typeof={props.typeof}
+          Detailpet={props.detailpet}
         />
       );
     } else if (
@@ -211,10 +260,25 @@ const QueueClinic = (props) => {
       return (
         <ChangeQueue
           Info={itemData.item}
+          Ownername={props.ownername}
+          Ownerphone={props.ownerphone}
+          CatorDog={props.pettypecatordog}
+          Typeof={props.typeof}
+          Detailpet={props.detailpet}
         />
       );
-    } else {
-      return <CompleteQueue />;
+    } else if (props.typestatus === "สำเร็จ" &&
+    (itemData.item.StatusClinic === "เลื่อนนัด" || itemData.item.StatusClinic === "ยกเลิก")) {
+      return (
+      <CompleteQueue
+        Info={itemData.item}
+        Ownername={props.ownername}
+          Ownerphone={props.ownerphone}
+          CatorDog={props.pettypecatordog}
+          Typeof={props.typeof}
+          Detailpet={props.detailpet}
+      />
+      );
     }
   };
 

@@ -67,12 +67,16 @@ const AppointmentScreen =  ({ route, navigation }) => {
         const subj = res.data();
         onChangedatetxt(subj.Date);
         setValuetime(subj.Time);
+        if (role === "Clinic") {
+          console.log("Ownername" + route.params.ownerName)
+        } else {
+          onChangeName(user.firstName + ' ' + user.lastName)
+          onChangeNumber(user.phone)
+        }
       } else {
         console.log("Document does not exist!!");
       }
     });
-    onChangeName(user.firstName + ' ' + user.lastName)
-    onChangeNumber(user.phone)
     const unsubscribe = firebase.firestore()
       .collection("Pet")
       .onSnapshot(getCollection);
@@ -162,7 +166,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
         .set({
           ClinicID: route.params.clinicID,
           Date: datetxt,
-          OwnerID: user.uid,
+          OwnerID: route.params.ownerID,
           PetID: value,
           Status: "เลื่อนนัด",
           Time: valuetime,

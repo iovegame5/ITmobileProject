@@ -147,7 +147,8 @@ const QueueOwner = (props) => {
                     queueid: prop.Key,
                     editfrom: "Owner",
                     clinicName: prop.ClinicName,
-                    clinicID: prop.ClinicID
+                    clinicID: prop.ClinicID,
+                    ownerName: prop.ownerName
                   });
                 }}
                 title="แก้ไข"
