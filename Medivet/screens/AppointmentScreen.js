@@ -12,10 +12,10 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { FIREBASE_APP } from "../database/firebaseDB";
+import firebase from "../database/firebase";
 
 const AppointmentScreen = ({ route, navigation }) => {
-  const appointmentDB = FIREBASE_APP.firestore().collection("Appointment");
+  const appointmentDB = firebase.firestore().collection("Appointment");
 
   const [Name, onChangeName] = React.useState("");
   const [open, setOpen] = useState(false);
@@ -37,7 +37,7 @@ const AppointmentScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     console.log("route " + route.params.todo);
-    const subjDoc = FIREBASE_APP.firestore()
+    const subjDoc = firebase.firestore()
       .collection("Appointment")
       .doc(route.params.queueid);
     subjDoc.get().then((res) => {
@@ -107,7 +107,7 @@ const AppointmentScreen = ({ route, navigation }) => {
           );
         });
     } else if (route.params.todo === "editQueue" && route.params.editfrom === "Owner") {
-      const updateQueue = FIREBASE_APP.firestore()
+      const updateQueue = firebase.firestore()
         .collection("Appointment")
         .doc(route.params.queueid);
       updateQueue
@@ -127,7 +127,7 @@ const AppointmentScreen = ({ route, navigation }) => {
           );
         });
     } else if (route.params.todo === "editQueue" && route.params.editfrom === "Clinic") {
-      const updateQueue = FIREBASE_APP.firestore()
+      const updateQueue = firebase.firestore()
         .collection("Appointment")
         .doc(route.params.queueid);
       updateQueue

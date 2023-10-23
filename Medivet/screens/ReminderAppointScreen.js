@@ -13,9 +13,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import QueueOwner from "../components/QueueOwner";
+import QueueOwner from "../component/QueueOwner";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { FIREBASE_APP } from "../database/firebaseDB";
+import firebase from "../database/firebase";
 
 const ReminderAppoint = ({ route, navigation }) => {
   const [queueowner_list, setQueueownerList] = useState([]);
@@ -47,7 +47,7 @@ const ReminderAppoint = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = FIREBASE_APP.firestore()
+    const unsubscribe = firebase.firestore()
       .collection("Appointment")
       .onSnapshot(getCollection);
 

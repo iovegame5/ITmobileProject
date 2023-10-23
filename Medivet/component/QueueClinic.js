@@ -13,19 +13,19 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { FlatList } from "react-native-gesture-handler";
-import { FIREBASE_APP } from "../database/firebaseDB";
+import firebases from "../database/firebase";
 
 const QueueClinic = (props) => {
   const [submitchange, Onsubmitchange] = React.useState(null);
 
   function SubmitChange(prop) {
-    const subjDoc = FIREBASE_APP.firestore()
+    const subjDoc = firebase.firestore()
       .collection("Appointment")
       .doc(prop);
     subjDoc.get().then((res) => {
       if (res.exists) {
         Onsubmitchange(res.data());
-        const updateChangeQueue = FIREBASE_APP.firestore()
+        const updateChangeQueue = firebase.firestore()
           .collection("Appointment")
           .doc(prop);
         updateChangeQueue

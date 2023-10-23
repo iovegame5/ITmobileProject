@@ -14,8 +14,8 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { FIREBASE_APP } from "../database/firebaseDB";
-import QueueClinic from "../components/QueueClinic";
+import firebase from "../database/firebase";
+import QueueClinic from "../component/QueueClinic";
 
 
 const QueueAppoint = ({ route, navigation }) => {
@@ -48,7 +48,7 @@ const QueueAppoint = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = FIREBASE_APP.firestore()
+    const unsubscribe = firebase.firestore()
       .collection("Appointment")
       .onSnapshot(getCollection);
 
