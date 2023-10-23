@@ -31,6 +31,7 @@ import ClinicDetailScreen from "../screens/ClinicDetail";
 import Allillness from "../screens/Allillness";
 import IllnessDetail from "../screens/illnessDetail"
 import CustomDrawerContent from "../component/CustomDrawerContent";
+import AddPromotionScreen from "../screens/AddPromotion";
 
 
 const Stack = createNativeStackNavigator();
@@ -316,6 +317,14 @@ function DrawerNavigator() {
         component={Illnessnavigate}
         options={{
           drawerLabel: "All illness",
+          headerShown: false,
+        }}
+      />
+       <Drawer.Screen
+        name="addPromotion"
+        component={AddPromotionScreen}
+        options={{
+        
           headerShown: false,
         }}
       />

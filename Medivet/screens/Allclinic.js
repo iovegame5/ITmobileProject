@@ -149,10 +149,10 @@ const Allclinic = ({ navigation }) => {
   const getCurrentLocation = async () => {
     setIsLoading(true);
     try {
+      console.log("get Location Current");
       if(!userLocation){
       const currentLocation = await Location.getCurrentPositionAsync({});
       if (currentLocation) {
-        console.log("get Location Current");
         setUserLocation(currentLocation.coords);
         if(!userLocation){
         }
