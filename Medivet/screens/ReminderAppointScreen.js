@@ -19,6 +19,8 @@ import firebase from "../database/firebase";
 
 const ReminderAppoint = ({ route, navigation }) => {
   const [queueowner_list, setQueueownerList] = useState([]);
+  const [dbclinic, setDbclinic] = useState("");
+  const [dbpet, setDbpet] = useState("");
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: "first", title: "รอยืนยัน" },
@@ -46,15 +48,50 @@ const ReminderAppoint = ({ route, navigation }) => {
     setQueueownerList(all_data);
   };
 
+  console.log(queueowner_list[0])
+
   useEffect(() => {
     const unsubscribe = firebase.firestore()
       .collection("Appointment")
       .onSnapshot(getCollection);
+    
+      getDatatoShow();
 
+    
     return () => {
       unsubscribe();
     };
   }, []);
+
+  function getDatatoShow() {
+    const clinicName = firebase.firestore()
+      .collection("Clinic")
+      .doc(queueowner_list[0].ClinicID);
+      clinicName.get().then((res) => {
+      if (res.exists) {
+        const clinicname = res.data();
+        setDbclinic(clinicname.name);
+        console.log(dbclinic)
+      } else {
+        console.log("Document does not exist!!");
+      }
+    });
+  
+    const PetName = firebase.firestore()
+    .collection("Pet")
+    .doc(queueowner_list[0].PetID);
+    PetName.get().then((res) => {
+    if (res.exists) {
+      const petname = res.data();
+      setDbpet(petname.Name);
+      console.log(dbpet)
+    } else {
+      console.log("Document does not exist!!");
+    }
+  });
+  }
+
+  
 
   const renderTabBar = (props) => {
     return (
@@ -71,26 +108,26 @@ const ReminderAppoint = ({ route, navigation }) => {
 
   const FirstRoute = () => (
     <View className="flex-1 bg-white-100 items-center">
-          <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="รอการยืนยัน"></QueueOwner>
+      <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="รอการยืนยัน"></QueueOwner>
     </View>
   );
 
   const SecondRoute = () => (
-      <View className="flex-1 bg-white-100 items-center">
-        <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="นัดหมาย"></QueueOwner>
-      </View>
-    
+    <View className="flex-1 bg-white-100 items-center">
+      <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="นัดหมาย"></QueueOwner>
+    </View>
+
   );
 
   const ThirdRoute = () => (
     <View className="flex-1 bg-white-100 items-center">
-       <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="สำเร็จ"></QueueOwner>
+      <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="สำเร็จ"></QueueOwner>
     </View>
   );
 
   const FourthRoute = () => (
     <View className="flex-1 bg-white-100 items-center">
-       <QueueOwner queuedata={queueowner_list} navigation={navigation} typestatus="เลื่อนนัด"></QueueOwner>
+      <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="เลื่อนนัด"></QueueOwner>
     </View>
   );
 

@@ -55,6 +55,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
 
   console.log("------------------------------")
   console.log("PetSelect " + value)
+  console.log(route.params.clinicID)
 
   useEffect(() => {
     console.log("route " + route.params.todo);
@@ -117,7 +118,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
     if (route.params.todo === "addQueue") {
       appointmentDB
         .add({
-          ClinicID: `L7Enot90M98NjnAxcb6R`,
+          ClinicID: route.params.clinicID,
           Date: datetxt,
           OwnerID: user.uid,
           PetID: value,
@@ -139,7 +140,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
         .doc(route.params.queueid);
       updateQueue
         .set({
-          ClinicID: `/Clinic/L7Enot90M98NjnAxcb6R`,
+          ClinicID: route.params.clinicID,
           Date: datetxt,
           OwnerID: user.uid,
           PetID: value,
@@ -159,7 +160,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
         .doc(route.params.queueid);
       updateQueue
         .set({
-          ClinicID: `/Clinic/L7Enot90M98NjnAxcb6R`,
+          ClinicID: route.params.clinicID,
           Date: datetxt,
           OwnerID: user.uid,
           PetID: value,
@@ -181,7 +182,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
       <Text style={styles.header}>จองคิวเข้ารักษา</Text>
 
       <View style={styles.form}>
-        <Text style={styles.txt}>ชื่อคลินิก : </Text>
+        <Text style={styles.txt}>ชื่อคลินิก : {route.params.clinicName}</Text>
 
         <Text style={styles.txt}>ชื่อ-นามสกุล :</Text>
         <TextInput

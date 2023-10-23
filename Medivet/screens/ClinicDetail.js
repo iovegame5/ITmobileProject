@@ -66,6 +66,7 @@ const ClinicDetail = ({ route, navigation }) => {
           addressDescription,
           address,
         });
+        console.log(id)
       } else {
         console.log("Document does not exist!!");
       }
@@ -295,7 +296,7 @@ const ClinicDetail = ({ route, navigation }) => {
                     <Text
                       style={{ fontSize: 20, color: "white" }}
                       onPress={() =>
-                        navigation.navigate("FormAppointment", {
+                        this.props.navigation.navigate("FormAppointment", {
                           todo: "addQueue",
                         })
                       }
