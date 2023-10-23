@@ -10,8 +10,10 @@ import {
   ScrollView,
   Button,
   Alert,
+  FlatList
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+<<<<<<< HEAD
 import { FlatList } from "react-native-gesture-handler";
 import firebases from "../database/firebase";
 
@@ -20,11 +22,25 @@ const QueueOwner = (props) => {
 
   function SubmitChange(prop) {
     const subjDoc = firebases.firestore()
+=======
+
+import firebase from "../database/firebase";
+
+const QueueOwner = (props) => {
+  const appointmentDB = firebase.firestore().collection("Appointment");
+
+  function SubmitChange(prop) {
+    const subjDoc = firebase.firestore()
+>>>>>>> 0fe3b954c84319ca55d16ef7d17156678122a074
       .collection("Appointment")
       .doc(prop);
     subjDoc.get().then((res) => {
       if (res.exists) {
+<<<<<<< HEAD
         const updateChangeQueue = firebases.firestore()
+=======
+        const updateChangeQueue = firebase.firestore()
+>>>>>>> 0fe3b954c84319ca55d16ef7d17156678122a074
           .collection("Appointment")
           .doc(prop);
         updateChangeQueue
