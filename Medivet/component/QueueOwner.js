@@ -52,6 +52,7 @@ const QueueOwner = (props) => {
   }
 
   const WaitQueue = (prop) => {
+    console.log(prop)
     return (
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
         <View className="w-72 h-44 rounded-2xl">
@@ -66,7 +67,7 @@ const QueueOwner = (props) => {
               />
             </View>
             <View className="w-3/6 gap-1">
-              <Text className=" text-base font-semibold">{prop.ClinicID}</Text>
+              <Text className=" text-base font-semibold">{prop.ClinicName}</Text>
               <View className="flex flex-row items-center">
                 <AntDesign name="calendar" size={20} color="rgb(14 116 144)" />
                 <Text className="text-sm text-blue-700 font-semibold">
@@ -76,7 +77,7 @@ const QueueOwner = (props) => {
               <Text className="text-sm text-blue-700 font-semibold">
                 {prop.Time}
               </Text>
-              <Text className="text-sm">{prop.PetID}</Text>
+              <Text className="text-sm">{prop.PetName}</Text>
             </View>
           </View>
         </View>
@@ -88,7 +89,7 @@ const QueueOwner = (props) => {
     console.log("key " + prop.Key);
     return (
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
-        <View className="flex flex-row justify-around  w-72 h-48 rounded-2xl items-center">
+        <View className="flex flex-row justify-around  w-72 h-44 rounded-2xl items-center">
           <View className="w-2/5 items-center">
             <Image
               source={require("../pics/promo1.jpeg")}
@@ -96,7 +97,7 @@ const QueueOwner = (props) => {
             />
           </View>
           <View className="w-3/6 gap-1 ">
-            <Text className=" text-base font-semibold">{prop.ClinicID}</Text>
+            <Text className=" text-base font-semibold">{prop.ClinicName}</Text>
             <View className="flex flex-row items-center">
               <AntDesign name="calendar" size={20} color="rgb(14 116 144)" />
               <Text className="text-sm text-blue-700 font-semibold">
@@ -106,7 +107,7 @@ const QueueOwner = (props) => {
             <Text className="text-sm text-blue-700 font-semibold">
               {prop.Time}
             </Text>
-            <Text className="text-sm">{prop.PetID}</Text>
+            <Text className="text-sm">{prop.PetName}</Text>
             <View className="border-t border-gray-400 mb-1"></View>
             <View className="flex flex-row justify-evenly	items-center">
               <Button
@@ -147,7 +148,7 @@ const QueueOwner = (props) => {
               />
             </View>
             <View className="w-3/6 gap-1">
-              <Text className=" text-base font-semibold">{prop.ClinicID}</Text>
+              <Text className=" text-base font-semibold">{prop.ClinicName}</Text>
               <View className="flex flex-row items-center">
                 <AntDesign name="calendar" size={20} color="rgb(14 116 144)" />
                 <Text className="text-sm text-blue-700 font-semibold">
@@ -157,7 +158,7 @@ const QueueOwner = (props) => {
               <Text className="text-sm text-blue-700 font-semibold">
                 {prop.Time}
               </Text>
-              <Text className="text-sm">{prop.PetID}</Text>
+              <Text className="text-sm">{prop.PetName}</Text>
               <View className="border-t border-gray-400 mb-1"></View>
               <View className="flex flex-row justify-evenly	items-center">
                 <Button
@@ -174,14 +175,15 @@ const QueueOwner = (props) => {
     );
   };
   const renderQueueItem = (itemData) => {
+    console.log(props.clinicname)
     if (props.typestatus === "นัดหมาย" && itemData.item.Status === "นัดหมาย") {
       return (
         //เขียนโค้ดเพิ่ม
         <ComingQueue
-          ClinicID={itemData.item.ClinicID}
+          ClinicName={props.clinicname}
           Date={itemData.item.Date}
           Time={itemData.item.Time}
-          PetID={itemData.item.PetID}
+          PetName={props.petname}
           Key={itemData.item.key}
         />
       );
@@ -191,10 +193,10 @@ const QueueOwner = (props) => {
     ) {
       return (
         <WaitQueue
-          ClinicID={itemData.item.ClinicID}
+          ClinicName={props.clinicname}
           Date={itemData.item.Date}
           Time={itemData.item.Time}
-          PetID={itemData.item.PetID}
+          PetName={props.petname}
         />
       );
     } else if (
@@ -203,10 +205,10 @@ const QueueOwner = (props) => {
     ) {
       return (
         <ChangeQueue
-          ClinicID={itemData.item.ClinicID}
+          ClinicName={props.clinicname}
           Date={itemData.item.Date}
           Time={itemData.item.Time}
-          PetID={itemData.item.PetID}
+          PetName={props.petname}
           Key={itemData.item.key}
         />
       );

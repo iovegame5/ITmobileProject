@@ -70,6 +70,7 @@ class ClinicDetail extends Component {
           addressDescription,
           address
         });
+        console.log(id)
       } else {
         console.log("Document does not exist!!");
       }
@@ -239,7 +240,7 @@ class ClinicDetail extends Component {
                       style={{fontSize:20, color:"white"}}
                       onPress={() =>
                         this.props.navigation.navigate("FormAppointment", {
-                          todo: "addQueue",
+                          todo: "addQueue", clinicID: this.state.id, clinicName: this.state.Name
                         })
                       }
                     >
