@@ -167,16 +167,10 @@ function MapComponent(
       const currentLocation = await Location.getCurrentPositionAsync({});
       if (currentLocation) {
         const { latitude, longitude } = currentLocation.coords;
-        // setSelectedLocation({ latitude, longitude });
-        // mapViewRef.current.animateToRegion({
-        //   latitude,
-        //   longitude,
-        //   latitudeDelta: 0.0922,
-        //   longitudeDelta: 0.0421,
-        // });
         setUserLocation({ latitude, longitude });
-        console.log("userLocation:", userLocation);
+
         goToPosition(latitude, longitude);
+        console.log("userLocation:", userLocation);
       } else {
         console.log("Current location not available.");
       }
@@ -290,7 +284,9 @@ function MapComponent(
         </View>
       ) : null}
       {currentPosition ? (
-        <View style={{ position: "absolute", top: searchBarPosition, left: 20 }}>
+        <View
+          style={{ position: "absolute", top: searchBarPosition, left: 20 }}
+        >
           <TouchableOpacity
             onPress={() => {
               goToCurrentLocation();

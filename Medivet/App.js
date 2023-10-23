@@ -8,18 +8,24 @@ import MyNavigator from "./navigation/MyNavigator.js";
 
 import Allclinic from "./screens/Allclinic.js";
 import { AuthProvider } from "./Auth/AuthContext.js";
+import MyComponent from "./component/MyComponent.js";
 
+import { SafeAreaView } from "react-native";
 export default function App() {
   // เพิ่มโค้ดส่วนนี้ เพื่อจัดการ Stack Navigation
   return (
 
+
     <AuthProvider>
       <MyNavigator></MyNavigator>
-         
+
+          {/* <MyComponent/> */}
+    
       {/* <QueueAppoint/> */}
       {/* <Allclinic></Allclinic> */}
   
     </AuthProvider>
+
 
   );
 }
