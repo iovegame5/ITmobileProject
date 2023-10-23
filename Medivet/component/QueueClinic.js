@@ -3,14 +3,14 @@ import { StatusBar } from "expo-status-bar";
 import {
   View,
   Text,
-  StyleSheet,
   Switch,
   Image,
   Linking,
   ScrollView,
   Button,
   Alert,
-  FlatList
+  FlatList,
+  StyleSheet
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import firebase from "../database/firebase";
@@ -218,7 +218,7 @@ const QueueClinic = (props) => {
     }
   };
 
-  return <FlatList data={props.queuedata} renderItem={renderQueueItem} />;
+  return <View className="justify-center items-center"><FlatList data={props.queuedata} renderItem={renderQueueItem} /></View>;
 }
 
 const styles = StyleSheet.create({

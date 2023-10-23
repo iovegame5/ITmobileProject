@@ -10,7 +10,8 @@ import {
   ScrollView,
   Button,
   Alert,
-  FlatList
+  FlatList,
+  
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -53,7 +54,7 @@ const QueueOwner = (props) => {
   const WaitQueue = (prop) => {
     return (
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
-        <View className=" w-72 h-44 rounded-2xl">
+        <View className="w-72 h-44 rounded-2xl">
           <Text className="text-right text-orange-700 mr-2 mt-2">
             รอการยืนยัน
           </Text>
@@ -134,7 +135,7 @@ const QueueOwner = (props) => {
   const ChangeQueue = (prop) => {
     return (
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
-        <View className=" w-72 h-52 rounded-2xl">
+        <View className="w-72 h-52 rounded-2xl">
           <Text className="text-right text-orange-700 mr-2 mt-2">
             เปลี่ยนแปลงนัด
           </Text>
@@ -214,7 +215,7 @@ const QueueOwner = (props) => {
     }
   };
 
-  return <FlatList data={props.queuedata} renderItem={renderQueueItem} />;
+  return <View className="justify-center items-center"><FlatList data={props.queuedata} renderItem={renderQueueItem} /></View>;
 };
 
 const styles = StyleSheet.create({
