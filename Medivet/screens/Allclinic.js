@@ -48,6 +48,7 @@ const Allclinic = ({ navigation }) => {
   const [test, setTest] = useState("before");
   const mapRef = useRef(null);
   const fetchClinics = async () => {
+    console.log("fetching clinics function call");
     try {
       setIsLoading(true);
 
@@ -93,6 +94,7 @@ const Allclinic = ({ navigation }) => {
       // Wait for all image URLs to be fetched before updating state
       await Promise.all(fetchImagePromises);
       console.log("fetching clinics");
+      console.log("userLocatiom : ", userLocation); // Log within this function
 
       const sortedClinics = clinicData.slice().sort((clinicA, clinicB) => {
   
@@ -147,17 +149,17 @@ const Allclinic = ({ navigation }) => {
   const getCurrentLocation = async () => {
     setIsLoading(true);
     try {
+      if(!userLocation){
       const currentLocation = await Location.getCurrentPositionAsync({});
       if (currentLocation) {
         console.log("get Location Current");
         setUserLocation(currentLocation.coords);
         if(!userLocation){
-          getCurrentLocation();
         }
-        console.log("userLocatio : ", userLocation); // Log within this function
       } else {
         console.log("Error Current location not available.");
       }
+    }
     } catch (error) {
       console.error("Error getting current location:", error);
       setIsLoading(false);
@@ -165,8 +167,7 @@ const Allclinic = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log("user: ", user);
-    console.log("role:", role)
+
     getCurrentLocation();
   }, []);
   useEffect(() => {
