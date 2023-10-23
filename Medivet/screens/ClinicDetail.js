@@ -8,10 +8,12 @@ import {
   ScrollView,
   Button,
   Touchable,
+  Linking,
+  Alert
 } from "react-native";
 import firebase from "../database/firebase";
 import MapComponent from "../component/MapComponent";
-import { Marker } from "react-native-maps";
+import { Callout, Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -48,7 +50,7 @@ class ClinicDetail extends Component {
       certificate,
       addressDescription,
     } = this.props.route.params;
-    console.log("addres", address);
+
 
     // Initialize a reference to the Firestore document using the provided 'id'
     const subjDoc = firebase.firestore().collection("Clinic").doc(id);
@@ -66,6 +68,7 @@ class ClinicDetail extends Component {
           endTime,
           certificate,
           addressDescription,
+          address
         });
       } else {
         console.log("Document does not exist!!");
@@ -107,6 +110,54 @@ class ClinicDetail extends Component {
                   {" "}
                   เบอร์โทร: {this.state.tel}
                 </Text>
+                {this.state.address&&(
+                <View>
+                    <MapView
+                    scrollEnabled={false}
+                      style={{ height: 200, width: 300 }}
+                      initialRegion={{
+                        latitude: this.state.address.latitude,
+                        longitude: this.state.address.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                      }}
+                    >
+                      <Marker
+                        coordinate={{
+                          latitude: this.state.address.latitude,
+                          longitude: this.state.address.longitude,
+                        }}
+                        title={this.state.Name}
+                        description="คลิกเพื่อเปิดไป google maps"
+                    
+                      >
+                        <Callout     onPress={() => {
+                          Alert.alert(
+                            "เปิดใน google maps?",
+                            "ต้องการหาเส้นทางไปคลินิกด้วย google maps ใช่หรือไม่?",
+                            [
+                              {
+                                text: "ไม่",
+                                style: "cancel",
+                              },
+                              {
+                                text: "ใช่",
+                                onPress: () => {
+                                  const lat = this.state.latitude;
+                                  const lng = this.state.longitude;
+                                  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+                                  Linking.openURL(url);
+                                },
+                              },
+                            ]
+                          );
+                        }}> 
+                          
+                        </Callout>
+                      </Marker>
+                    </MapView>
+                  </View>
+       )}
 
                 {/* Render other details using this.state properties */}
                 {/* For example, you can render this.state.addressDescription, this.state.vetName, etc. */}
@@ -128,6 +179,7 @@ class ClinicDetail extends Component {
                   style={{ fontSize: 18, fontWeight: "bold", marginTop: 10 }}
                 >
                   {" "}
+
                   ใบอนุญาติการทำงาน:
                 </Text>
                 <View style={styles.cer}>
@@ -136,30 +188,9 @@ class ClinicDetail extends Component {
                     source={{ uri: this.state.certificate }}
                   />
                 </View>
-               
-                {/* {this.state.address && (
-                  <View>
-                    <MapView
-                      style={{ height: 300, width: 300 }}
-                      initialRegion={{
-                        latitude: this.state.latitude,
-                        longitude: this.state.longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                        
-                      }}
-                    >
-                      <Marker
-                        coordinate={{
-                          latitude: this.state.latitude,
-                          longitude: this.state.longitude,
-                        }}
-                        title="Marker Title"
-                        description="Marker Description"
-                      />
-                    </MapView>
-                  </View>
-                )} */}
+       
+                
+             
                 <View
                   style={{
                     borderBottomColor: "black",
@@ -247,7 +278,7 @@ const styles = StyleSheet.create({
   layout: {
     backgroundColor: "white",
     width: 420,
-    height: 800,
+    // height: 800,
     marginTop: 10,
     borderRadius: 30,
     alignItems: "stretch",
