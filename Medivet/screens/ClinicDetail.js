@@ -34,7 +34,7 @@ const ClinicDetail = ({ route, navigation }) => {
   const [promotions, setPromotions] = useState(null);
   const [currentPromotion, setCurrentPromotion] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const {
@@ -146,7 +146,12 @@ const ClinicDetail = ({ route, navigation }) => {
           <View style={styles.container}>
             <View style={styles.img}>
               <Image
-                style={{ width: 350, height: 200, resizeMode: "contain", borderRadius:20 }}
+                style={{
+                  width: 350,
+                  height: 200,
+                  resizeMode: "contain",
+                  borderRadius: 20,
+                }}
                 source={{ uri: clinicData.clinicImage }}
               />
             </View>
@@ -177,7 +182,7 @@ const ClinicDetail = ({ route, navigation }) => {
                   >
                     <MapView
                       scrollEnabled={false}
-                      style={{ height: 200, width: 350, marginTop:20 }}
+                      style={{ height: 200, width: 350, marginTop: 20 }}
                       initialRegion={{
                         latitude: clinicData.address.latitude,
                         longitude: clinicData.address.longitude,
@@ -296,14 +301,15 @@ const ClinicDetail = ({ route, navigation }) => {
                 ) : (
                   <Text> ไม่มีโปรโมชั่น </Text>
                 )}
-                {clinicData.id == user.uid ? (
+                {clinicData.id == user.uid && isAuthenticated  ? (
                   <View>
                     <TouchableOpacity style={styles.buttonContainer}>
                       <Text
                         style={{ fontSize: 20, color: "white" }}
-                        onPress={() =>
-                          navigation.navigate("addPromotion")
-                        }
+                        onPress={() => {
+                          navigation.navigate("addPromotion");
+                          console.log("add Promotion clic")
+                        }}
                       >
                         เพิ่มโปรโมชั่น
                       </Text>
@@ -316,7 +322,9 @@ const ClinicDetail = ({ route, navigation }) => {
                         style={{ fontSize: 20, color: "white" }}
                         onPress={() =>
                           navigation.navigate("FormAppointment", {
-                            todo: "addQueue",ClinicID:clinicData.id
+                            todo: "addQueue",
+                            ClinicID: clinicData.id,
+                            clinicName : clinicData.Name,
                           })
                         }
                       >
@@ -330,7 +338,7 @@ const ClinicDetail = ({ route, navigation }) => {
           </View>
         </ScrollView>
       ) : (
-       <Loading></Loading>
+        <Loading></Loading>
       )}
     </SafeAreaView>
   );
@@ -349,7 +357,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 5,
     resizeMode: "contain",
-    borderRadius:20,
+    borderRadius: 20,
   },
   cer: {
     marginTop: 10,
@@ -368,15 +376,14 @@ const styles = StyleSheet.create({
   form: {
     // marginRight: 10,
     padding: 10,
-    
   },
   center: {
     alignItems: "center",
-    flex:1,
-    justifyContent:"center",
+    flex: 1,
+    justifyContent: "center",
   },
   buttonContainer: {
-    width: 100,
+    width: 200,
     height: 70,
     backgroundColor: "#87D8C3",
     alignItems: "center",
@@ -385,6 +392,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 40,
     elevation: 5,
+    zIndex:1
   },
   loadingContainer: {
     flex: 1,

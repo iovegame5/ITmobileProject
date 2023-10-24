@@ -16,7 +16,10 @@ const Promotion = ({ promotions }) => {
           source={{ uri: item.imageFilename }}
         />
         <Text style={styles.promotionTitle}>{item.promotionDetails}</Text>
-        <Text stylle={{fontSize:16}}>ชื่อคลินิก: {item.clinicName}</Text>
+        {item.clinicName &&(
+           <Text stylle={{fontSize:16}}>ชื่อคลินิก: {item.clinicName}</Text>
+        )}
+       
         <Text>วันที่เริ่ม: {startDate.toString().replace(' BE', '')}     วันที่สิ้นสุด: {endDate.toString().replace(' BE', '')}</Text>
 
         {/* Render other promotion details as needed */}
