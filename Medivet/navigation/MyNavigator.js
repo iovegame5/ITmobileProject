@@ -30,7 +30,7 @@ import FixpetScreen from "../screens/Fixpet";
 import AllclinicScreen from "../screens/Allclinic";
 import ClinicDetailScreen from "../screens/ClinicDetail";
 import Allillness from "../screens/Allillness";
-
+import illnessDetail from "../screens/illnessDetail";
 import CustomDrawerContent from "../component/CustomDrawerContent";
 import AddPromotionScreen from "../screens/AddPromotion";
 
@@ -42,7 +42,7 @@ const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 function LogoTitle() {
   const { user, role } = useAuth();
-  console.log("user", user)
+  console.log("user", user);
   return (
     <View
       style={{
@@ -70,13 +70,11 @@ function LogoTitle() {
             {user.firstName} {user.lastName}
           </Text>
         )}
-         {role == "Clinic" && (
+        {role == "Clinic" && (
           <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
-          {user.name}
+            {user.name}
           </Text>
         )}
-        
-        
       </View>
       {/* <Text style={{ marginRight: '8%' }}>Log out</Text> */}
     </View>
@@ -172,7 +170,7 @@ function Illnessnavigate() {
           headerTitle: "โรคที่พบได้ทั่วไป",
         }}
       />
-      <Stack.Screen name="IllnessDetail" component={IllnessDetail} />
+      <Stack.Screen name="IllnessDetail" component={illnessDetail} />
     </Stack.Navigator>
   );
 }
@@ -362,6 +360,7 @@ function TabNavigator() {
 }
 
 function DrawerNavigator() {
+  const { user, role } = useAuth();
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -394,6 +393,18 @@ function DrawerNavigator() {
           headerShown: false,
         }}
       />
+      {role ==="Clinic" &&(
+         <Drawer.Screen
+         name="addPromotion"
+         component={AddPromotionScreen}
+         options={{
+           drawerLabel: "เพิ่มโปรโมชั่น",
+           headerShown: true,
+          headerTitl:"เพิ่มโปรโมชั่น"
+         }}
+       />
+      )}
+      
     </Drawer.Navigator>
   );
 }

@@ -151,7 +151,9 @@ const Allclinic = ({ navigation }) => {
       console.log("get Location Curret");
       if (!userLocation) {
         const timeoutMs = 10000; // 10 seconds
-        const locationPromise = Location.getCurrentPositionAsync({});
+        const locationPromise = Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Low,
+        });
 
         const timeoutPromise = new Promise((resolve, reject) => {
           setTimeout(
@@ -177,12 +179,8 @@ const Allclinic = ({ navigation }) => {
             console.log("Error Current location not available.");
           }
         } catch (error) {
-          getCurrentLocation();
-          
+     
         }
-        // const currentLocation = await Location.getCurrentPositionAsync({
-        //   accuracy: Location.Accuracy.Low, // Adjust this based on your needs
-        // });
       }
     } catch (error) {
       console.error("Error getting current location:", error);
