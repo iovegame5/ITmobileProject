@@ -133,6 +133,7 @@ function Petnavigate() {
         name="MyPet"
         component={MypetScreen}
         options={({ route }) => ({
+          headerTitle:"สัตว์เลี้ยง",
           headerShown: true, // Show the Stack header for this screen
           headerLeft: () => (
             <Ionicons
@@ -145,7 +146,9 @@ function Petnavigate() {
         })}
       />
 
-      <Stack.Screen name="AddPet" component={Addpet} />
+      <Stack.Screen name="AddPet" component={Addpet} options= {{
+        headerTitle:"เพิ่มสัตว์เลี้ยง"
+      }} /> 
       <Stack.Screen name="Edit animal information" component={FixpetScreen} options= {{
         headerTitle:"เปลี่ยนข้อมูลสัตว์เลี้ยง"
       }}/>
