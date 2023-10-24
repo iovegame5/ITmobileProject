@@ -291,11 +291,12 @@ const QueueOwner = (props) => {
     }
   };
 
-  return <View className="justify-center items-center"><FlatList data={props.queuedata} renderItem={renderQueueItem} /></View>;
+  return <View style={{padding:10}} className="justify-center items-center "><FlatList data={props.queuedata} renderItem={renderQueueItem} /></View>;
 };
 
 const styles = StyleSheet.create({
   shadow: {
+    margin:10,
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 10 },
     shadowRadius: 12.5,

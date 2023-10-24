@@ -13,7 +13,7 @@ import {
 import firebase from "../database/firebase";
 import { useAuth } from "../Auth/AuthContext";
 import Promotion from "../component/PromotionComponent";
-import { Callout, Marker } from "react-native-maps";
+import { Callout, Marker,PROVIDER_GOOGLE } from "react-native-maps";
 import MapView from "react-native-maps";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Loading from "../component/LoadingComponent";
@@ -181,6 +181,7 @@ const ClinicDetail = ({ route, navigation }) => {
                     style={{ justifyContent: "center", alignItems: "center" }}
                   >
                     <MapView
+                     provider={PROVIDER_GOOGLE}
                       scrollEnabled={false}
                       style={{ height: 200, width: 350, marginTop: 20 }}
                       initialRegion={{

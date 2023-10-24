@@ -43,8 +43,8 @@ const Promotion = ({ promotions }) => {
 const styles = {
   promotionCard: {
     width: 320,
-    height: 280,
-    // padding: 20,
+    height: 300,
+
     margin: 10,
 
     backgroundColor: "white",
@@ -60,6 +60,7 @@ const styles = {
     shadowRadius: 3.84,
   },
   promotionImage: {
+    marginTop:10,
     alignSelf: "center",
     width: 300,
     height: 200,
