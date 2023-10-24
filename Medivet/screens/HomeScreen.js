@@ -21,11 +21,41 @@ import Loading from "../component/LoadingComponent";
 import { useAuth } from "../Auth/AuthContext";
 const auth = firebase.auth();
 const HomeScreen = (props) => {
+  const { user, role, login, logout } = useAuth();
   const navigation = useNavigation();
+  const [alldbappoint, setalldbappoint] = useState([]);
   const [promotions, setPromotions] = useState(null);
+  const [namedb, setnamedb] = useState("");
+  const [detaildb, setdetaildb] = useState("");
+  const [datecoming, setdatecoming] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const { isAuthenticated } = useAuth();
-  useEffect(() => {}, []);
+
+  const getCollection = (querySnapshot) => {
+    const all_data = [];
+    querySnapshot.forEach((res) => {
+      const {ClinicID ,OwnerID, PetID, Date, Time} = res.data();
+      if (OwnerID === user.uid) {
+        all_data.push({
+         ClinicID,
+         PetID,
+         Date,
+         Time
+        });
+      }
+    });
+
+    setalldbappoint(all_data);
+    
+  };
+
+
+  useEffect(() => {
+    const unsubscribe = firebase.firestore()
+      .collection("Appointment")
+      .onSnapshot(getCollection);
+    
+  }, []);
   useEffect(() => {
     if (!isAuthenticated) {
       navigation.navigate("Main");
@@ -109,24 +139,36 @@ const HomeScreen = (props) => {
     }
   };
 
-  // const renderMealItem = (itemData) => {
-  //   return (
-  //     //เขียนโค้ดเพิ่ม
-  //     <MealItem
-  //       title={itemData.item.title}
-  //       duration={itemData.item.duration}
-  //       complexity={itemData.item.complexity}
-  //       affordability={itemData.item.affordability}
-  //       image={itemData.item.imageUrl}
-  //       onSelectMeal={() => {
-  //         props.navigation.navigate("MealDetail", {
-  //           foodmenu: itemData.item.title,
-  //           howto: itemData.item.steps,
-  //         });
-  //       }}
-  //     />
-  //   );
-  // };
+  if (alldbappoint.length > 0) {
+    console.log()
+    const clinicName = firebase
+      .firestore()
+      .collection("Clinic")
+      .doc(alldbappoint.ClinicID);
+    clinicName.get().then((res) => {
+      if (res.exists) {
+        const clinicname = res.data();
+        setDbclinic(clinicname.name);
+        console.log(dbclinic);
+      } else {
+        console.log("Document does not exist!!");
+      }
+    });
+/* 
+    const PetName = firebase
+      .firestore()
+      .collection("Pet")
+      .doc(queueowner_list[0].PetID);
+    PetName.get().then((res) => {
+      if (res.exists) {
+        const petname = res.data();
+        setDbpet(petname.Name);
+        console.log(dbpet);
+      } else {
+        console.log("Document does not exist!!");
+      }
+    }); */
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -139,7 +181,8 @@ const HomeScreen = (props) => {
             <View>
               <Text style={styles.header}>การนัดที่กำลังมาถึง</Text>
 
-              <View style={styles.upcoming_box}>
+              {role === "Owner" && (
+                <View style={styles.upcoming_box}>
                 <View style={styles.infoappoint}>
                   <Text style={styles.txtinfoappoint}>ชื่อหมอ</Text>
                   <Text style={styles.txtinfoappoint}>ชื่อคลินิก</Text>
@@ -158,6 +201,30 @@ const HomeScreen = (props) => {
                   />
                 </View>
               </View>
+              )}
+
+              {role === "Clinic" && (
+                <View style={styles.upcoming_box}>
+                <View style={styles.infoappoint}>
+                  <Text style={styles.txtinfoappoint}>ชื่อคนไข้</Text>
+                  <Text style={styles.txtinfoappoint}>พันธุ์</Text>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <AntDesign name="calendar" size={20} color="black" />
+                    <Text style={styles.txtinfoappoint}>
+                      {" "}
+                      30th July, 9.00 am
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.picappoint}>
+                  <Image
+                    source={require("../pics/Howlcastel.jpeg")}
+                    style={styles.piconappoint}
+                  />
+                </View>
+              </View>
+              )}
+              
             </View>
 
             {/* // common illnesses */}
