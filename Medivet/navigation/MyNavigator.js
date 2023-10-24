@@ -41,7 +41,8 @@ const Queue = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 function LogoTitle() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
+  console.log("user", user)
   return (
     <View
       style={{
@@ -64,16 +65,17 @@ function LogoTitle() {
           style={{ width: 40, height: 40, borderRadius: 25 }}
           source={require("../pics/userpic.jpeg")}
         />
-        {user && (
+        {role == "Owner" && (
           <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
             {user.firstName} {user.lastName}
           </Text>
         )}
-         {!user && (
+         {role == "Clinic" && (
           <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
-            {user.firstName} {user.lastName}
+          {user.name}
           </Text>
         )}
+        
         
       </View>
       {/* <Text style={{ marginRight: '8%' }}>Log out</Text> */}
