@@ -152,14 +152,11 @@ const Allclinic = ({ navigation }) => {
       if (!userLocation) {
         const currentLocation = await Location.getCurrentPositionAsync({});
         if (currentLocation) {
-          await setUserLocation(currentLocation.coords);
+          setUserLocation(currentLocation.coords);
           console.log("ไม่เจอ user location ขอท่อยู่");
           if (!userLocation) {
-            console.log("ผิดพลาด")
-
-          }
-          else{
-            
+            console.log("ผิดพลาด");
+          } else {
           }
         } else {
           console.log("Error Current location not available.");
@@ -228,7 +225,7 @@ const Allclinic = ({ navigation }) => {
             <Text style={{ fontSize: 24, color: "white" }}>คลินิกใกล้ฉัน</Text>
           </View>
           {isLoading ? ( // Show loading indicator when isLoading is true
-         <Loading></Loading>
+            <Loading></Loading>
           ) : (
             <View style={{ padding: 10 }}>
               <FlatList
@@ -386,7 +383,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    fontSize:20,
+    fontSize: 20,
   },
 });
 export default Allclinic;

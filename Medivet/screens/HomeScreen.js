@@ -25,9 +25,7 @@ const HomeScreen = (props) => {
   const [promotions, setPromotions] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { isAuthenticated } = useAuth();
-  useEffect(()=>{
-
-  },[])
+  useEffect(() => {}, []);
   useEffect(() => {
     if (!isAuthenticated) {
       navigation.navigate("Main");
@@ -43,7 +41,11 @@ const HomeScreen = (props) => {
     try {
       const promotionsRef = firebase.firestore().collection("Promotions");
       const querySnapshot = await promotionsRef.get();
-
+      if (querySnapshot.empty) {
+        // Check if there are no promotions
+        setIsLoading(false); // Set isLoading to false
+        return;
+      }
       const promotionsData = [];
       const counter = { count: 0 }; // Counter to track the number of promotions fetched
 
@@ -198,9 +200,18 @@ const HomeScreen = (props) => {
             </View>
 
             {/* // Promotion clinic */}
+            
             <View style={{ width: "90%" }}>
               <Text style={styles.header}>โปรโมชั่นคลินิก</Text>
-              <Promotion promotions={promotions}></Promotion>
+              {promotions ? (
+                  <Promotion promotions={promotions}></Promotion>
+              ):(
+                <View style={{height:300}}>
+                     <Text> ไม่มีโปรโมชั่นขณะนี้</Text>
+                </View>
+             
+              )}
+            
             </View>
           </View>
         </ScrollView>

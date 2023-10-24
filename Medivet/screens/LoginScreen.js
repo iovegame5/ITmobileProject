@@ -21,36 +21,42 @@ import { CommonActions } from "@react-navigation/native";
 const auth = firebase.auth();
 
 const LoginScreen = ({ navigation }) => {
-  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  
+  const { user, role, isAuthenticated, login, logout } = useAuth();
+
   useEffect(() => {
+    
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: 'all' }] 
-          })
-        );
+        if (isAuthenticated) {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: "all" }],
+            })
+          );
+        }
       }
     });
 
     // Make sure to unsubscribe when the component unmounts
     return unsubscribe;
-  }, [auth, navigation]);
+  }, [auth, navigation, isAuthenticated]);
 
   const handleLogin = async (email, password) => {
     try {
       await login(email, password);
       setEmail(null);
       setPassword(null);
+
+      navigation.navigate("all")
       // Login was successful, you can navigate to another screen here
     } catch (error) {
       // Handle the login error, e.g., show an alert
-      console.log(error.type)
+      console.log(error.type);
       Alert.alert("เข้าสู่ระบบไม่สำเร็จ", "อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
       setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
       setPassword(null);
@@ -207,7 +213,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: "center",
-    justifyContent:"center"
+    justifyContent: "center",
   },
   loginButton: {
     alignSelf: "center",
