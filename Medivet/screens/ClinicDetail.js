@@ -278,10 +278,9 @@ const ClinicDetail = ({ route, navigation }) => {
                       fontSize: 16,
                       marginLeft: 15,
                       marginTop: 13,
-           
                     }}
                   >
-                     จันทร์ - เสาร์   {clinicData.startTime} - {clinicData.endTime}
+                    จันทร์ - เสาร์ {clinicData.startTime} - {clinicData.endTime}
                   </Text>
                 </View>
                 <View
@@ -303,14 +302,14 @@ const ClinicDetail = ({ route, navigation }) => {
                 ) : (
                   <Text> ไม่มีโปรโมชั่น </Text>
                 )}
-                {clinicData.id == user.uid && isAuthenticated ? (
+                {user && clinicData.id === user.uid ? (
                   <View>
                     <TouchableOpacity style={styles.buttonContainer}>
                       <Text
                         style={{ fontSize: 20, color: "white" }}
                         onPress={() => {
                           navigation.navigate("addPromotion");
-                          console.log("add Promotion clic");
+                          console.log("add Promotion clicked");
                         }}
                       >
                         เพิ่มโปรโมชั่น
