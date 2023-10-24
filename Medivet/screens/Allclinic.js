@@ -154,10 +154,6 @@ const Allclinic = ({ navigation }) => {
         if (currentLocation) {
           setUserLocation(currentLocation.coords);
           console.log("ไม่เจอ user location ขอท่อยู่");
-          if (!userLocation) {
-            console.log("ผิดพลาด");
-          } else {
-          }
         } else {
           console.log("Error Current location not available.");
         }
