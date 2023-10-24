@@ -281,11 +281,11 @@ const RegisterScreen = ({ navigation }) => {
               setClinicOpenTime(null);
               setClinicCloseTime(null);
               setClinicAddressDescription(null);
+              navigation.navigate("LoginPage");
               Alert.alert("สมัครคลินิกสำเร็จ");
               
   
               console.log("New User ID:", newUserId);
-              navigation.navigate("LoginPage");
 
               Keyboard.dismiss();
             })

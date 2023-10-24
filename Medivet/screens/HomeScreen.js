@@ -18,16 +18,24 @@ import * as Location from "expo-location";
 import Promotion from "../component/PromotionComponent";
 import { useNavigation } from "@react-navigation/native";
 import Loading from "../component/LoadingComponent";
-
+import { useAuth } from "../Auth/AuthContext";
 const auth = firebase.auth();
 const HomeScreen = (props) => {
   const navigation = useNavigation();
   const [promotions, setPromotions] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated } = useAuth();
+  useEffect(()=>{
+
+  },[])
   useEffect(() => {
-    fetchPromotions();
-    Location.requestForegroundPermissionsAsync();
-  }, []);
+    if (!isAuthenticated) {
+      navigation.navigate("Main");
+    } else {
+      fetchPromotions();
+      Location.requestForegroundPermissionsAsync();
+    }
+  }, [isAuthenticated]);
 
   const fetchPromotions = async () => {
     setIsLoading(true);
@@ -99,7 +107,6 @@ const HomeScreen = (props) => {
     }
   };
 
-  console.log(auth.currentUser.uid);
   // const renderMealItem = (itemData) => {
   //   return (
   //     //เขียนโค้ดเพิ่ม
