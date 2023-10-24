@@ -123,12 +123,13 @@ const AppointmentScreen =  ({ route, navigation }) => {
       appointmentDB
         .add({
           ClinicID: route.params.ClinicID,
-          Date: new Date(datetxt),
+          Date: datetxt,
           OwnerID: user.uid,
           PetID: value,
           Status: "รอการยืนยัน",
           Time: valuetime,
-          StatusClinic: "รอการยืนยัน"
+          StatusClinic: "รอการยืนยัน",
+          Datestamp: new Date(datetxt)
         })
         .then((res) => {
           onChangedatetxt("");
@@ -145,12 +146,13 @@ const AppointmentScreen =  ({ route, navigation }) => {
       updateQueue
         .set({
           ClinicID: route.params.clinicID,
-          Date: new Date(datetxt),
+          Date: datetxt,
           OwnerID: user.uid,
           PetID: value,
           Status: "รอการยืนยัน",
           Time: valuetime,
-          StatusClinic: "เลื่อนนัด"
+          StatusClinic: "เลื่อนนัด",
+          Datestamp: new Date(datetxt)
         })
         .then(() => {
           Alert.alert(
@@ -165,12 +167,13 @@ const AppointmentScreen =  ({ route, navigation }) => {
       updateQueue
         .set({
           ClinicID: route.params.clinicID,
-          Date: new Date(datetxt),
+          Date: datetxt,
           OwnerID: route.params.ownerID,
           PetID: route.params.PetID,
           Status: "เลื่อนนัด",
           Time: valuetime,
-          StatusClinic: "รอการยืนยัน"
+          StatusClinic: "รอการยืนยัน",
+          Datestamp: new Date(datetxt)
         })
         .then(() => {
           Alert.alert(

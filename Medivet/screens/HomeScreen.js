@@ -42,6 +42,13 @@ const HomeScreen = (props) => {
          Date,
          Time
         });
+      } else if (ClinicID === user.uid) {
+        all_data.push({
+          OwnerID,
+          PetID,
+          Date,
+          Time
+         });
       }
     });
 
@@ -52,7 +59,7 @@ const HomeScreen = (props) => {
 
   useEffect(() => {
     const unsubscribe = firebase.firestore()
-      .collection("Appointment")
+      .collection("Appointment").orderBy("Datestamp")
       .onSnapshot(getCollection);
     
   }, []);
@@ -140,34 +147,54 @@ const HomeScreen = (props) => {
   };
 
   if (alldbappoint.length > 0) {
-    
-    const clinicName = firebase
+    console.log("-------------------")
+    console.log(alldbappoint[0])
+    if (role === "Owner") {
+      const clinicName = firebase
       .firestore()
       .collection("Clinic")
-      .doc(alldbappoint.ClinicID);
+      .doc(alldbappoint[0].ClinicID);
     clinicName.get().then((res) => {
       if (res.exists) {
         const clinicname = res.data();
-        setDbclinic(clinicname.name);
-        console.log(dbclinic);
+        setnamedb(clinicname.name);
+        console.log(namedb);
       } else {
         console.log("Document does not exist!!");
       }
     });
-/* 
-    const PetName = firebase
+    } else if (role === "Clinic") {
+      const ownerName = firebase
       .firestore()
-      .collection("Pet")
-      .doc(queueowner_list[0].PetID);
-    PetName.get().then((res) => {
+      .collection("Owner")
+      .doc(alldbappoint[0].OwnerID);
+      ownerName.get().then((res) => {
       if (res.exists) {
-        const petname = res.data();
-        setDbpet(petname.Name);
-        console.log(dbpet);
+        const ownname = res.data();
+        setdetaildb(ownname.firstName);
+        console.log(detaildb);
       } else {
         console.log("Document does not exist!!");
       }
-    }); */
+    });
+    }
+    
+
+    const PetName = firebase
+      .firestore()
+      .collection("Pet")
+      .doc(alldbappoint[0].PetID);
+    PetName.get().then((res) => {
+      if (res.exists) {
+        const petname = res.data();
+        setdetaildb(petname.Name);
+        console.log(detaildb);
+      } else {
+        console.log("Document does not exist!!");
+      }
+    });
+
+   
   }
 
   return (
@@ -184,13 +211,13 @@ const HomeScreen = (props) => {
               {role === "Owner" && (
                 <View style={styles.upcoming_box}>
                 <View style={styles.infoappoint}>
-                  <Text style={styles.txtinfoappoint}>ชื่อหมอ</Text>
-                  <Text style={styles.txtinfoappoint}>ชื่อคลินิก</Text>
+                  <Text style={styles.txtinfoappoint}>{namedb}</Text>
+                  <Text style={styles.txtinfoappoint}>{"ชื่อสัตว์เลี้ยง : " + detaildb}</Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <AntDesign name="calendar" size={20} color="black" />
                     <Text style={styles.txtinfoappoint}>
                       {" "}
-                      30th July, 9.00 am
+                      {alldbappoint[0].Date + " , " + alldbappoint[0].Time.substring(0, 5) + " am"}
                     </Text>
                   </View>
                 </View>

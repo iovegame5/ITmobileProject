@@ -63,6 +63,7 @@ const ReminderAppoint = ({ route, navigation }) => {
       unsubscribe();
     };
   }, []);
+  
 
   if (queueowner_list.length > 0) {
     const clinicName = firebase
