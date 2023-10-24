@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import firebase from "../database/firebase";
-
+import { useAuth } from "../Auth/AuthContext";
 import Promotion from "../component/PromotionComponent";
 import { Callout, Marker } from "react-native-maps";
 import MapView from "react-native-maps";
@@ -33,6 +33,7 @@ const ClinicDetail = ({ route, navigation }) => {
   const [promotions, setPromotions] = useState(null);
   const [currentPromotion, setCurrentPromotion] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const {
@@ -110,12 +111,10 @@ const ClinicDetail = ({ route, navigation }) => {
       await Promise.all(fetchImagePromises);
 
       if (promotionsData.length > 0) {
-      
         setPromotions(promotionsData);
       } else {
-      
       }
-      console.log(promotions)
+      console.log(promotions);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching promotions:", error);
@@ -292,25 +291,39 @@ const ClinicDetail = ({ route, navigation }) => {
                   โปรโมชั่น
                 </Text>
                 {promotions && promotions.length > 0 ? (
-                  <Promotion promotions={promotions}/>
+                  <Promotion promotions={promotions} />
                 ) : (
                   <Text> ไม่มีโปรโมชั่น </Text>
                 )}
-
-                <View>
-                  <TouchableOpacity style={styles.buttonContainer}>
-                    <Text
-                      style={{ fontSize: 20, color: "white" }}
-                      onPress={() =>
-                        navigation.navigate("FormAppointment", {
-                          todo: "addQueue",
-                        })
-                      }
-                    >
-                      จองคิว
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                {clinicData.id == user.uid ? (
+                  <View>
+                    <TouchableOpacity style={styles.buttonContainer}>
+                      <Text
+                        style={{ fontSize: 20, color: "white" }}
+                        onPress={() =>
+                          navigation.navigate("addPromotion")
+                        }
+                      >
+                        เพิ่มโปรโมชั่น
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View>
+                    <TouchableOpacity style={styles.buttonContainer}>
+                      <Text
+                        style={{ fontSize: 20, color: "white" }}
+                        onPress={() =>
+                          navigation.navigate("FormAppointment", {
+                            todo: "addQueue",
+                          })
+                        }
+                      >
+                        จองคิว
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             </SafeAreaView>
           </View>
