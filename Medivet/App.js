@@ -16,12 +16,12 @@ export default function App() {
 
 
     <AuthProvider>
-      <MyNavigator></MyNavigator>
+      {/* <MyNavigator></MyNavigator> */}
 
           {/* <MyComponent/> */}
     
       {/* <QueueAppoint/> */}
-      {/* <Allclinic></Allclinic> */}
+      <Allclinic></Allclinic>
   
     </AuthProvider>
 
