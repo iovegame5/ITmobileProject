@@ -281,7 +281,7 @@ const RegisterScreen = ({ navigation }) => {
               setClinicOpenTime(null);
               setClinicCloseTime(null);
               setClinicAddressDescription(null);
-              navigation.navigate("LoginPage");
+              navigation.navigate("Main");
               Alert.alert("สมัครคลินิกสำเร็จ");
               
   
