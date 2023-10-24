@@ -30,7 +30,7 @@ import FixpetScreen from "../screens/Fixpet";
 import AllclinicScreen from "../screens/Allclinic";
 import ClinicDetailScreen from "../screens/ClinicDetail";
 import Allillness from "../screens/Allillness";
-import IllnessDetail from "../screens/IllnessDetail";
+import IllnessDetail from "../screens/illnessDetail";
 import CustomDrawerContent from "../component/CustomDrawerContent";
 import AddPromotionScreen from "../screens/AddPromotion";
 
