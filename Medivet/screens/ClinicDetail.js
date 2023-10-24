@@ -146,7 +146,7 @@ const ClinicDetail = ({ route, navigation }) => {
           <View style={styles.container}>
             <View style={styles.img}>
               <Image
-                style={{ width: 350, height: 200, resizeMode: "contain" }}
+                style={{ width: 350, height: 200, resizeMode: "contain", borderRadius:20 }}
                 source={{ uri: clinicData.clinicImage }}
               />
             </View>
@@ -177,7 +177,7 @@ const ClinicDetail = ({ route, navigation }) => {
                   >
                     <MapView
                       scrollEnabled={false}
-                      style={{ height: 200, width: 300 }}
+                      style={{ height: 200, width: 350, marginTop:20 }}
                       initialRegion={{
                         latitude: clinicData.address.latitude,
                         longitude: clinicData.address.longitude,
@@ -349,6 +349,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 5,
     resizeMode: "contain",
+    borderRadius:20,
   },
   cer: {
     marginTop: 10,
@@ -367,6 +368,7 @@ const styles = StyleSheet.create({
   form: {
     // marginRight: 10,
     padding: 10,
+    
   },
   center: {
     alignItems: "center",

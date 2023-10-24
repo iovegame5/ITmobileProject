@@ -135,7 +135,7 @@ const HomeScreen = (props) => {
           <View style={styles.container}>
             {/* // upcoming appointment */}
             <View>
-              <Text style={styles.header}>Upcoming appointment</Text>
+              <Text style={styles.header}>การนัดที่กำลังมาถึง</Text>
 
               <View style={styles.upcoming_box}>
                 <View style={styles.infoappoint}>
@@ -167,7 +167,7 @@ const HomeScreen = (props) => {
                   alignItems: "center",
                 }}
               >
-                <Text style={styles.header}>Common illnesses</Text>
+                <Text style={styles.header}>โรคที่มักพบเจอ</Text>
                 <Text
                   style={{ color: "blue" }}
                   onPress={() => {
@@ -175,7 +175,7 @@ const HomeScreen = (props) => {
                   }}
                 >
                   {" "}
-                  all illnesses{" "}
+                  ทั้งหมด{" "}
                 </Text>
               </View>
 
@@ -199,7 +199,7 @@ const HomeScreen = (props) => {
 
             {/* // Promotion clinic */}
             <View style={{ width: "90%" }}>
-              <Text style={styles.header}>Promotion Clinic</Text>
+              <Text style={styles.header}>โปรโมชั่นคลินิก</Text>
               <Promotion promotions={promotions}></Promotion>
             </View>
           </View>

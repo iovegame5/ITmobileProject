@@ -49,8 +49,8 @@ class Allillness extends Component {
       const {navigation} = this.props
     
     return (
-      <SafeAreaView>
-      <ScrollView>
+      <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={{justifyContent:"center"}}>
        
               
                 <View style={styles.card}>
@@ -115,33 +115,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    resizeMode: 'contain',
+    resizeMode: 'stretch',
     width: 350,
     height: 200,
+    borderRadius:20,
   },
   text: {
     marginLeft: 20,
     marginTop: 10
   },
   card: {
-    width: 400,
+    width: 370,
     height: 300,
     backgroundColor: "#F9F9F9",
-    marginTop: 50,
+    marginTop: 20,
+    marginBottom:20,
     marginLeft: 5,
     borderRadius: 20,
+    elevation:5,
+    justifyContent:"center"
   },
   arrow : {
       marginLeft: 30,
       marginTop: 20
   },
   layoutimage :{
-      width: 300,
+      width: "100%",
       height: 200,
       alignItems: 'center',
       justifyContent: 'center',
-      marginLeft: 48,
-      marginTop: 10,
+
+      marginTop: 20,
       backgroundColor: "#F9F9F9"
 
 

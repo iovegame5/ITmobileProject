@@ -261,7 +261,9 @@ function QueueNavigator() {
         options={{
           headerStyle: {
             backgroundColor: "#E3F4F4",
+            
           },
+          headerTitle:"รายละเอียดคลินิก"
         }}
       />
       <Queue.Screen
