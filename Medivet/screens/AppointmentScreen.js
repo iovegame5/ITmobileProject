@@ -113,7 +113,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
     month = month < 10 ? `0${month}` : month;
     day = day < 10 ? `0${day}` : day;
 
-    return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
   };
 
   
@@ -123,7 +123,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
       appointmentDB
         .add({
           ClinicID: route.params.ClinicID,
-          Date: datetxt,
+          Date: new Date(datetxt),
           OwnerID: user.uid,
           PetID: value,
           Status: "รอการยืนยัน",
@@ -145,7 +145,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
       updateQueue
         .set({
           ClinicID: route.params.clinicID,
-          Date: datetxt,
+          Date: new Date(datetxt),
           OwnerID: user.uid,
           PetID: value,
           Status: "รอการยืนยัน",
@@ -165,7 +165,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
       updateQueue
         .set({
           ClinicID: route.params.clinicID,
-          Date: datetxt,
+          Date: new Date(datetxt),
           OwnerID: route.params.ownerID,
           PetID: route.params.PetID,
           Status: "เลื่อนนัด",
