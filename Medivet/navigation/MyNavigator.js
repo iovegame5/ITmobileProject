@@ -49,6 +49,7 @@ function LogoTitle() {
         flex: 1,
         justifyContent: "flex-end", // Center vertically
         alignItems: "center",
+        maxWidth:"100%",
       }}
     >
       <View
@@ -56,11 +57,11 @@ function LogoTitle() {
           flexDirection: "row",
           justifyContent: "flex-end",
           alignItems: "center",
-          marginRight: 40,
+          marginRight: 60,
         }}
       >
         <Image
-          style={{ width: 50, height: 50, borderRadius: 25 }}
+          style={{ width: 40, height: 40, borderRadius: 25 }}
           source={require("../pics/userpic.jpeg")}
         />
           {user && (
@@ -86,7 +87,7 @@ function LoginNavigator() {
       <Stack.Screen
         name="LoginPage"
         component={LoginScreen}
-        options={{ headerShown: true, headerBackVisible: false }}
+        options={{ headerBackVisible: false,headerShown: false }}
       />
       <Stack.Screen name="RegisterPage" component={RegisterScreen} />
     </Stack.Navigator>
@@ -138,7 +139,7 @@ function Petnavigate() {
           ),
         })}
       />
-      x
+
       <Stack.Screen name="AddPet" component={Addpet} />
       <Stack.Screen name="Edit animal information" component={FixpetScreen} />
     </Stack.Navigator>
@@ -318,7 +319,7 @@ function TabNavigator() {
       />
       {!role || role !== "Clinic" ? (
         <Tab.Screen
-          name="MyPet"
+          name="petTab"
           component={Petnavigate}
           options={{
             tabBarIcon: ({ color, size }) => {
@@ -380,14 +381,6 @@ function DrawerNavigator() {
         }}
       /> */}
       <Drawer.Screen
-        name="pet"
-        component={Petnavigate}
-        options={{
-          drawerLabel: "MyPet",
-          headerShown: false,
-        }}
-      />
-      <Drawer.Screen
         name="ill"
         component={Illnessnavigate}
         options={{
@@ -397,31 +390,6 @@ function DrawerNavigator() {
       />
    
     </Drawer.Navigator>
-  );
-}
-function MyPetScreen() {
-  const navigation = useNavigation();
-
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="MyPet"
-        component={MypetScreen}
-        options={({ route }) => ({
-          headerShown: true,
-          headerLeft: () => (
-            <Ionicons
-              name="menu"
-              size={24}
-              color="black"
-              onPress={() => navigation.openDrawer()}
-            />
-          ),
-        })}
-      />
-      <Stack.Screen name="AddPet" component={Addpet} />
-      <Stack.Screen name="Edit animal information" component={FixpetScreen} />
-    </Stack.Navigator>
   );
 }
 

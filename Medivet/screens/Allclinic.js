@@ -27,6 +27,7 @@ import * as geolib from "geolib";
 import MapComponent from "../component/MapComponent";
 import { useAuth } from "../Auth/AuthContext";
 import { FontAwesome } from "@expo/vector-icons";
+import Loading from "../component/LoadingComponent";
 const Allclinic = ({ navigation }) => {
   // Authten !important
   //
@@ -147,15 +148,14 @@ const Allclinic = ({ navigation }) => {
   const getCurrentLocation = async () => {
     setIsLoading(true);
     try {
-      console.log("get Location Current");
+      console.log("get Location Curret");
       if (!userLocation) {
-        console.log("ไม่เจอ user location เลยขอท่อยู่");
         const currentLocation = await Location.getCurrentPositionAsync({});
         if (currentLocation) {
           await setUserLocation(currentLocation.coords);
-          console.log("ไม่เจอ user location เลยขอท่อยู่");
+          console.log("ไม่เจอ user location ขอท่อยู่");
           if (!userLocation) {
-           await getCurrentLocation();
+            console.log("ผิดพลาด")
 
           }
           else{
@@ -228,10 +228,7 @@ const Allclinic = ({ navigation }) => {
             <Text style={{ fontSize: 24, color: "white" }}>คลินิกใกล้ฉัน</Text>
           </View>
           {isLoading ? ( // Show loading indicator when isLoading is true
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#378985" />
-              <Text style={styles.loadingText}>รอซักครู่...</Text>
-            </View>
+         <Loading></Loading>
           ) : (
             <View style={{ padding: 10 }}>
               <FlatList
@@ -389,6 +386,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
+    fontSize:20,
   },
 });
 export default Allclinic;

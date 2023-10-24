@@ -122,9 +122,10 @@ const AppointmentScreen =  ({ route, navigation }) => {
   
   function storeAppointment() {
     if (route.params.todo === "addQueue") {
+      console.log( route.params)
       appointmentDB
         .add({
-          ClinicID: route.params.clinicID,
+          ClinicID: route.params.ClinicID,
           Date: datetxt,
           OwnerID: user.uid,
           PetID: value,

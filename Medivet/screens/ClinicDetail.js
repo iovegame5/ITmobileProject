@@ -16,6 +16,7 @@ import Promotion from "../component/PromotionComponent";
 import { Callout, Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import Loading from "../component/LoadingComponent";
 
 const ClinicDetail = ({ route, navigation }) => {
   const [clinicData, setClinicData] = useState({
@@ -315,7 +316,7 @@ const ClinicDetail = ({ route, navigation }) => {
                         style={{ fontSize: 20, color: "white" }}
                         onPress={() =>
                           navigation.navigate("FormAppointment", {
-                            todo: "addQueue",
+                            todo: "addQueue",ClinicID:clinicData.id
                           })
                         }
                       >
@@ -329,10 +330,7 @@ const ClinicDetail = ({ route, navigation }) => {
           </View>
         </ScrollView>
       ) : (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#3498db" />
-          <Text style={styles.loadingText}>รอซักครู่...</Text>
-        </View>
+       <Loading></Loading>
       )}
     </SafeAreaView>
   );
@@ -372,6 +370,8 @@ const styles = StyleSheet.create({
   },
   center: {
     alignItems: "center",
+    flex:1,
+    justifyContent:"center",
   },
   buttonContainer: {
     width: 100,

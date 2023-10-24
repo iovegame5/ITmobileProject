@@ -115,6 +115,7 @@ function MapComponent(
       if (context === "RegisterScreen") {
         // ถ้า context ทรี่ส่งใสเป็น RegisterScreen ให้ทำฟังก์ชันตามนี้เมื่อกดแแผนที่
         setSelectedLocation(e.nativeEvent.coordinate);
+        
         onLocationSelect(e.nativeEvent.coordinate);
       }
     }
@@ -200,6 +201,8 @@ function MapComponent(
                 longitude: location.address.longitude,
               }}
               title={location.name}
+              description="คลิกเพื่อเปิดไป google maps"
+              
             >
               {/* You can customize the marker's callout here */}
               <Callout
@@ -210,12 +213,7 @@ function MapComponent(
                   )
                 }
               >
-                <View>
-                  <Text style={{ fontSize: 24 }}>
-                    ชื่อคลิกนิก: {location.name}
-                  </Text>
-                  <Text>เปิดบน google maps?</Text>
-                </View>
+           
               </Callout>
             </Marker>
           ))}

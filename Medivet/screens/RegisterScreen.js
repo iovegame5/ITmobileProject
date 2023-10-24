@@ -939,8 +939,8 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     marginTop: 10,
-    color: "blue",
-    textDecorationLine: "underline",
+    color: "#378985",
+    // textDecorationLine: "underline",
     alignSelf: "flex-end",
     marginRight: 20,
     marginBottom: 40,

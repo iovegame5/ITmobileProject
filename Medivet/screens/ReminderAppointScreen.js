@@ -18,7 +18,6 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import firebase from "../database/firebase";
 import { useAuth } from "../Auth/AuthContext";
 
-
 const ReminderAppoint = ({ route, navigation }) => {
   const [queueowner_list, setQueueownerList] = useState([]);
   const [dbclinic, setDbclinic] = useState("");
@@ -31,12 +30,12 @@ const ReminderAppoint = ({ route, navigation }) => {
     { key: "fourth", title: "เลื่อนนัด" },
   ]);
   const { user, role, isAuthenticated, login, logout } = useAuth();
-  console.log(user.uid)
 
   const getCollection = (querySnapshot) => {
     const all_data = [];
     querySnapshot.forEach((res) => {
-      const { ClinicID, Date, OwnerID, PetID, Status, Time, StatusClinic } = res.data();
+      const { ClinicID, Date, OwnerID, PetID, Status, Time, StatusClinic } =
+        res.data();
       if (OwnerID === user.uid) {
         all_data.push({
           key: res.id,
@@ -46,7 +45,7 @@ const ReminderAppoint = ({ route, navigation }) => {
           PetID,
           Status,
           Time,
-          StatusClinic
+          StatusClinic,
         });
       }
     });
@@ -54,48 +53,46 @@ const ReminderAppoint = ({ route, navigation }) => {
     setQueueownerList(all_data);
   };
 
-
   useEffect(() => {
-    const unsubscribe = firebase.firestore()
+    const unsubscribe = firebase
+      .firestore()
       .collection("Appointment")
       .onSnapshot(getCollection);
-    
+
     return () => {
       unsubscribe();
     };
   }, []);
 
   if (queueowner_list.length > 0) {
-    const clinicName = firebase.firestore()
-    .collection("Clinic")
-    .doc(queueowner_list[0].ClinicID);
+    const clinicName = firebase
+      .firestore()
+      .collection("Clinic")
+      .doc(queueowner_list[0].ClinicID);
     clinicName.get().then((res) => {
-    if (res.exists) {
-      const clinicname = res.data();
-      setDbclinic(clinicname.name);
-      console.log(dbclinic)
-    } else {
-      console.log("Document does not exist!!");
-    }
-  });
+      if (res.exists) {
+        const clinicname = res.data();
+        setDbclinic(clinicname.name);
+        console.log(dbclinic);
+      } else {
+        console.log("Document does not exist!!");
+      }
+    });
 
-  const PetName = firebase.firestore()
-  .collection("Pet")
-  .doc(queueowner_list[0].PetID);
-  PetName.get().then((res) => {
-  if (res.exists) {
-    const petname = res.data();
-    setDbpet(petname.Name);
-    console.log(dbpet)
-  } else {
-    console.log("Document does not exist!!");
+    const PetName = firebase
+      .firestore()
+      .collection("Pet")
+      .doc(queueowner_list[0].PetID);
+    PetName.get().then((res) => {
+      if (res.exists) {
+        const petname = res.data();
+        setDbpet(petname.Name);
+        console.log(dbpet);
+      } else {
+        console.log("Document does not exist!!");
+      }
+    });
   }
-});
-  }
-
-
-
-  
 
   const renderTabBar = (props) => {
     return (
@@ -109,53 +106,80 @@ const ReminderAppoint = ({ route, navigation }) => {
     );
   };
 
-
   const FirstRoute = () => {
-  return (
-    <View className="flex-1 bg-white-100 items-center">
-      <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="รอการยืนยัน"></QueueOwner>
-    </View>
-  );
-}
-  const SecondRoute = () =>{
-  return (
-    <View className="flex-1 bg-white-100 items-center">
-      <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="นัดหมาย"></QueueOwner>
-    </View>
-
-  );}
+    return (
+      <View className="flex-1 bg-white-100 items-center">
+        <QueueOwner
+          queuedata={queueowner_list}
+          clinicname={dbclinic}
+          petname={dbpet}
+          navigation={navigation}
+          typestatus="รอการยืนยัน"
+        ></QueueOwner>
+      </View>
+    );
+  };
+  const SecondRoute = () => {
+    return (
+      <View className="flex-1 bg-white-100 items-center">
+        <QueueOwner
+          queuedata={queueowner_list}
+          clinicname={dbclinic}
+          petname={dbpet}
+          navigation={navigation}
+          typestatus="นัดหมาย"
+        ></QueueOwner>
+      </View>
+    );
+  };
 
   const ThirdRoute = () => {
-  return (
-    <View className="flex-1 bg-white-100 items-center">
-      <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="สำเร็จ"></QueueOwner>
-    </View>
-  );
-}
+    return (
+      <View className="flex-1 bg-white-100 items-center">
+        <QueueOwner
+          queuedata={queueowner_list}
+          clinicname={dbclinic}
+          petname={dbpet}
+          navigation={navigation}
+          typestatus="สำเร็จ"
+        ></QueueOwner>
+      </View>
+    );
+  };
   const FourthRoute = () => {
-  return (
-    <View className="flex-1 bg-white-100 items-center">
-      <QueueOwner queuedata={queueowner_list} clinicname={dbclinic} petname={dbpet} navigation={navigation} typestatus="เลื่อนนัด"></QueueOwner>
-    </View>
-  );
-}
+    return (
+      <View className="flex-1 bg-white-100 items-center">
+        <QueueOwner
+          queuedata={queueowner_list}
+          clinicname={dbclinic}
+          petname={dbpet}
+          navigation={navigation}
+          typestatus="เลื่อนนัด"
+        ></QueueOwner>
+      </View>
+    );
+  };
 
   const layout = useWindowDimensions();
 
   return (
     <View style={{ flex: 1 }}>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={SceneMap({
-          first: FirstRoute,
-          second: SecondRoute,
-          third: ThirdRoute,
-          fourth: FourthRoute,
-        })}
-        onIndexChange={setIndex}
-        renderTabBar={renderTabBar}
-        initialLayout={{ width: layout.width }}
-      />
+      {isAuthenticated ? ( // Check if the user is authenticated before rendering the TabView
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={SceneMap({
+            first: FirstRoute,
+            second: SecondRoute,
+            third: ThirdRoute,
+            fourth: FourthRoute,
+          })}
+          onIndexChange={setIndex}
+          renderTabBar={renderTabBar}
+          initialLayout={{ width: layout.width }}
+        />
+      ) : (
+        <Text>You are not logged in</Text>
+      )}
     </View>
   );
 };

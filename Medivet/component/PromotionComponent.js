@@ -17,8 +17,8 @@ const Promotion = ({ promotions }) => {
         />
         <Text style={styles.promotionTitle}>{item.promotionDetails}</Text>
         <Text stylle={{fontSize:16}}>ชื่อคลินิก: {item.clinicName}</Text>
-        <Text>วันที่เริ่ม: {startDate.toString()}</Text>
-        <Text>วันที่สิ้นสุด: {endDate.toString()}</Text>
+        <Text>วันที่เริ่ม: {startDate.toString().replace(' BE', '')}     วันที่สิ้นสุด: {endDate.toString().replace(' BE', '')}</Text>
+
         {/* Render other promotion details as needed */}
       </View>
     );
@@ -29,7 +29,7 @@ const Promotion = ({ promotions }) => {
       <Carousel
         layout={"default"}
         data={promotions}
-        sliderWidth={350}
+        sliderWidth={370}
         itemWidth={320}
         renderItem={renderPromotionCard}
       />
@@ -40,8 +40,8 @@ const Promotion = ({ promotions }) => {
 const styles = {
   promotionCard: {
     width: 320,
-    height: 350,
-    padding: 20,
+    height: 280,
+    // padding: 20,
     margin: 10,
 
     backgroundColor: "white",

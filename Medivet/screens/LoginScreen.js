@@ -50,6 +50,7 @@ const LoginScreen = ({ navigation }) => {
       // Login was successful, you can navigate to another screen here
     } catch (error) {
       // Handle the login error, e.g., show an alert
+      console.log(error.type)
       Alert.alert("เข้าสู่ระบบไม่สำเร็จ", "อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
       setError("อีเมลล์หรือรหัสผ่านไม่ถูกต้อง");
       setPassword(null);

@@ -17,6 +17,7 @@ import firebase from "../database/firebase";
 import * as Location from "expo-location";
 import Promotion from "../component/PromotionComponent";
 import { useNavigation } from "@react-navigation/native";
+import Loading from "../component/LoadingComponent";
 
 const auth = firebase.auth();
 const HomeScreen = (props) => {
@@ -30,18 +31,18 @@ const HomeScreen = (props) => {
 
   const fetchPromotions = async () => {
     setIsLoading(true);
-  
+
     try {
       const promotionsRef = firebase.firestore().collection("Promotions");
       const querySnapshot = await promotionsRef.get();
-  
+
       const promotionsData = [];
       const counter = { count: 0 }; // Counter to track the number of promotions fetched
-  
+
       querySnapshot.forEach(async (doc) => {
         const data = doc.data();
         const storageRef = firebase.storage().ref().child(data.imageFilename);
-  
+
         try {
           const url = await storageRef.getDownloadURL();
           const promotion = {
@@ -53,31 +54,37 @@ const HomeScreen = (props) => {
             endDate: data.endDate,
             // Add more fields as needed
           };
-  
+
           promotionsData.push(promotion);
           counter.count++;
-  
+
           if (counter.count === querySnapshot.size) {
             // All promotions have been fetched
             if (promotionsData.length > 0) {
               setPromotions(promotionsData);
-  
+
               // Fetch clinic details for each promotion
               const clinicsPromises = promotionsData.map(async (promotion) => {
-                const clinicRef = firebase.firestore().collection("Clinic").doc(promotion.clinic_id);
+                const clinicRef = firebase
+                  .firestore()
+                  .collection("Clinic")
+                  .doc(promotion.clinic_id);
                 const clinicSnapshot = await clinicRef.get();
                 const clinicData = clinicSnapshot.data();
-  
+
                 if (clinicData) {
                   promotion.clinicName = clinicData.name;
                   // Add more clinic details as needed
                 } else {
-                  console.error("Clinic data not found for promotion:", promotion);
+                  console.error(
+                    "Clinic data not found for promotion:",
+                    promotion
+                  );
                 }
               });
-  
+
               await Promise.all(clinicsPromises);
-  
+
               console.log(promotionsData);
               setIsLoading(false);
             }
@@ -91,7 +98,6 @@ const HomeScreen = (props) => {
       console.error("Error fetching promotions:", error);
     }
   };
-  
 
   console.log(auth.currentUser.uid);
   // const renderMealItem = (itemData) => {
@@ -115,9 +121,8 @@ const HomeScreen = (props) => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
-        // Show a loading indicator (e.g., ActivityIndicator) here.
-        <ActivityIndicator size="large" color="#3498db" />
+      {isLoading ? ( // Show loading indicator when isLoading is true
+        <Loading></Loading>
       ) : (
         <ScrollView style={{ flex: 1 }}>
           <View style={styles.container}>
@@ -156,7 +161,12 @@ const HomeScreen = (props) => {
                 }}
               >
                 <Text style={styles.header}>Common illnesses</Text>
-                <Text style={{ color: "blue" }} onPress={() => {navigation.navigate("ill")}}>
+                <Text
+                  style={{ color: "blue" }}
+                  onPress={() => {
+                    navigation.navigate("ill");
+                  }}
+                >
                   {" "}
                   all illnesses{" "}
                 </Text>
@@ -266,6 +276,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "500",
     marginVertical: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 20,
   },
 });
 
