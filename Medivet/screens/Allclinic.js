@@ -179,7 +179,9 @@ const Allclinic = ({ navigation }) => {
             console.log("Error Current location not available.");
           }
         } catch (error) {
-     
+          if(!userLocation){
+          getCurrentLocation();
+          }
         }
       }
     } catch (error) {

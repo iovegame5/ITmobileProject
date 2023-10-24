@@ -9,13 +9,14 @@ import {
   Linking,
   Alert,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import firebase from "../database/firebase";
 import { useAuth } from "../Auth/AuthContext";
 import Promotion from "../component/PromotionComponent";
-import { Callout, Marker,PROVIDER_GOOGLE } from "react-native-maps";
+import { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapView from "react-native-maps";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 import Loading from "../component/LoadingComponent";
 
 const ClinicDetail = ({ route, navigation }) => {
@@ -181,7 +182,7 @@ const ClinicDetail = ({ route, navigation }) => {
                     style={{ justifyContent: "center", alignItems: "center" }}
                   >
                     <MapView
-                     provider={PROVIDER_GOOGLE}
+                      provider={PROVIDER_GOOGLE}
                       scrollEnabled={false}
                       style={{ height: 200, width: 350, marginTop: 20 }}
                       initialRegion={{
@@ -199,7 +200,7 @@ const ClinicDetail = ({ route, navigation }) => {
                         title={clinicData.Name}
                         description="คลิกเพื่อเปิดไป google maps"
                       >
-                        <Callout 
+                        <Callout
                           onPress={() => {
                             Alert.alert(
                               "เปิดใน google maps?",
@@ -277,10 +278,10 @@ const ClinicDetail = ({ route, navigation }) => {
                       fontSize: 16,
                       marginLeft: 15,
                       marginTop: 13,
-                      marginLeft: 30,
+           
                     }}
                   >
-                    {clinicData.startTime} - {clinicData.endTime}
+                     จันทร์ - เสาร์   {clinicData.startTime} - {clinicData.endTime}
                   </Text>
                 </View>
                 <View
@@ -302,38 +303,41 @@ const ClinicDetail = ({ route, navigation }) => {
                 ) : (
                   <Text> ไม่มีโปรโมชั่น </Text>
                 )}
-                {clinicData.id == user.uid && isAuthenticated (
+                {clinicData.id == user.uid && isAuthenticated ? (
                   <View>
                     <TouchableOpacity style={styles.buttonContainer}>
                       <Text
                         style={{ fontSize: 20, color: "white" }}
                         onPress={() => {
                           navigation.navigate("addPromotion");
-                          console.log("add Promotion clic")
+                          console.log("add Promotion clic");
                         }}
                       >
                         เพิ่มโปรโมชั่น
                       </Text>
                     </TouchableOpacity>
                   </View>
-                )} 
+                ) : (
+                  <View></View>
+                )}
                 {role === "Owner" && (
-                   <View>
-                   <TouchableOpacity style={styles.buttonContainer}>
-                     <Text
-                       style={{ fontSize: 20, color: "white" }}
-                       onPress={() =>
-                         navigation.navigate("FormAppointment", {
-                           todo: "addQueue",
-                           ClinicID: clinicData.id,
-                           clinicName : clinicData.Name,
-                         })
-                       }
-                     >
-                       จองคิว
-                     </Text>
-                   </TouchableOpacity>
-                 </View>
+                  <View>
+                    <TouchableOpacity style={styles.buttonContainer}>
+                      <Text
+                        style={{ fontSize: 20, color: "white" }}
+                        onPress={() => {
+                          navigation.navigate("FormAppointment", {
+                            todo: "addQueue",
+                            ClinicID: clinicData.id,
+                            clinicName: clinicData.Name,
+                          });
+                          console.log("eiei");
+                        }}
+                      >
+                        จองคิว
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 )}
               </View>
             </SafeAreaView>
@@ -394,7 +398,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 40,
     elevation: 5,
-    zIndex:1
+    zIndex: 1,
   },
   loadingContainer: {
     flex: 1,
