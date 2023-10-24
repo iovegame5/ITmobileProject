@@ -177,14 +177,8 @@ const Allclinic = ({ navigation }) => {
             console.log("Error Current location not available.");
           }
         } catch (error) {
-          // Handle the timeout or any other errors
-          if (error instanceof TimeoutError) {
-            // Handle the timeout (custom handling) - don't log the error
-            getCurrentLocation();
-          } else {
-            // Handle other errors (not a timeout) and log them
-            console.error(error);
-          }
+          getCurrentLocation();
+          
         }
         // const currentLocation = await Location.getCurrentPositionAsync({
         //   accuracy: Location.Accuracy.Low, // Adjust this based on your needs

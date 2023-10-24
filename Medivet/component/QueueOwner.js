@@ -93,7 +93,7 @@ const QueueOwner = (props) => {
           <View className="flex flex-row justify-evenly items-center">
             <View className="w-2/5 items-center">
               <Image
-                source={require("../pics/promo1.jpeg")}
+                source={require("../pics/clinic.jpeg")}
                 className="h-32 w-28 rounded-lg"
               />
             </View>
@@ -122,7 +122,7 @@ const QueueOwner = (props) => {
         <View className="flex flex-row justify-around  w-72 h-44 rounded-2xl items-center">
           <View className="w-2/5 items-center">
             <Image
-              source={require("../pics/promo1.jpeg")}
+              source={require("../pics/clinic.jpeg")}
               className="h-2/3 w-28 rounded-lg"
             />
           </View>
@@ -172,7 +172,7 @@ const QueueOwner = (props) => {
         <View className="flex flex-row justify-evenly items-center">
           <View className="w-2/5 items-center">
             <Image
-              source={require("../pics/promo1.jpeg")}
+              source={require("../pics/clinic.jpeg")}
               className="h-32 w-28 rounded-lg"
             />
           </View>
@@ -205,7 +205,7 @@ const QueueOwner = (props) => {
           <View className="flex flex-row justify-evenly items-center">
             <View className="w-2/5 items-center">
               <Image
-                source={require("../pics/promo1.jpeg")}
+                source={require("../pics/clinic.jpeg")}
                 className="h-36 w-28 rounded-lg"
               />
             </View>
