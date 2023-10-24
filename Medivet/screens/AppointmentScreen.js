@@ -19,6 +19,7 @@ import { useAuth } from "../Auth/AuthContext";
 const AppointmentScreen =  ({ route, navigation }) => {
   const appointmentDB = firebase.firestore().collection("Appointment");
   const { user, role, isAuthenticated, login, logout } = useAuth();
+  console.log("role", role)
 
   const [Name, onChangeName] = React.useState("");
   const [open, setOpen] = useState(false);
@@ -52,10 +53,6 @@ const AppointmentScreen =  ({ route, navigation }) => {
 
     onChangePetname(all_data);
   };
-
-  console.log("------------------------------")
-  console.log("PetSelect " + value)
-  console.log(route.params.clinicID)
 
   useEffect(() => {
     console.log("route " + route.params.todo);
