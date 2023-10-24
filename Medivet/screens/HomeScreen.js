@@ -140,7 +140,7 @@ const HomeScreen = (props) => {
   };
 
   if (alldbappoint.length > 0) {
-    console.log()
+    
     const clinicName = firebase
       .firestore()
       .collection("Clinic")
