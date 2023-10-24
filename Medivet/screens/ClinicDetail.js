@@ -34,7 +34,7 @@ const ClinicDetail = ({ route, navigation }) => {
   const [promotions, setPromotions] = useState(null);
   const [currentPromotion, setCurrentPromotion] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, role } = useAuth();
 
   useEffect(() => {
     const {
@@ -199,7 +199,7 @@ const ClinicDetail = ({ route, navigation }) => {
                         title={clinicData.Name}
                         description="คลิกเพื่อเปิดไป google maps"
                       >
-                        <Callout
+                        <Callout 
                           onPress={() => {
                             Alert.alert(
                               "เปิดใน google maps?",
@@ -302,7 +302,7 @@ const ClinicDetail = ({ route, navigation }) => {
                 ) : (
                   <Text> ไม่มีโปรโมชั่น </Text>
                 )}
-                {clinicData.id == user.uid && isAuthenticated  ? (
+                {clinicData.id == user.uid && isAuthenticated (
                   <View>
                     <TouchableOpacity style={styles.buttonContainer}>
                       <Text
@@ -316,23 +316,24 @@ const ClinicDetail = ({ route, navigation }) => {
                       </Text>
                     </TouchableOpacity>
                   </View>
-                ) : (
-                  <View>
-                    <TouchableOpacity style={styles.buttonContainer}>
-                      <Text
-                        style={{ fontSize: 20, color: "white" }}
-                        onPress={() =>
-                          navigation.navigate("FormAppointment", {
-                            todo: "addQueue",
-                            ClinicID: clinicData.id,
-                            clinicName : clinicData.Name,
-                          })
-                        }
-                      >
-                        จองคิว
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+                )} 
+                {role === "Owner" && (
+                   <View>
+                   <TouchableOpacity style={styles.buttonContainer}>
+                     <Text
+                       style={{ fontSize: 20, color: "white" }}
+                       onPress={() =>
+                         navigation.navigate("FormAppointment", {
+                           todo: "addQueue",
+                           ClinicID: clinicData.id,
+                           clinicName : clinicData.Name,
+                         })
+                       }
+                     >
+                       จองคิว
+                     </Text>
+                   </TouchableOpacity>
+                 </View>
                 )}
               </View>
             </SafeAreaView>

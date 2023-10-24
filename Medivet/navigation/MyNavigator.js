@@ -30,7 +30,7 @@ import FixpetScreen from "../screens/Fixpet";
 import AllclinicScreen from "../screens/Allclinic";
 import ClinicDetailScreen from "../screens/ClinicDetail";
 import Allillness from "../screens/Allillness";
-import IllnessDetail from "../screens/illnessDetail";
+import illnessDetail from "../screens/illnessDetail";
 import CustomDrawerContent from "../component/CustomDrawerContent";
 import AddPromotionScreen from "../screens/AddPromotion";
 
@@ -41,7 +41,8 @@ const Queue = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 function LogoTitle() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
+  console.log("user", user);
   return (
     <View
       style={{
@@ -49,7 +50,7 @@ function LogoTitle() {
         flex: 1,
         justifyContent: "flex-end", // Center vertically
         alignItems: "center",
-        maxWidth:"100%",
+        maxWidth: "100%",
       }}
     >
       <View
@@ -64,12 +65,16 @@ function LogoTitle() {
           style={{ width: 40, height: 40, borderRadius: 25 }}
           source={require("../pics/userpic.jpeg")}
         />
-          {user && (
-        <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
-        {user.firstName} {user.lastName}
-        </Text>
+        {role == "Owner" && (
+          <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
+            {user.firstName} {user.lastName}
+          </Text>
         )}
-          
+        {role == "Clinic" && (
+          <Text ellipsizeMode="tail" style={{ marginLeft: "5%" }}>
+            {user.name}
+          </Text>
+        )}
       </View>
       {/* <Text style={{ marginRight: '8%' }}>Log out</Text> */}
     </View>
@@ -87,7 +92,7 @@ function LoginNavigator() {
       <Stack.Screen
         name="LoginPage"
         component={LoginScreen}
-        options={{ headerBackVisible: false,headerShown: false }}
+        options={{ headerBackVisible: false, headerShown: false }}
       />
       <Stack.Screen name="RegisterPage" component={RegisterScreen} />
     </Stack.Navigator>
@@ -141,7 +146,9 @@ function Petnavigate() {
       />
 
       <Stack.Screen name="AddPet" component={Addpet} />
-      <Stack.Screen name="Edit animal information" component={FixpetScreen} />
+      <Stack.Screen name="Edit animal information" component={FixpetScreen} options= {{
+        headerTitle:"เปลี่ยนข้อมูลสัตว์เลี้ยง"
+      }}/>
     </Stack.Navigator>
   );
 }
@@ -165,7 +172,7 @@ function Illnessnavigate() {
           headerTitle: "โรคที่พบได้ทั่วไป",
         }}
       />
-      <Stack.Screen name="IllnessDetail" component={IllnessDetail} />
+      <Stack.Screen name="IllnessDetail" component={illnessDetail} />
     </Stack.Navigator>
   );
 }
@@ -206,31 +213,31 @@ function Profiles() {
 
 function AppointmentNavigator() {
   const { user, role, isAuthenticated, login, logout } = useAuth();
-  console.log(role)
+  console.log(role);
   return (
-
     <Appointment.Navigator>
       {role === "Clinic" ? (
-      <Appointment.Screen
-        name="DoctorAppointment"
-        component={QueueAppoint}
-        options={{
-          headerStyle: {
-            backgroundColor: "#E3F4F4",
-          },
-        }}
-      /> ) : (
         <Appointment.Screen
-        name="ReminderAppointment"
-        component={ReminderAppoint}
-        options={{
-          headerStyle: {
-            backgroundColor: "#E3F4F4",
-          },
-        }}
-      /> 
+          name="DoctorAppointment"
+          component={QueueAppoint}
+          options={{
+            headerStyle: {
+              backgroundColor: "#E3F4F4",
+            },
+          }}
+        />
+      ) : (
+        <Appointment.Screen
+          name="ReminderAppointment"
+          component={ReminderAppoint}
+          options={{
+            headerStyle: {
+              backgroundColor: "#E3F4F4",
+            },
+          }}
+        />
       )}
-       <Appointment.Screen
+      <Appointment.Screen
         name="FormAppointment"
         component={AppointmentScreen}
         options={{
@@ -261,9 +268,8 @@ function QueueNavigator() {
         options={{
           headerStyle: {
             backgroundColor: "#E3F4F4",
-            
           },
-          headerTitle:"รายละเอียดคลินิก"
+          headerTitle: "รายละเอียดคลินิก",
         }}
       />
       <Queue.Screen
@@ -273,7 +279,6 @@ function QueueNavigator() {
           headerShown: true,
           headerTitle: "เพิ่มโปรโมชั่น",
         }}
-      
       />
       <Queue.Screen
         name="FormAppointment"
@@ -296,7 +301,6 @@ function QueueNavigator() {
     </Queue.Navigator>
   );
 }
-
 
 function TabNavigator() {
   const { user, role, isAuthenticated, login, logout } = useAuth();
@@ -358,6 +362,7 @@ function TabNavigator() {
 }
 
 function DrawerNavigator() {
+  const { user, role } = useAuth();
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -390,7 +395,18 @@ function DrawerNavigator() {
           headerShown: false,
         }}
       />
-   
+      {role ==="Clinic" &&(
+         <Drawer.Screen
+         name="addPromotion"
+         component={AddPromotionScreen}
+         options={{
+           drawerLabel: "เพิ่มโปรโมชั่น",
+           headerShown: true,
+          headerTitl:"เพิ่มโปรโมชั่น"
+         }}
+       />
+      )}
+      
     </Drawer.Navigator>
   );
 }

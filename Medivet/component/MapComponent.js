@@ -126,15 +126,15 @@ function MapComponent(
     console.log("Press");
     // Ask the user for confirmation
     Alert.alert(
-      "Open in Google Maps?",
-      "Do you want to open this location in Google Maps?",
+      "เปิดใน google maps?",
+      "ต้องการเปิดสถานที่นี้ใน google maps หรือไม่",
       [
         {
-          text: "No",
+          text: "ไม่",
           style: "cancel",
         },
         {
-          text: "Yes",
+          text: "ใช่",
           onPress: () => openLocationInGoogleMaps(latitude, longtitude),
         },
       ]
@@ -213,6 +213,8 @@ function MapComponent(
                   )
                 }
               >
+                <Text>{location.name}</Text>
+                
            
               </Callout>
             </Marker>
