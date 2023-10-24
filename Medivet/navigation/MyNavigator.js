@@ -146,7 +146,9 @@ function Petnavigate() {
       />
 
       <Stack.Screen name="AddPet" component={Addpet} />
-      <Stack.Screen name="Edit animal information" component={FixpetScreen} />
+      <Stack.Screen name="Edit animal information" component={FixpetScreen} options= {{
+        headerTitle:"เปลี่ยนข้อมูลสัตว์เลี้ยง"
+      }}/>
     </Stack.Navigator>
   );
 }

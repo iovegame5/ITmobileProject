@@ -21,8 +21,10 @@ import firebase from "../database/firebase";
 
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import { useNavigation } from "@react-navigation/native";
 
 const Addpet = () => {
+  const navigation = useNavigation();
   const [showAllSpecies, setShowAllSpecies] = useState(false);
 
   const Speciedog = [
@@ -229,6 +231,7 @@ const Addpet = () => {
   // };
 
   const storeSubject = async () => {
+
     try {
       if (!image) {
         Alert.alert("โปรดเลือกรูปภาพ");

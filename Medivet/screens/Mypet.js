@@ -144,7 +144,7 @@ class Mypet extends Component {
                         </Text>
                       </View>
                       <View style={{ marginTop: 10, marginLeft: 40 }}>
-                        <Button title="แก้ไขข้อมูล"   color="#378985"onPress={ () => { navigation.navigate("Edit pet information", {key:item.key, Name: item.Name, Detail: item.Detail,  Gender: item.Gender, Image: item.Image, PetType : item.PetType,  Type : item.Type, DateofBirth: item.DateofBirth, Weight : item.Weight}); } } />
+                        <Button title="แก้ไขข้อมูล"   color="#378985"onPress={ () => { navigation.navigate("Edit animal information", {key:item.key, Name: item.Name, Detail: item.Detail,  Gender: item.Gender, Image: item.Image, PetType : item.PetType,  Type : item.Type, DateofBirth: item.DateofBirth, Weight : item.Weight}); } } />
                       </View>
                     </View>
                   </View>
