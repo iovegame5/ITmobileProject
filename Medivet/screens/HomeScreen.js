@@ -156,7 +156,7 @@ const HomeScreen = (props) => {
                 }}
               >
                 <Text style={styles.header}>Common illnesses</Text>
-                <Text style={{ color: "blue" }} onPress={() => {navigation.navigate("Allillness")}}>
+                <Text style={{ color: "blue" }} onPress={() => {navigation.navigate("ill")}}>
                   {" "}
                   all illnesses{" "}
                 </Text>

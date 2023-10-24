@@ -39,7 +39,6 @@ const Allclinic = ({ navigation }) => {
 
   const { user, role, isAuthenticated, login, logout } = useAuth();
 
-
   const [isLoading, setIsLoading] = useState(true);
   const [clinics, setClinics] = useState([]);
   const [search, setSearch] = useState("");
@@ -97,7 +96,6 @@ const Allclinic = ({ navigation }) => {
       console.log("userLocatiom : ", userLocation); // Log within this function
 
       const sortedClinics = clinicData.slice().sort((clinicA, clinicB) => {
-  
         const distanceA = geolib.getDistance(
           {
             latitude: clinicA.address.latitude,
@@ -150,18 +148,23 @@ const Allclinic = ({ navigation }) => {
     setIsLoading(true);
     try {
       console.log("get Location Current");
-      if(!userLocation){
-        console.log("ไม่เจอ user location เลยขอท่อยู่")
-      const currentLocation =  Location.getCurrentPositionAsync({});
-      if (currentLocation) {
-        setUserLocation(currentLocation.coords);
-        console.log("ไม่เจอ user location เลยขอท่อยู่")
-        if(!userLocation){
+      if (!userLocation) {
+        console.log("ไม่เจอ user location เลยขอท่อยู่");
+        const currentLocation = await Location.getCurrentPositionAsync({});
+        if (currentLocation) {
+          await setUserLocation(currentLocation.coords);
+          console.log("ไม่เจอ user location เลยขอท่อยู่");
+          if (!userLocation) {
+           await getCurrentLocation();
+
+          }
+          else{
+            
+          }
+        } else {
+          console.log("Error Current location not available.");
         }
-      } else {
-        console.log("Error Current location not available.");
       }
-    }
     } catch (error) {
       console.error("Error getting current location:", error);
       setIsLoading(false);
@@ -169,15 +172,13 @@ const Allclinic = ({ navigation }) => {
   };
 
   useEffect(() => {
-
     getCurrentLocation();
   }, []);
   useEffect(() => {
- 
     if (userLocation) {
       fetchClinics();
-    } 
-    if(!userLocation){
+    }
+    if (!userLocation) {
       getCurrentLocation();
     }
   }, [userLocation]); // Add a new useEffect to log userLocation when it changes
@@ -228,7 +229,7 @@ const Allclinic = ({ navigation }) => {
           </View>
           {isLoading ? ( // Show loading indicator when isLoading is true
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#3498db" />
+              <ActivityIndicator size="large" color="#378985" />
               <Text style={styles.loadingText}>รอซักครู่...</Text>
             </View>
           ) : (

@@ -75,7 +75,7 @@ const RegisterScreen = ({ navigation }) => {
           .getMinutes()
           .toString()
           .padStart(2, "0")}`
-      : "เลือกเวลา";
+      : "เลือกเวลาทำการ";
   };
 
   // error

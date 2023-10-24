@@ -16,9 +16,9 @@ const Promotion = ({ promotions }) => {
           source={{ uri: item.imageFilename }}
         />
         <Text style={styles.promotionTitle}>{item.promotionDetails}</Text>
-        <Text>{item.clinicName}</Text>
-        <Text>Start Date: {startDate.toString()}</Text>
-        <Text>End Date: {endDate.toString()}</Text>
+        <Text stylle={{fontSize:16}}>ชื่อคลินิก: {item.clinicName}</Text>
+        <Text>วันที่เริ่ม: {startDate.toString()}</Text>
+        <Text>วันที่สิ้นสุด: {endDate.toString()}</Text>
         {/* Render other promotion details as needed */}
       </View>
     );
@@ -48,10 +48,16 @@ const styles = {
     borderRadius: 10,
     elevation: 5,
     alignItems: "center",
-    justifyItems: "center"
+    justifyItems: "center",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3.84,
   },
   promotionImage: {
-    alignSelf:"center",
+    alignSelf: "center",
     width: 300,
     height: 200,
     resizeMode: "cover",
