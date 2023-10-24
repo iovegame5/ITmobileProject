@@ -16,13 +16,8 @@ export default function App() {
 
 
     <AuthProvider>
-      {/* <MyNavigator></MyNavigator> */}
-
-          {/* <MyComponent/> */}
-    
-      {/* <QueueAppoint/> */}
-      <Allclinic></Allclinic>
-  
+     
+      <MyNavigator></MyNavigator>  
     </AuthProvider>
 
 
