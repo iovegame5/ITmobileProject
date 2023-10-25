@@ -11,7 +11,6 @@ import {
   Button,
   Alert,
   FlatList,
-  
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -21,12 +20,11 @@ const QueueOwner = (props) => {
   const appointmentDB = firebase.firestore().collection("Appointment");
 
   function SubmitChange(prop) {
-    const subjDoc = firebase.firestore()
-      .collection("Appointment")
-      .doc(prop);
+    const subjDoc = firebase.firestore().collection("Appointment").doc(prop);
     subjDoc.get().then((res) => {
       if (res.exists) {
-        const updateChangeQueue = firebase.firestore()
+        const updateChangeQueue = firebase
+          .firestore()
           .collection("Appointment")
           .doc(prop);
         updateChangeQueue
@@ -37,7 +35,7 @@ const QueueOwner = (props) => {
             PetID: res.data().PetID,
             Status: "นัดหมาย",
             Time: res.data().Time,
-            StatusClinic: "นัดหมาย"
+            StatusClinic: "นัดหมาย",
           })
           .then(() => {
             Alert.alert(
@@ -52,12 +50,11 @@ const QueueOwner = (props) => {
   }
 
   function abortAppointment(prop) {
-    const subjDoc = firebase.firestore()
-      .collection("Appointment")
-      .doc(prop);
+    const subjDoc = firebase.firestore().collection("Appointment").doc(prop);
     subjDoc.get().then((res) => {
       if (res.exists) {
-        const updateChangeQueue = firebase.firestore()
+        const updateChangeQueue = firebase
+          .firestore()
           .collection("Appointment")
           .doc(prop);
         updateChangeQueue
@@ -68,7 +65,7 @@ const QueueOwner = (props) => {
             PetID: res.data().PetID,
             Status: "ยกเลิก",
             Time: res.data().Time,
-            StatusClinic: "ยกเลิก"
+            StatusClinic: "ยกเลิก",
           })
           .then(() => {
             Alert.alert(
@@ -82,9 +79,8 @@ const QueueOwner = (props) => {
     });
   }
 
-
   const WaitQueue = (prop) => {
-    console.log(prop)
+    console.log(prop);
     return (
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
         <View className="w-72 h-44 rounded-2xl">
@@ -93,12 +89,15 @@ const QueueOwner = (props) => {
           </Text>
           <View className="flex flex-row justify-evenly items-center">
             <View className="w-2/5 items-center">
-            <Image source={{ uri: prop.clinicImage }} 
+              <Image
+                source={{ uri: prop.clinicImage }}
                 className="h-32 w-28 rounded-lg"
               />
             </View>
             <View className="w-3/6 gap-1">
-              <Text className=" text-base font-semibold">{prop.ClinicName}</Text>
+              <Text className=" text-base font-semibold">
+                {prop.ClinicName}
+              </Text>
               <View className="flex flex-row items-center">
                 <AntDesign name="calendar" size={20} color="rgb(14 116 144)" />
                 <Text className="text-sm text-blue-700 font-semibold">
@@ -121,8 +120,8 @@ const QueueOwner = (props) => {
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
         <View className="flex flex-row justify-around  w-72 h-44 rounded-2xl items-center">
           <View className="w-2/5 items-center">
-            <Image source={{ uri: prop.clinicImage }} 
-              
+            <Image
+              source={{ uri: prop.clinicImage }}
               className="h-2/3 w-28 rounded-lg"
             />
           </View>
@@ -148,13 +147,17 @@ const QueueOwner = (props) => {
                     editfrom: "Owner",
                     clinicName: prop.ClinicName,
                     clinicID: prop.ClinicID,
-                    ownerName: prop.ownerName
+                    ownerName: prop.ownerName,
                   });
                 }}
                 title="แก้ไข"
                 color="#379895"
               />
-              <Button onPress={() => abortAppointment(prop.Key)} title="ยกเลิก" color="#FD6262" />
+              <Button
+                onPress={() => abortAppointment(prop.Key)}
+                title="ยกเลิก"
+                color="#FD6262"
+              />
             </View>
           </View>
         </View>
@@ -165,32 +168,40 @@ const QueueOwner = (props) => {
   const CompleteQueue = (prop) => {
     return (
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
-      <View className="w-72 h-44 rounded-2xl">
-        <Text className="text-right text-orange-700 mr-2 mt-2">
-          {prop.Status}
-        </Text>
-        <View className="flex flex-row justify-evenly items-center">
-          <View className="w-2/5 items-center">
-          <Image source={{ uri: prop.clinicImage }} 
-              className="h-32 w-28 rounded-lg"
-            />
-          </View>
-          <View className="w-3/6 gap-1">
-            <Text className=" text-base font-semibold">{prop.ClinicName}</Text>
-            <View className="flex flex-row items-center">
-              <AntDesign name="calendar" size={20} color="rgb(14 116 144)" />
-              <Text className="text-sm text-blue-700 font-semibold">
-                {prop.Date}
-              </Text>
-            </View>
-            <Text className="text-sm text-blue-700 font-semibold">
-              {prop.Time}
+        <View className="w-72 h-44 rounded-2xl">
+          {prop.Status == "สำเร็จ" ? (
+            <Text className="text-right text-green-700 mr-2 mt-2">
+              {prop.Status}
             </Text>
-            <Text className="text-sm">{prop.PetName}</Text>
+          ):(<Text className="text-right text-orange-700 mr-2 mt-2">
+          {prop.Status}
+        </Text>)}
+          
+          <View className="flex flex-row justify-evenly items-center">
+            <View className="w-2/5 items-center">
+              <Image
+                source={{ uri: prop.clinicImage }}
+                className="h-32 w-28 rounded-lg"
+              />
+            </View>
+            <View className="w-3/6 gap-1">
+              <Text className=" text-base font-semibold">
+                {prop.ClinicName}
+              </Text>
+              <View className="flex flex-row items-center">
+                <AntDesign name="calendar" size={20} color="rgb(14 116 144)" />
+                <Text className="text-sm text-blue-700 font-semibold">
+                  {prop.Date}
+                </Text>
+              </View>
+              <Text className="text-sm text-blue-700 font-semibold">
+                {prop.Time}
+              </Text>
+              <Text className="text-sm">{prop.PetName}</Text>
+            </View>
           </View>
         </View>
       </View>
-    </View>
     );
   };
 
@@ -203,12 +214,15 @@ const QueueOwner = (props) => {
           </Text>
           <View className="flex flex-row justify-evenly items-center">
             <View className="w-2/5 items-center">
-            <Image source={{ uri: prop.clinicImage }} 
+              <Image
+                source={{ uri: prop.clinicImage }}
                 className="h-36 w-28 rounded-lg"
               />
             </View>
             <View className="w-3/6 gap-1">
-              <Text className=" text-base font-semibold">{prop.ClinicName}</Text>
+              <Text className=" text-base font-semibold">
+                {prop.ClinicName}
+              </Text>
               <View className="flex flex-row items-center">
                 <AntDesign name="calendar" size={20} color="rgb(14 116 144)" />
                 <Text className="text-sm text-blue-700 font-semibold">
@@ -226,7 +240,11 @@ const QueueOwner = (props) => {
                   title="ยืนยัน"
                   color="#379895"
                 />
-                <Button onPress={() => abortAppointment(prop.Key)} title="ยกเลิก" color="#FD6262" />
+                <Button
+                  onPress={() => abortAppointment(prop.Key)}
+                  title="ยกเลิก"
+                  color="#FD6262"
+                />
               </View>
             </View>
           </View>
@@ -245,7 +263,7 @@ const QueueOwner = (props) => {
           PetName={itemData.item.petName}
           Key={itemData.item.key}
           ClinicID={itemData.item.ClinicID}
-          clinicImage = {itemData.item.clinicImage}
+          clinicImage={itemData.item.clinicImage}
         />
       );
     } else if (
@@ -259,7 +277,7 @@ const QueueOwner = (props) => {
           Time={itemData.item.Time}
           PetName={itemData.item.petName}
           ClinicID={itemData.item.ClinicID}
-          clinicImage = {itemData.item.clinicImage}
+          clinicImage={itemData.item.clinicImage}
         />
       );
     } else if (
@@ -274,11 +292,13 @@ const QueueOwner = (props) => {
           PetName={itemData.item.petName}
           Key={itemData.item.key}
           ClinicID={itemData.item.ClinicID}
-          clinicImage = {itemData.item.clinicImage}
+          clinicImage={itemData.item.clinicImage}
         />
       );
-    } else if ( props.typestatus === "สำเร็จ" &&
-    (itemData.item.Status === "เลื่อนนัด" || itemData.item.Status === "ยกเลิก")) {
+    } else if (
+      props.typestatus === "สำเร็จ" &&
+      (itemData.item.Status === "สำเร็จ" || itemData.item.Status === "ยกเลิก")
+    ) {
       return (
         <CompleteQueue
           ClinicName={itemData.item.clinicName}
@@ -287,18 +307,22 @@ const QueueOwner = (props) => {
           PetName={itemData.item.petName}
           ClinicID={itemData.item.ClinicID}
           Status={itemData.item.Status}
-          clinicImage = {itemData.item.clinicImage}
+          clinicImage={itemData.item.clinicImage}
         />
-      )
+      );
     }
   };
 
-  return <View style={{padding:10}} className="justify-center items-center "><FlatList data={props.queuedata} renderItem={renderQueueItem} /></View>;
+  return (
+    <View style={{ padding: 10 }} className="justify-center items-center ">
+      <FlatList data={props.queuedata} renderItem={renderQueueItem} />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
   shadow: {
-    margin:10,
+    margin: 10,
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 10 },
     shadowRadius: 12.5,
