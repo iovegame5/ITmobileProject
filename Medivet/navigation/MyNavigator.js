@@ -310,7 +310,7 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: "black",
+        tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "black",
         tabBarStyle: { backgroundColor: "#52A9A8" },
         tabBarLabelStyle: { fontSize: 15 },
@@ -321,7 +321,7 @@ function TabNavigator() {
         component={HomeNavigator}
         options={{
           tabBarIcon: ({ color, size }) => {
-            return <Ionicons name="home" size={24} color="white" />;
+            return <Ionicons name="home" size={24} color={color} />;
           },
           headerShown: false,
         }}
@@ -332,7 +332,7 @@ function TabNavigator() {
           component={Petnavigate}
           options={{
             tabBarIcon: ({ color, size }) => {
-              return <MaterialIcons name="pets" size={24} color="white" />;
+              return <MaterialIcons name="pets" size={24} color={color} />;
             },
             headerShown: false,
           }}
@@ -344,7 +344,7 @@ function TabNavigator() {
         options={{
           tabBarIcon: ({ color, size }) => {
             return (
-              <FontAwesome5 name="clinic-medical" size={24} color="white" />
+              <FontAwesome5 name="clinic-medical" size={24} color={color} />
             );
           },
           headerShown: false,
@@ -355,7 +355,7 @@ function TabNavigator() {
         component={AppointmentNavigator}
         options={{
           tabBarIcon: ({ color, size }) => {
-            return <FontAwesome name="calendar" size={24} color="white" />;
+            return <FontAwesome name="calendar" size={24} color={color} />;
           },
           headerShown: false,
         }}
