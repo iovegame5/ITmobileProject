@@ -55,7 +55,7 @@ function AllIllness({ navigation }) {
                   });
                 }}
               >
-                <Text style={styles.textStyle}  onPress={ () => { navigation.navigate("IllnessDetail", {key:item.key, illnessName: item.illnessName, Symytoms: item.Symytoms, Detail: item.Detail, Cause: item.Cause, Image: item.Image }); } }>ดูข้อมูล</Text>
+                <Text style={styles.textStyle}  onPress={ () => { navigation.navigate("IllnessDetail", {key:item.key, illnessName: item.illnessName, Symytoms: item.Symytoms, Detail: item.Detail, Cause: item.Cause, image: item.Image }); } }>ดูข้อมูล</Text>
               </Pressable>
             </View>
           </View>
