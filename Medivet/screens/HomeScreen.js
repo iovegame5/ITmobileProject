@@ -23,11 +23,11 @@ const auth = firebase.auth();
 const HomeScreen = (props) => {
   const { user, role, login, logout } = useAuth();
   const navigation = useNavigation();
-  const [alldbappoint, setalldbappoint] = useState([]);
+  const [alldbappoint, setalldbappoint] = useState(null);
   const [promotions, setPromotions] = useState(null);
   const [namedb, setnamedb] = useState("");
   const [detaildb, setdetaildb] = useState("");
-  const [datecoming, setdatecoming] = useState("");
+  const [datecoming, setdatecoming] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { isAuthenticated } = useAuth();
 
@@ -61,10 +61,9 @@ const HomeScreen = (props) => {
   //   }
   // };
 
-  useEffect(() => {
+ /*  useEffect(() => {
     if (alldbappoint.length > 0) {
       if (role === "Owner") {
-        console.log(alldbappoint);
         const clinicID = alldbappoint[0].ClinicID;
 
         // Fetch clinic data
@@ -101,7 +100,7 @@ const HomeScreen = (props) => {
           });
       }
     }
-  }, [alldbappoint, role]);
+  }, [alldbappoint, role]); */
   // useEffect(() => {
   //   const unsubscribe = firebase
   //     .firestore()
@@ -118,10 +117,21 @@ const HomeScreen = (props) => {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = firebase.firestore()
+    .collection("Appointment")
+    .onSnapshot(fetchAppointment);
+
+    return () => {
+      unsubscribe();
+    }
+  }, []);
   useEffect(() => {
     if (!isAuthenticated) {
       navigation.navigate("Main");
     } else {
+      fetchAppointment();
       fetchPromotions();
       Location.requestForegroundPermissionsAsync();
     }
@@ -187,8 +197,109 @@ const HomeScreen = (props) => {
 
               await Promise.all(clinicsPromises);
 
-              console.log(promotionsData);
               setIsLoading(false);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching image:", error);
+          setIsLoading(false);
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching promotions:", error);
+    }
+  };
+
+  const fetchAppointment = async () => {
+    setIsLoading(true);
+
+    try {
+      const appointRef = firebase.firestore().collection("Appointment").orderBy("Date");
+      const querySnapshot = await appointRef.get();
+      if (querySnapshot.empty) {
+        // Check if there are no promotions
+        setIsLoading(false); // Set isLoading to false
+        return;
+      }
+      const appointData = [];
+      const counter = { count: 0 }; // Counter to track the number of promotions fetched
+
+      querySnapshot.forEach(async (doc) => {
+        const data = doc.data();
+        try {
+          /* const url = await storageRef.getDownloadURL(); */
+            if (user.uid === data.OwnerID || user.uid === data.ClinicID) {
+              const allappointment = {
+                id: doc.id,
+                ClinicID: data.ClinicID,
+                Date: data.Date,
+                OwnerID: data.OwnerID,
+                PetID: data.PetID,
+                Status: data.Status,
+                StatusClinic: data.StatusClinic,
+                Time: data.Time
+                // Add more fields as needed
+              };
+              appointData.push(allappointment);
+            }
+         
+          counter.count++;
+
+          if (counter.count === querySnapshot.size) {
+            // All promotions have been fetched
+            if (appointData.length > 0) {
+
+              // Fetch clinic details for each promotion
+              const Promises = appointData.map(async (queue) => {
+                const clinicRef = firebase
+                  .firestore()
+                  .collection("Clinic")
+                  .doc(queue.ClinicID);
+                const clinicSnapshot = await clinicRef.get();
+                const clinicData = clinicSnapshot.data();
+                const storageimgclinic = firebase.storage().ref().child(clinicData.clinicImage);
+                const url = await storageimgclinic.getDownloadURL();
+                
+                const petRef = firebase
+                  .firestore()
+                  .collection("Pet")
+                  .doc(queue.PetID);
+                const petSnapshot = await petRef.get();
+                const petData = petSnapshot.data();
+                const storageimgpet = firebase.storage().ref().child(petData.Image);
+                const urlpet = await storageimgpet.getDownloadURL();
+
+                const ownerRef = firebase
+                  .firestore()
+                  .collection("Owner")
+                  .doc(queue.OwnerID);
+                const ownerSnapshot = await ownerRef.get();
+                const ownerData = ownerSnapshot.data();
+
+                if (clinicData && petData) {
+                  queue.clinicName = clinicData.name;
+                  queue.clinicImage = url
+                  queue.pettype = petData.PetType
+                  queue.type = petData.Type
+                  queue.petImage = urlpet
+                  queue.petName = petData.Name
+                  queue.ownerName = ownerData.firstName + " " + ownerData.lastName
+                  // Add more clinic details as needed
+                } else {
+                  console.error(
+                    "Clinic data not found for promotion:",
+                    queue
+                  );
+                  console.error(
+                    "Pet data not found", queue
+                  )
+                }
+
+              });
+
+              await Promise.all(Promises);
+              setIsLoading(false);
+              setalldbappoint(appointData);
             }
           }
         } catch (error) {
@@ -260,17 +371,16 @@ const HomeScreen = (props) => {
             {/* // upcoming appointment */}
             <View>
               <Text style={styles.header}>การนัดที่กำลังมาถึง</Text>
-              {alldbappoint.length == 0 && (
+              {alldbappoint === null && (
                    <View style={styles.upcoming_box}>
                    <View style={styles.infoappoint}>
-                     <Text style={styles.txtinfoappoint}>{namedb}</Text>
+                     <Text style={styles.txtinfoappoint}></Text>
                      <Text style={{fontSize:14, alignSelf:"center"}}>
                      ไม่มีการนัดหมาย
                      </Text>
                      <View
                        style={{ flexDirection: "row", alignItems: "center" }}
                      >
-                       <AntDesign name="calendar" size={20} color="black" />
                        <Text style={styles.txtinfoappoint}>
                          {" "}
                       
@@ -280,14 +390,13 @@ const HomeScreen = (props) => {
                 
                  </View>
               )}
-              {alldbappoint.length > 0 && (
-                <View>
-                  {role === "Owner" && (
+              {alldbappoint !== null && 
+                  role === "Owner" && (
                     <View style={styles.upcoming_box}>
                       <View style={styles.infoappoint}>
-                        <Text style={styles.txtinfoappoint}>{namedb}</Text>
+                        <Text style={styles.txtinfoappoint}>{alldbappoint[0].clinicName}</Text>
                         <Text style={styles.txtinfoappoint}>
-                          {"ชื่อสัตว์เลี้ยง : " + detaildb}
+                          {"ชื่อสัตว์เลี้ยง : " + alldbappoint[0].petName}
                         </Text>
                         <View
                           style={{ flexDirection: "row", alignItems: "center" }}
@@ -297,27 +406,26 @@ const HomeScreen = (props) => {
                             {" "}
                             {alldbappoint[0].Date +
                               " , " +
-                              alldbappoint[0].Time.substring(0, 5) +
-                              " am"}
+                              alldbappoint[0].Time.substring(0, 5) }
                           </Text>
                         </View>
                       </View>
                       <View style={styles.picappoint}>
                         <Image
-                          source={require("../pics/Howlcastel.jpeg")}
+                          source={{uri: alldbappoint[0].clinicImage}}
                           style={styles.piconappoint}
                         />
                       </View>
                     </View>
                   )}
 
-                  {role === "Clinic" && (
+                  {alldbappoint !== null && role === "Clinic" && (
                     <View style={styles.upcoming_box}>
                       <View style={styles.infoappoint}>
                         <Text style={styles.txtinfoappoint}>
-                          ชื่อ {detaildb}
+                          เจ้าของ : {alldbappoint[0].ownerName}
                         </Text>
-                        <Text style={styles.txtinfoappoint}>พันธุ์{}</Text>
+                        <Text style={styles.txtinfoappoint}>พันธุ์ : {alldbappoint[0].type}</Text>
                         <View
                           style={{ flexDirection: "row", alignItems: "center" }}
                         >
@@ -326,8 +434,7 @@ const HomeScreen = (props) => {
                             {" "}
                             {alldbappoint[0].Date +
                               ", " +
-                              alldbappoint[0].Time.substring(0, 5) +
-                              "am"}
+                              alldbappoint[0].Time.substring(0, 5) }
                           </Text>
                         </View>
                       </View>
@@ -340,8 +447,8 @@ const HomeScreen = (props) => {
                     </View>
                   )}
                 </View>
-              )}
-            </View>
+              
+            
 
             {/* // common illnesses */}
             <View>
@@ -374,7 +481,7 @@ const HomeScreen = (props) => {
                 </View>
                 <View style={styles.commonill}>
                   <Image
-                    source={require("../pics/catill.jpeg")}
+                    source={require("../pics/cat.jpeg")}
                     style={styles.picill}
                   />
                   <Text>Cat</Text>

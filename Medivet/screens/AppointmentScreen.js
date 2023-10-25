@@ -19,7 +19,6 @@ import { useAuth } from "../Auth/AuthContext";
 const AppointmentScreen =  ({ route, navigation }) => {
   const appointmentDB = firebase.firestore().collection("Appointment");
   const { user, role, isAuthenticated, login, logout } = useAuth();
-  console.log("role", role)
 
   const [Name, onChangeName] = React.useState("");
   const [open, setOpen] = useState(false);
