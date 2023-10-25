@@ -30,10 +30,9 @@ import FixpetScreen from "../screens/Fixpet";
 import AllclinicScreen from "../screens/Allclinic";
 import ClinicDetailScreen from "../screens/ClinicDetail";
 import Allillness from "../screens/Allillness";
-import illnessDetail from "../screens/illnessDetail";
 import CustomDrawerContent from "../component/CustomDrawerContent";
 import AddPromotionScreen from "../screens/AddPromotion";
-
+import IllnessDetail from "../screens/IllnessDetailScreen";
 import { useAuth } from "../Auth/AuthContext";
 const Stack = createNativeStackNavigator();
 const Appointment = createNativeStackNavigator();
@@ -175,7 +174,7 @@ function Illnessnavigate() {
           headerTitle: "โรคที่พบได้ทั่วไป",
         }}
       />
-      <Stack.Screen name="IllnessDetail" component={illnessDetail} />
+      <Stack.Screen name="IllnessDetail" component={IllnessDetail} />
     </Stack.Navigator>
   );
 }
@@ -310,7 +309,7 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: "black",
+        tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "black",
         tabBarStyle: { backgroundColor: "#52A9A8" },
         tabBarLabelStyle: { fontSize: 15 },
@@ -321,7 +320,7 @@ function TabNavigator() {
         component={HomeNavigator}
         options={{
           tabBarIcon: ({ color, size }) => {
-            return <Ionicons name="home" size={24} color="white" />;
+            return <Ionicons name="home" size={24} color={color} />;
           },
           headerShown: false,
         }}
@@ -332,7 +331,7 @@ function TabNavigator() {
           component={Petnavigate}
           options={{
             tabBarIcon: ({ color, size }) => {
-              return <MaterialIcons name="pets" size={24} color="white" />;
+              return <MaterialIcons name="pets" size={24} color={color} />;
             },
             headerShown: false,
           }}
@@ -344,7 +343,7 @@ function TabNavigator() {
         options={{
           tabBarIcon: ({ color, size }) => {
             return (
-              <FontAwesome5 name="clinic-medical" size={24} color="white" />
+              <FontAwesome5 name="clinic-medical" size={24} color={color} />
             );
           },
           headerShown: false,
@@ -355,7 +354,7 @@ function TabNavigator() {
         component={AppointmentNavigator}
         options={{
           tabBarIcon: ({ color, size }) => {
-            return <FontAwesome name="calendar" size={24} color="white" />;
+            return <FontAwesome name="calendar" size={24} color={color} />;
           },
           headerShown: false,
         }}
@@ -379,6 +378,14 @@ function DrawerNavigator() {
         component={TabNavigator}
         options={{
           drawerLabel: "Home",
+          headerShown: false,
+        }}
+      />
+         <Drawer.Screen
+        name="editProfile"
+        component={EditProfileClinic}
+        options={{
+          drawerLabel: "แก้ไขข้อมูล",
           headerShown: false,
         }}
       />
