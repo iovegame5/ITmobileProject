@@ -129,8 +129,7 @@ const QueueClinic = (props) => {
             </Text>
             <View className="flex flex-row justify-evenly items-center">
               <View className="w-2/5 items-center">
-                <Image
-                  source={require("../pics/promo1.jpeg")}
+              <Image source={{ uri: prop.petImage }} 
                   className="h-36 w-28 rounded-lg"
                 />
               </View>
@@ -161,8 +160,7 @@ const QueueClinic = (props) => {
             </Text>
             <View className="flex flex-row justify-evenly items-center">
               <View className="w-2/5 items-center">
-                <Image
-                  source={require("../pics/channels4_profile.jpg")}
+              <Image source={{ uri: prop.petImage }} 
                   className="h-36 w-28 rounded-lg"
                 />
               </View>
@@ -202,8 +200,7 @@ const QueueClinic = (props) => {
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
         <View className="flex flex-row justify-around  w-72 h-48 rounded-2xl items-center">
           <View className="w-2/5 items-center">
-            <Image
-              source={require("../pics/channels4_profile.jpg")}
+          <Image source={{ uri: prop.petImage }} 
               className="h-2/3 w-28 rounded-lg"
             />
           </View>
@@ -256,8 +253,7 @@ const QueueClinic = (props) => {
         </Text>
         <View className="flex flex-row justify-evenly items-center">
           <View className="w-2/5 items-center">
-            <Image
-              source={require("../pics/channels4_profile.jpg")}
+          <Image source={{ uri: prop.petImage }} 
               className="h-36 w-28 rounded-lg"
             />
           </View>
@@ -290,8 +286,7 @@ const QueueClinic = (props) => {
           </Text>
           <View className="flex flex-row justify-evenly items-center">
             <View className="w-2/5 items-center">
-              <Image
-                source={require("../pics/channels4_profile.jpg")}
+            <Image source={{ uri: prop.petImage }} 
                 className="h-36 w-28 rounded-lg"
               />
             </View>
@@ -329,13 +324,14 @@ const QueueClinic = (props) => {
       return (
         //เขียนโค้ดเพิ่ม
         <ComingQueue
-          Info={itemData.item}
-          Ownername={itemData.item.ownerName}
-          Ownerphone={itemData.item.ownerPhone}
-          CatorDog={props.pettypecatordog}
-          Typeof={itemData.item.petSubType}
-          Detailpet={itemData.item.petDetail}
-          Fullname={itemData.item.ownerFullName}
+        Info={itemData.item}
+        Ownername={itemData.item.ownerName}
+        Ownerphone={itemData.item.ownerPhone}
+        CatorDog={props.pettypecatordog}
+        Typeof={itemData.item.petSubType}
+        Detailpet={itemData.item.petDetail}
+        Fullname={itemData.item.ownerFullName}
+        petImage= {itemData.item.petImage}
         />
       );
     } else if (
@@ -351,6 +347,7 @@ const QueueClinic = (props) => {
         Typeof={itemData.item.petSubType}
         Detailpet={itemData.item.petDetail}
         Fullname={itemData.item.ownerFullName}
+        petImage= {itemData.item.petImage}
         />
       );
     } else if (
@@ -360,16 +357,18 @@ const QueueClinic = (props) => {
       return (
         <ChangeQueue
         Info={itemData.item}
-          Ownername={itemData.item.ownerName}
-          Ownerphone={itemData.item.ownerPhone}
-          CatorDog={props.pettypecatordog}
-          Typeof={itemData.item.petSubType}
-          Detailpet={itemData.item.petDetail}
-          Fullname={itemData.item.ownerFullName}
+        Ownername={itemData.item.ownerName}
+        Ownerphone={itemData.item.ownerPhone}
+        CatorDog={props.pettypecatordog}
+        Typeof={itemData.item.petSubType}
+        Detailpet={itemData.item.petDetail}
+        Fullname={itemData.item.ownerFullName}
+        petImage= {itemData.item.petImage}
         />
       );
     } else if (props.typeclinicstatus === "สำเร็จ" &&
     (itemData.item.StatusClinic === "สำเร็จ" || itemData.item.StatusClinic === "ยกเลิก")) {
+      
       return (
       <CompleteQueue
       Info={itemData.item}
@@ -379,6 +378,7 @@ const QueueClinic = (props) => {
       Typeof={itemData.item.petSubType}
       Detailpet={itemData.item.petDetail}
       Fullname={itemData.item.ownerFullName}
+      petImage= {itemData.item.petImage}
       />
       );
     }
