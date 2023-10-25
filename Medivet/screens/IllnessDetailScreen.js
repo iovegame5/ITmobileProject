@@ -1,128 +1,71 @@
-import React, { Component } from "react";
-import {
-  ScrollView,
-  Image,
-  SafeAreaView,
-  FlatList,
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { ScrollView,View, Text, StyleSheet, StatusBar } from "react-native";
 import firebase from "../database/firebase";
-import { ListItem } from "react-native-elements";
-import Loading from "../component/LoadingComponent";
+import { Image } from "react-native";
 
-class IllnessDetail extends Component {
-  constructor() {
-    super();
+function IllnessDetail({ route }) {
+  const { key, illnessName, Symytoms, Detail, Cause, image } = route.params;
+  const [illnessData, setIllnessData] = useState({
+    key: key,
+    illnessName: illnessName,
+    Symytoms: Symytoms,
+    Detail: Detail,
+    Cause: Cause,
+    image: image,
+  });
 
-    this.state = {
-      key: "",
-      illnessName: "",
-      Symytoms: "",
-      Detail: "",
-      Cause: "",
-      Image: "",
-      isLoading:true,
-    };
-  }
-
-  componentDidMount() {
-    const { key, illnessName, Symytoms, Detail, Cause, Image } =
-      this.props.route.params;
+  useEffect(() => {
     const subjDoc = firebase.firestore().collection("illness").doc(key);
     subjDoc.get().then((res) => {
       if (res.exists) {
         const subj = res.data();
-        this.setState({
+        setIllnessData({
           key: key,
           illnessName: illnessName,
           Symytoms: Symytoms,
           Detail: Detail,
           Cause: Cause,
-          Image: Image,
+          image: image,
         });
-        console.log("test", this.state.Image);
       } else {
         console.log("Document does not exist!!");
       }
     });
-  }
+  }, [key, illnessName, Symytoms, Detail, Cause, image]);
 
-  //   getCollection = (querySnapshot) => {
-  //     const all_data = [];
-  //     querySnapshot.forEach((res) => {
-  //       //   console.log("res: ", res);
-  //       //   console.log("res.data() : ", res.data());
-
-  //       const { illnessName, Symytoms, Detail, Cause, Image } = res.data();
-  //       all_data.push({
-  //         key: res.id,
-  //         illnessName,
-  //         Symytoms,
-  //         Detail,
-  //         Cause,
-  //         Image,
-  //       });
-  //     });
-  //     // console.log("all_data : ", all_data);
-  //     this.setState({
-  //       illness_list: all_data,
-  //     });
-  //   };
-
-  //   componentDidMount() {
-  //     this.unsubscribe = this.subjCollection.onSnapshot(this.getCollection);
-  //   }
-
-  //   componentWillUnmount() {
-  //     this.unsubscribe();
-  //   }
-
-  render() {
-    if (!this.state.isLoading) {
-      return <Loading></Loading>;
-    } else {
-    return (
-      <View>
-        <ScrollView>
-          <Image source={{ uri: this.state.Image }} style={styles.image} />
-
-          <View style={styles.detail}>
-            <Text style={{ marginBottom: 10 }}>
-              <Text style={styles.headText}>โรค:</Text>
-              <Text style={{ fontSize: 19 }}> {this.state.illnessName}</Text>
-            </Text>
-            <Text style={{ marginBottom: 10 }}>
-              {" "}
-              <Text style={styles.headText}>รายละเอียด:</Text>{" "}
-              <Text style={{ fontSize: 16 }}>{this.state.Detail}</Text>
-            </Text>
-            <Text style={{ marginBottom: 10 }}>
-              {" "}
-              <Text style={styles.headText}>สาเหตุ :</Text>{" "}
-              <Text style={{ fontSize: 16 }}>{this.state.Cause}</Text>
-            </Text>
-            <Text>
-              {" "}
-              <Text style={styles.headText}>อาการ :</Text>{" "}
-              <Text style={{ fontSize: 16 }}>{this.state.Symytoms}</Text>
-            </Text>
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
-}
+  return (
+    <View>
+      <ScrollView>
+        <Image source={{ uri: illnessData.image }} style={styles.image} />
+        <View style={styles.detail}>
+          <Text style={{ marginBottom: 10 }}>
+            <Text style={styles.headText}>โรค:</Text>
+            <Text style={{ fontSize: 19 }}> {illnessData.illnessName}</Text>
+          </Text>
+          <Text style={{ marginBottom: 10 }}>
+            <Text style={styles.headText}>รายละเอียด:</Text>
+            <Text style={{ fontSize: 16 }}>{illnessData.Detail}</Text>
+          </Text>
+          <Text style={{ marginBottom: 10 }}>
+            <Text style={styles.headText}>สาเหตุ :</Text>
+            <Text style={{ fontSize: 16 }}>{illnessData.Cause}</Text>
+          </Text>
+          <Text>
+            <Text style={styles.headText}>อาการ :</Text>
+            <Text style={{ fontSize: 16 }}>{illnessData.Symytoms}</Text>
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  container: {
+    container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
     alignItems: "stretch",
+    
   },
   scrollview: {
     padding: 4,
@@ -147,15 +90,15 @@ const styles = StyleSheet.create({
   image: {
     width: 375,
     height: 200,
-
+    
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 20, 
     marginLeft: 12,
-    resizeMode: "contain",
+    resizeMode: "contain"
   },
   text: {
     marginLeft: 20,
-    marginTop: 10,
+    marginTop: 10
   },
   card: {
     width: 390,
@@ -163,72 +106,101 @@ const styles = StyleSheet.create({
     backgroundColor: "grey",
     marginLeft: 1,
     marginTop: 30,
-
+    
     borderRadius: 20,
   },
-  arrow: {
-    marginLeft: 30,
-    marginTop: 20,
+  arrow : {
+      marginLeft: 30,
+      marginTop: 20
   },
-  layoutimage: {
-    width: 300,
-    height: 200,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 48,
-    marginTop: 10,
-    backgroundColor: "#F9F9F9",
+  layoutimage :{
+      width: 300,
+      height: 200,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 48,
+      marginTop: 10,
+      backgroundColor: "#F9F9F9"
+
+
   },
   button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: "#87D8C3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    width: 300,
-    height: 300,
-    alignItems: "stretch",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
     },
+    buttonOpen: {
+      backgroundColor: '#87D8C3',
+    },
+    textStyle: {
+      color: 'white',
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
+    centeredView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 22,
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: 'white',
+      borderRadius: 20,
+      width:300,
+      height: 300,
+      alignItems:'stretch',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      }
   },
   modalText: {
-    marginBottom: 15,
-    marginTop: 20,
-    marginLeft: 10,
-    fontSize: 20,
-  },
-  buttonClose: {
-    backgroundColor: "red",
-  },
-  headText: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  detail: {
-    width: 300,
-    height: 800,
-    marginLeft: 40,
-  },
+      marginBottom: 15,
+      marginTop: 20,
+      marginLeft: 10,
+      fontSize: 20
+
+    },
+    buttonClose: {
+      backgroundColor: 'red',
+    },
+    headText : {
+      fontSize: 20,
+      fontWeight: "bold",
+      
+      
+
+    },
+    detail:{
+      width: 300,
+      height: 800,
+      marginLeft: 40
+
+    }
 });
 
 export default IllnessDetail;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

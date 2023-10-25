@@ -10,6 +10,7 @@ import {
   ScrollView,
   SafeAreaView,
   ActivityIndicator,
+  Pressable
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -472,13 +473,27 @@ const HomeScreen = (props) => {
               </View>
 
               <View style={{ flexDirection: "row", width: "90%", height: 150 }}>
+
+
+              <Pressable
+          onPress={() => {
+            navigation.navigate("illness", { type: 'Dog' });
+          }}
+        >
                 <View style={styles.commonill}>
-                  <Image
+                    <Image
                     source={require("../pics/dog.jpg")}
                     style={styles.picill}
                   />
                   <Text>Dog</Text>
                 </View>
+            </Pressable>
+       
+            <Pressable
+          onPress={() => {
+            navigation.navigate("illness", { type: "Cat" });
+          }}
+        >
                 <View style={styles.commonill}>
                   <Image
                     source={require("../pics/catill.jpeg")}
@@ -486,6 +501,7 @@ const HomeScreen = (props) => {
                   />
                   <Text>Cat</Text>
                 </View>
+                </Pressable>
               </View>
             </View>
 

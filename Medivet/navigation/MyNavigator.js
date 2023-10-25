@@ -29,7 +29,7 @@ import Addpet from "../screens/Addpet";
 import FixpetScreen from "../screens/Fixpet";
 import AllclinicScreen from "../screens/Allclinic";
 import ClinicDetailScreen from "../screens/ClinicDetail";
-import Allillness from "../screens/Allillness";
+import AllIllness from "../screens/Allillness";
 import CustomDrawerContent from "../component/CustomDrawerContent";
 import AddPromotionScreen from "../screens/AddPromotion";
 import IllnessDetail from "../screens/IllnessDetailScreen";
@@ -159,9 +159,12 @@ function Illnessnavigate() {
   const navigation = useNavigation();
   return (
     <Stack.Navigator initialRouteName="Allillness">
-      <Stack.Screen
+      {/* <Stack.Screen name="Home" component={HomePageScreen}  options={{
+        headerShown : false
+      }}/> */}
+  <Stack.Screen
         name="Allillness"
-        component={Allillness}
+        component={AllIllness}
         options={{
           headerLeft: () => (
             <Ionicons
@@ -175,9 +178,13 @@ function Illnessnavigate() {
         }}
       />
       <Stack.Screen name="IllnessDetail" component={IllnessDetail} />
+   
     </Stack.Navigator>
   );
 }
+
+
+
 
 function Profiles() {
   const navigation = useNavigation();
@@ -420,6 +427,31 @@ function DrawerNavigator() {
     </Drawer.Navigator>
   );
 }
+function NewillnessNavigator() {
+  return(<Stack.Navigator name="home">
+    <Stack.Screen 
+    name = "home"
+    component={HomeScreen}
+    options={{
+      headerShown: false
+    }}/>
+       <Stack.Screen 
+    name="illness"
+    component={AllIllness}
+    options={{
+      headerShown: false
+    }}/>
+    <Stack.Screen 
+    name = "Illnessdetail"
+    component={IllnessDetail}
+    options={{
+      headerShown: false
+    }}/>
+
+  </Stack.Navigator>);
+  
+  
+}
 
 function MainNavigator() {
   return (
@@ -432,6 +464,13 @@ function MainNavigator() {
       <Stack.Screen
         name="all"
         component={DrawerNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
+            <Stack.Screen
+        name="illnew"
+        component={NewillnessNavigator}
         options={{
           headerShown: false,
         }}
