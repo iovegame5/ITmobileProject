@@ -190,7 +190,18 @@ const Allclinic = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if(userLocation){
+    const unsubscribe = firebase.firestore()
+      .collection("Clinic")
+      .onSnapshot(fetchClinics);
+      
+
+    return () => {
+      unsubscribe();
+    }
+    };
+  }, []);
   useEffect(() => {
     if (userLocation) {
       fetchClinics();

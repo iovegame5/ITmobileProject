@@ -30,10 +30,9 @@ import FixpetScreen from "../screens/Fixpet";
 import AllclinicScreen from "../screens/Allclinic";
 import ClinicDetailScreen from "../screens/ClinicDetail";
 import Allillness from "../screens/Allillness";
-import illnessDetail from "../screens/illnessDetail";
 import CustomDrawerContent from "../component/CustomDrawerContent";
 import AddPromotionScreen from "../screens/AddPromotion";
-
+import IllnessDetail from "../screens/IllnessDetailScreen";
 import { useAuth } from "../Auth/AuthContext";
 const Stack = createNativeStackNavigator();
 const Appointment = createNativeStackNavigator();
@@ -175,7 +174,7 @@ function Illnessnavigate() {
           headerTitle: "โรคที่พบได้ทั่วไป",
         }}
       />
-      <Stack.Screen name="IllnessDetail" component={illnessDetail} />
+      <Stack.Screen name="IllnessDetail" component={IllnessDetail} />
     </Stack.Navigator>
   );
 }
@@ -379,6 +378,14 @@ function DrawerNavigator() {
         component={TabNavigator}
         options={{
           drawerLabel: "Home",
+          headerShown: false,
+        }}
+      />
+         <Drawer.Screen
+        name="editProfile"
+        component={EditProfileClinic}
+        options={{
+          drawerLabel: "แก้ไขข้อมูล",
           headerShown: false,
         }}
       />
