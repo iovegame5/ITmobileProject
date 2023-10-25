@@ -3,7 +3,7 @@ import { ScrollView,View, Text, StyleSheet, StatusBar } from "react-native";
 import firebase from "../database/firebase";
 import { Image } from "react-native";
 
-function IllnessDetail({ route }) {
+const  IllnessDetail = ({ route, navigation }) => {
   const { key, illnessName, Symytoms, Detail, Cause, image } = route.params;
   const [illnessData, setIllnessData] = useState({
     key: key,

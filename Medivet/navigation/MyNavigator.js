@@ -31,8 +31,8 @@ import AllclinicScreen from "../screens/Allclinic";
 import ClinicDetailScreen from "../screens/ClinicDetail";
 import AllIllness from "../screens/Allillness";
 import CustomDrawerContent from "../component/CustomDrawerContent";
-import AddPromotionScreen from "../screens/AddPromotion";
 import IllnessDetail from "../screens/IllnessDetailScreen";
+import AddPromotionScreen from "../screens/AddPromotion";
 import { useAuth } from "../Auth/AuthContext";
 const Stack = createNativeStackNavigator();
 const Appointment = createNativeStackNavigator();
@@ -120,6 +120,20 @@ function HomeNavigator() {
           ),
         }}
       />
+      <Stack.Screen
+        name="illness"
+        component={AllIllness}
+        options={({route}) => ({
+          headerTitle: route.params.headername.toString(),
+        })}
+      />
+       <Stack.Screen
+        name="Illnessdetail"
+        component={IllnessDetail}
+        options={{
+          headerTitle: "รายละเอียดโรค",
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -132,7 +146,7 @@ function Petnavigate() {
         name="MyPet"
         component={MypetScreen}
         options={({ route }) => ({
-          headerTitle:"สัตว์เลี้ยง",
+          headerTitle: "สัตว์เลี้ยง",
           headerShown: true, // Show the Stack header for this screen
           headerLeft: () => (
             <Ionicons
@@ -145,12 +159,20 @@ function Petnavigate() {
         })}
       />
 
-      <Stack.Screen name="AddPet" component={Addpet} options= {{
-        headerTitle:"เพิ่มสัตว์เลี้ยง"
-      }} /> 
-      <Stack.Screen name="Edit animal information" component={FixpetScreen} options= {{
-        headerTitle:"เปลี่ยนข้อมูลสัตว์เลี้ยง"
-      }}/>
+      <Stack.Screen
+        name="AddPet"
+        component={Addpet}
+        options={{
+          headerTitle: "เพิ่มสัตว์เลี้ยง",
+        }}
+      />
+      <Stack.Screen
+        name="Edit animal information"
+        component={FixpetScreen}
+        options={{
+          headerTitle: "เปลี่ยนข้อมูลสัตว์เลี้ยง",
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -162,7 +184,7 @@ function Illnessnavigate() {
       {/* <Stack.Screen name="Home" component={HomePageScreen}  options={{
         headerShown : false
       }}/> */}
-  <Stack.Screen
+      <Stack.Screen
         name="Allillness"
         component={AllIllness}
         options={{
@@ -178,13 +200,9 @@ function Illnessnavigate() {
         }}
       />
       <Stack.Screen name="IllnessDetail" component={IllnessDetail} />
-   
     </Stack.Navigator>
   );
 }
-
-
-
 
 function Profiles() {
   const navigation = useNavigation();
@@ -388,7 +406,7 @@ function DrawerNavigator() {
           headerShown: false,
         }}
       />
-         <Drawer.Screen
+      <Drawer.Screen
         name="editProfile"
         component={EditProfileClinic}
         options={{
@@ -412,45 +430,39 @@ function DrawerNavigator() {
           headerShown: false,
         }}
       />
-      {role ==="Clinic" &&(
-         <Drawer.Screen
-         name="addPromotion"
-         component={AddPromotionScreen}
-         options={{
-           drawerLabel: "เพิ่มโปรโมชั่น",
-           headerShown: true,
-          headerTitl:"เพิ่มโปรโมชั่น"
-         }}
-       />
+      {role === "Clinic" && (
+        <Drawer.Screen
+          name="addPromotion"
+          component={AddPromotionScreen}
+          options={{
+            drawerLabel: "เพิ่มโปรโมชั่น",
+            headerShown: true,
+            headerTitl: "เพิ่มโปรโมชั่น",
+          }}
+        />
       )}
-      
     </Drawer.Navigator>
   );
 }
 function NewillnessNavigator() {
-  return(<Stack.Navigator name="home">
-    <Stack.Screen 
-    name = "home"
-    component={HomeScreen}
-    options={{
-      headerShown: false
-    }}/>
-       <Stack.Screen 
-    name="illness"
-    component={AllIllness}
-    options={{
-      headerShown: false
-    }}/>
-    <Stack.Screen 
-    name = "Illnessdetail"
-    component={IllnessDetail}
-    options={{
-      headerShown: false
-    }}/>
-
-  </Stack.Navigator>);
-  
-  
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="illness"
+        component={AllIllness}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Illnessdetail"
+        component={IllnessDetail}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
 }
 
 function MainNavigator() {
@@ -468,7 +480,7 @@ function MainNavigator() {
           headerShown: false,
         }}
       />
-            <Stack.Screen
+      <Stack.Screen
         name="illnew"
         component={NewillnessNavigator}
         options={{

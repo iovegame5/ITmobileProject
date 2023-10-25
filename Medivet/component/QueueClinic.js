@@ -248,9 +248,13 @@ const QueueClinic = (props) => {
     return (
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
       <View className=" w-72 h-48 rounded-2xl">
-        <Text className="text-right text-orange-700 mr-2 mt-2">
+        {prop.Info.StatusClinic == "สำเร็จ" ? (
+            <Text className="text-right text-green-700 mr-2 mt-2">
+              {prop.Info.StatusClinic}
+            </Text>
+          ):(<Text className="text-right text-orange-700 mr-2 mt-2">
           {prop.Info.StatusClinic}
-        </Text>
+        </Text>)}
         <View className="flex flex-row justify-evenly items-center">
           <View className="w-2/5 items-center">
           <Image source={{ uri: prop.petImage }} 

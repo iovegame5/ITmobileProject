@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { ScrollView, Image, SafeAreaView, FlatList, View, Text, StyleSheet, Pressable, StatusBar } from "react-native";
 import firebase from "../database/firebase";
 
-function AllIllness({ route, navigation }) {
-  const { type } = route.params;
+const AllIllness = ({ route, navigation }) => {
   const [illnessList, setIllnessList] = useState([]);
-  console.log(type)
-
+  
   useEffect(() => {
     const subjCollection = firebase.firestore().collection("illness");
 
@@ -14,7 +12,17 @@ function AllIllness({ route, navigation }) {
       const allData = [];
       querySnapshot.forEach((res) => {
         const { illnessName, Symytoms, Detail, Cause, Image, Type } = res.data();
-        if (Type === type) {
+        if (typeof route.params === "undefined" || route.params.type === "All") {
+          allData.push({
+            key: res.id,
+            illnessName,
+            Symytoms,
+            Detail,
+            Cause,
+            Image,
+            Type
+          });
+        } else if (Type === route.params.type) {
           allData.push({
             key: res.id,
             illnessName,
@@ -34,7 +42,7 @@ function AllIllness({ route, navigation }) {
     return () => {
       unsubscribe();
     };
-  }, [type]);
+  }, []);
 
   const renderFlatListItem = ({ item }) => {
     return (
@@ -51,7 +59,7 @@ function AllIllness({ route, navigation }) {
               <Pressable
                 style={[styles.button, styles.buttonOpen]}
                 onPress={() => {
-                  navigation.navigate("IllnessDetail", {
+                  navigation.navigate("Illnessdetail", {
                     key: item.key,
                     illnessName: item.illnessName,
                     Symytoms: item.Symytoms,
@@ -61,7 +69,7 @@ function AllIllness({ route, navigation }) {
                   });
                 }}
               >
-                <Text style={styles.textStyle}  onPress={ () => { navigation.navigate("IllnessDetail", {key:item.key, illnessName: item.illnessName, Symytoms: item.Symytoms, Detail: item.Detail, Cause: item.Cause, image: item.Image }); } }>ดูข้อมูล</Text>
+                <Text style={styles.textStyle}  onPress={ () => { navigation.navigate("Illnessdetail", {key:item.key, illnessName: item.illnessName, Symytoms: item.Symytoms, Detail: item.Detail, Cause: item.Cause, image: item.Image }); } }>ดูข้อมูล</Text>
               </Pressable>
             </View>
           </View>

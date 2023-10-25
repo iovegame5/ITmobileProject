@@ -279,7 +279,7 @@ const Allclinic = ({ navigation }) => {
                             <View style={{ marginTop: 10 }}>
                               <Text style={{ fontSize: 14 }}>
                                 {" "}
-                                ชื่อหมอ: {item.vetName}
+                                ชื่อหมอ: {item.vetName.substring(0, 17)}
                               </Text>
 
                               <View style={styles.arrow}>
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     // alignItems: "stretch",
   },
   scrollview: {
-    padding: 4,
+    padding: 1,
   },
   child: {
     flex: 1,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   card: {
-    width: 360,
+    width: "94%",
     height: 130,
     backgroundColor: "#F9F9F9",
     // backgroundColor:"red",
