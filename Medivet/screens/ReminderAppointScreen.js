@@ -31,26 +31,79 @@ const ReminderAppoint = ({ route, navigation }) => {
   ]);
   const { user, role, isAuthenticated, login, logout } = useAuth();
 
-  const getCollection = (querySnapshot) => {
+  // const getCollection = (querySnapshot) => {
+  //   const all_data = [];
+  //   querySnapshot.forEach((res) => {
+  //     const { ClinicID, Date, OwnerID, PetID, Status, Time, StatusClinic } =
+  //       res.data();
+  //     if (OwnerID === user.uid) {
+  //       all_data.push({
+  //         key: res.id,
+  //         ClinicID,
+  //         Date,
+  //         OwnerID,
+  //         PetID,
+  //         Status,
+  //         Time,
+  //         StatusClinic,
+  //       });
+  //     }
+  //   });
+
+  //   setQueueownerList(all_data);
+  // };
+
+
+  // เพิ่มชื่อคลินิคกะบชื่อสัตว์ ใน queuedata
+  const getCollection =async (querySnapshot) => {
     const all_data = [];
-    querySnapshot.forEach((res) => {
+    querySnapshot.forEach(async (res) => {
       const { ClinicID, Date, OwnerID, PetID, Status, Time, StatusClinic } =
         res.data();
       if (OwnerID === user.uid) {
-        all_data.push({
-          key: res.id,
-          ClinicID,
-          Date,
-          OwnerID,
-          PetID,
-          Status,
-          Time,
-          StatusClinic,
-        });
+        await firebase
+          .firestore()
+          .collection("Clinic")
+          .doc(ClinicID)
+          .get()
+          .then(async (clinicSnapshot) => {
+            if (clinicSnapshot.exists) {
+              const clinicName = clinicSnapshot.data().name;
+              const clinicImage = await getImageURL(clinicSnapshot.data().clinicImage);
+              console.log(clinicImage)
+              await firebase
+                .firestore()
+                .collection("Pet")
+                .doc(PetID)
+                .get()
+                .then(async  (petSnapshot) => {
+                  if (petSnapshot.exists) {
+                    const petName = petSnapshot.data().Name;
+                    const petImage = await getImageURL(petSnapshot.data().Image);
+                    all_data.push({
+                      key: res.id,
+                      ClinicID,
+                      Date,
+                      OwnerID,
+                      PetID,
+                      Status,
+                      Time,
+                      StatusClinic,
+                      clinicName,
+                      petName,
+                      clinicImage,
+                      petImage
+                    });
+                    setQueueownerList(all_data);
+                    
+            
+                    
+                  }
+                });
+            }
+          });
       }
     });
-
-    setQueueownerList(all_data);
   };
 
   useEffect(() => {
@@ -63,37 +116,51 @@ const ReminderAppoint = ({ route, navigation }) => {
       unsubscribe();
     };
   }, []);
+
+  const getImageURL = async (imagePath) => {
+    // เอารูปจาก firebase
+    const storage = firebase.storage();
+    const storageRef = storage.ref();
+    const imageRef = storageRef.child(imagePath);
   
+    try {
+      const url = await imageRef.getDownloadURL();
+      return url;
+    } catch (error) {
+      console.error('Error getting download URL:', error);
+      throw error; // Propagate the error
+    }
+  };
+  
+  // if (queueowner_list.length > 0) {
+  //   const clinicName = firebase
+  //     .firestore()
+  //     .collection("Clinic")
+  //     .doc(queueowner_list[0].ClinicID);
+  //   clinicName.get().then((res) => {
+  //     if (res.exists) {
+  //       const clinicname = res.data();
+  //       setDbclinic(clinicname.name);
+  //       console.log(dbclinic);
+  //     } else {
+  //       console.log("Document does not exist!!");
+  //     }
+  //   });
 
-  if (queueowner_list.length > 0) {
-    const clinicName = firebase
-      .firestore()
-      .collection("Clinic")
-      .doc(queueowner_list[0].ClinicID);
-    clinicName.get().then((res) => {
-      if (res.exists) {
-        const clinicname = res.data();
-        setDbclinic(clinicname.name);
-        console.log(dbclinic);
-      } else {
-        console.log("Document does not exist!!");
-      }
-    });
-
-    const PetName = firebase
-      .firestore()
-      .collection("Pet")
-      .doc(queueowner_list[0].PetID);
-    PetName.get().then((res) => {
-      if (res.exists) {
-        const petname = res.data();
-        setDbpet(petname.Name);
-        console.log(dbpet);
-      } else {
-        console.log("Document does not exist!!");
-      }
-    });
-  }
+  //   const PetName = firebase
+  //     .firestore()
+  //     .collection("Pet")
+  //     .doc(queueowner_list[0].PetID);
+  //   PetName.get().then((res) => {
+  //     if (res.exists) {
+  //       const petname = res.data();
+  //       setDbpet(petname.Name);
+  //       console.log(dbpet);
+  //     } else {
+  //       console.log("Document does not exist!!");
+  //     }
+  //   });
+  // }
 
   const renderTabBar = (props) => {
     return (
@@ -112,8 +179,8 @@ const ReminderAppoint = ({ route, navigation }) => {
       <View className="flex-1 bg-white-100 items-center">
         <QueueOwner
           queuedata={queueowner_list}
-          clinicname={dbclinic}
-          petname={dbpet}
+          // clinicname={dbclinic}
+          // petname={dbpet}
           navigation={navigation}
           typestatus="รอการยืนยัน"
         ></QueueOwner>
@@ -125,8 +192,8 @@ const ReminderAppoint = ({ route, navigation }) => {
       <View className="flex-1 bg-white-100 items-center">
         <QueueOwner
           queuedata={queueowner_list}
-          clinicname={dbclinic}
-          petname={dbpet}
+          // clinicname={dbclinic}
+          // petname={dbpet}
           navigation={navigation}
           typestatus="นัดหมาย"
         ></QueueOwner>
@@ -139,8 +206,8 @@ const ReminderAppoint = ({ route, navigation }) => {
       <View className="flex-1 bg-white-100 items-center">
         <QueueOwner
           queuedata={queueowner_list}
-          clinicname={dbclinic}
-          petname={dbpet}
+          // clinicname={dbclinic}
+          // petname={dbpet}
           navigation={navigation}
           typestatus="สำเร็จ"
         ></QueueOwner>
@@ -152,8 +219,8 @@ const ReminderAppoint = ({ route, navigation }) => {
       <View className="flex-1 bg-white-100 items-center">
         <QueueOwner
           queuedata={queueowner_list}
-          clinicname={dbclinic}
-          petname={dbpet}
+          // clinicname={dbclinic}
+          // petname={dbpet}
           navigation={navigation}
           typestatus="เลื่อนนัด"
         ></QueueOwner>

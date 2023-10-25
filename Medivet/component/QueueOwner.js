@@ -84,6 +84,7 @@ const QueueOwner = (props) => {
 
 
   const WaitQueue = (prop) => {
+    console.log(prop)
     return (
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
         <View className="w-72 h-44 rounded-2xl">
@@ -92,8 +93,7 @@ const QueueOwner = (props) => {
           </Text>
           <View className="flex flex-row justify-evenly items-center">
             <View className="w-2/5 items-center">
-              <Image
-                source={require("../pics/clinic.jpeg")}
+            <Image source={{ uri: prop.clinicImage }} 
                 className="h-32 w-28 rounded-lg"
               />
             </View>
@@ -121,8 +121,8 @@ const QueueOwner = (props) => {
       <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
         <View className="flex flex-row justify-around  w-72 h-44 rounded-2xl items-center">
           <View className="w-2/5 items-center">
-            <Image
-              source={require("../pics/clinic.jpeg")}
+            <Image source={{ uri: prop.clinicImage }} 
+              
               className="h-2/3 w-28 rounded-lg"
             />
           </View>
@@ -171,8 +171,7 @@ const QueueOwner = (props) => {
         </Text>
         <View className="flex flex-row justify-evenly items-center">
           <View className="w-2/5 items-center">
-            <Image
-              source={require("../pics/clinic.jpeg")}
+          <Image source={{ uri: prop.clinicImage }} 
               className="h-32 w-28 rounded-lg"
             />
           </View>
@@ -204,8 +203,7 @@ const QueueOwner = (props) => {
           </Text>
           <View className="flex flex-row justify-evenly items-center">
             <View className="w-2/5 items-center">
-              <Image
-                source={require("../pics/clinic.jpeg")}
+            <Image source={{ uri: prop.clinicImage }} 
                 className="h-36 w-28 rounded-lg"
               />
             </View>
@@ -241,12 +239,13 @@ const QueueOwner = (props) => {
       return (
         //เขียนโค้ดเพิ่ม
         <ComingQueue
-          ClinicName={props.clinicname}
+          ClinicName={itemData.item.clinicName}
           Date={itemData.item.Date}
           Time={itemData.item.Time}
-          PetName={props.petname}
+          PetName={itemData.item.petName}
           Key={itemData.item.key}
           ClinicID={itemData.item.ClinicID}
+          clinicImage = {itemData.item.clinicImage}
         />
       );
     } else if (
@@ -255,11 +254,12 @@ const QueueOwner = (props) => {
     ) {
       return (
         <WaitQueue
-          ClinicName={props.clinicname}
+          ClinicName={itemData.item.clinicName}
           Date={itemData.item.Date}
           Time={itemData.item.Time}
-          PetName={props.petname}
+          PetName={itemData.item.petName}
           ClinicID={itemData.item.ClinicID}
+          clinicImage = {itemData.item.clinicImage}
         />
       );
     } else if (
@@ -268,24 +268,26 @@ const QueueOwner = (props) => {
     ) {
       return (
         <ChangeQueue
-          ClinicName={props.clinicname}
+          ClinicName={itemData.item.clinicName}
           Date={itemData.item.Date}
           Time={itemData.item.Time}
-          PetName={props.petname}
+          PetName={itemData.item.petName}
           Key={itemData.item.key}
           ClinicID={itemData.item.ClinicID}
+          clinicImage = {itemData.item.clinicImage}
         />
       );
     } else if ( props.typestatus === "สำเร็จ" &&
     (itemData.item.Status === "เลื่อนนัด" || itemData.item.Status === "ยกเลิก")) {
       return (
         <CompleteQueue
-          ClinicName={props.clinicname}
+          ClinicName={itemData.item.clinicName}
           Date={itemData.item.Date}
           Time={itemData.item.Time}
-          PetName={props.petname}
+          PetName={itemData.item.petName}
           ClinicID={itemData.item.ClinicID}
           Status={itemData.item.Status}
+          clinicImage = {itemData.item.clinicImage}
         />
       )
     }

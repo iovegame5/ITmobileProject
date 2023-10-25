@@ -38,26 +38,94 @@ const QueueAppoint = ({ route, navigation }) => {
   const { user, role, isAuthenticated, login, logout } = useAuth();
   console.log(user.uid)
 
-  const getCollection = (querySnapshot) => {
+  // const getCollection = (querySnapshot) => {
+  //   const all_data = [];
+  //   querySnapshot.forEach((res) => {
+  //     const { ClinicID, Date, OwnerID, PetID, Status, StatusClinic, Time } = res.data();
+  //     if (ClinicID === user.uid) {
+  //       all_data.push({
+  //         key: res.id,
+  //         ClinicID,
+  //         Date,
+  //         OwnerID,
+  //         PetID,
+  //         Status,
+  //         StatusClinic,
+  //         Time
+  //       });
+  //     }
+  //   });
+
+  //   setQueueclinicList(all_data);
+  // };
+  const getCollection =async (querySnapshot) => {
     const all_data = [];
-    querySnapshot.forEach((res) => {
-      const { ClinicID, Date, OwnerID, PetID, Status, StatusClinic, Time } = res.data();
+    querySnapshot.forEach(async (res) => {
+      const { ClinicID, Date, OwnerID, PetID, Status, Time, StatusClinic } =
+        res.data();
       if (ClinicID === user.uid) {
-        all_data.push({
-          key: res.id,
-          ClinicID,
-          Date,
-          OwnerID,
-          PetID,
-          Status,
-          StatusClinic,
-          Time
-        });
+        await firebase
+          .firestore()
+          .collection("Owner")
+          .doc(OwnerID)
+          .get()
+          .then(async (ownerSnapshot) => {
+            if (ownerSnapshot.exists) {
+              const ownerFullName = ownerSnapshot.data().firstName +" " + ownerSnapshot.data().lastName;
+              const ownerName = ownerSnapshot.data().firstName;
+              const ownerPhone = ownerSnapshot.data().phone;
+              await firebase
+                .firestore()
+                .collection("Pet")
+                .doc(PetID)
+                .get()
+                .then(async  (petSnapshot) => {
+                  if (petSnapshot.exists) {
+                    const petName = petSnapshot.data().Name;
+                    const petImage = await getImageURL(petSnapshot.data().Image);
+                    const petSubType = petSnapshot.data().Type;
+                    const petType = petSnapshot.data().PetType;
+                    const petDetail = petSnapshot.data().Detail;
+                    // Ownername={props.ownername}
+                    // Ownerphone={props.ownerphone}
+                    // CatorDog={props.pettypecatordog}
+                    // Typeof={props.typeof}
+                    // Detailpet={props.detailpet}
+                    // Fullname={props.fullnameowner}
+                    all_data.push({
+                      key: res.id,
+                      ClinicID,
+                      Date,
+                      OwnerID,
+                      PetID,
+                      Status,
+                      Time,
+                      StatusClinic,
+                      ownerName,
+                      ownerPhone,
+                      petName,
+                      petType,
+                      petImage,
+                      petSubType,
+                      petDetail,
+                      ownerFullName
+                    });
+                    console.log(all_data)
+                    console.log("-----------")
+                    console.log("-----------")
+                    console.log("-----------")
+                    setQueueclinicList(all_data);
+                    
+            
+                    
+                  }
+                });
+            }
+          });
       }
     });
-
-    setQueueclinicList(all_data);
   };
+
 
   useEffect(() => {
     const unsubscribe = firebase.firestore()
@@ -69,37 +137,51 @@ const QueueAppoint = ({ route, navigation }) => {
     };
   }, []);
 
-  if (queueclinic_list.length > 0) {
-    const ownerName = firebase.firestore()
-    .collection("Owner")
-    .doc(queueclinic_list[0].OwnerID);
-    ownerName.get().then((res) => {
-    if (res.exists) {
-      const owner = res.data();
-      setDbowner(owner.firstName);
-      setDbownerphone(owner.phone);
-      setfullname(owner.firstName + " " + owner.lastName)
-      console.log(dbowner + " " + dbownerphone)
-    } else {
-      console.log("Document does not exist!!");
+  const getImageURL = async (imagePath) => {
+    // เอารูปจาก firebase
+    const storage = firebase.storage();
+    const storageRef = storage.ref();
+    const imageRef = storageRef.child(imagePath);
+  
+    try {
+      const url = await imageRef.getDownloadURL();
+      return url;
+    } catch (error) {
+      console.error('Error getting download URL:', error);
+      throw error; // Propagate the error
     }
-  });
+  };
+  // if (queueclinic_list.length > 0) {
+  //   const ownerName = firebase.firestore()
+  //   .collection("Owner")
+  //   .doc(queueclinic_list[0].OwnerID);
+  //   ownerName.get().then((res) => {
+  //   if (res.exists) {
+  //     const owner = res.data();
+  //     setDbowner(owner.firstName);
+  //     setDbownerphone(owner.phone);
+  //     setfullname(owner.firstName + " " + owner.lastName)
+  //     console.log(dbowner + " " + dbownerphone)
+  //   } else {
+  //     console.log("Document does not exist!!");
+  //   }
+  // });
 
-  const PetName = firebase.firestore()
-  .collection("Pet")
-  .doc(queueclinic_list[0].PetID);
-  PetName.get().then((res) => {
-  if (res.exists) {
-    const petname = res.data();
-    setDbpet(petname.PetType);
-    setDbpetType(petname.Type)
-    setDbpetDetail(petname.Detail)
-    console.log(dbpet)
-  } else {
-    console.log("Document does not exist!!");
-  }
-});
-  }
+//   const PetName = firebase.firestore()
+//   .collection("Pet")
+//   .doc(queueclinic_list[0].PetID);
+//   PetName.get().then((res) => {
+//   if (res.exists) {
+//     const petname = res.data();
+//     setDbpet(petname.PetType);
+//     setDbpetType(petname.Type)
+//     setDbpetDetail(petname.Detail)
+//     console.log(dbpet)
+//   } else {
+//     console.log("Document does not exist!!");
+//   }
+// });
+//   }
 
   const renderTabBar = (props) => {
     return (

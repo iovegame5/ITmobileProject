@@ -20,7 +20,7 @@ import { useAuth } from "../Auth/AuthContext";
 const QueueClinic = (props) => {
   const [submitchange, Onsubmitchange] = React.useState(null);
   const { user, role, isAuthenticated, login, logout } = useAuth();
-  console.log(user)
+  // console.log(user)
 
   function SubmitChange(prop) {
     const subjDoc = firebase.firestore()
@@ -118,8 +118,8 @@ const QueueClinic = (props) => {
 
 
   const WaitQueue = (prop) => {
-    console.log("prop---------------")
-    console.log(prop.Info)
+    // console.log("prop---------------")
+    // console.log(prop.Info)
     if (prop.Info.Status === "เลื่อนนัด") {
       return (
         <View className="bg-slate-50 mt-3 mb-2 rounded-2xl" style={styles.shadow}>
@@ -324,18 +324,18 @@ const QueueClinic = (props) => {
     );
   };
   const renderQueueItem = (itemData) => {
-    console.log(props.typeclinicstatus)
+    // console.log(props.typeclinicstatus)
     if (props.typeclinicstatus === "นัดหมาย" && itemData.item.StatusClinic === "นัดหมาย") {
       return (
         //เขียนโค้ดเพิ่ม
         <ComingQueue
           Info={itemData.item}
-          Ownername={props.ownername}
-          Ownerphone={props.ownerphone}
+          Ownername={itemData.item.ownerName}
+          Ownerphone={itemData.item.ownerPhone}
           CatorDog={props.pettypecatordog}
-          Typeof={props.typeof}
-          Detailpet={props.detailpet}
-          Fullname={props.fullnameowner}
+          Typeof={itemData.item.petSubType}
+          Detailpet={itemData.item.petDetail}
+          Fullname={itemData.item.ownerFullName}
         />
       );
     } else if (
@@ -344,13 +344,13 @@ const QueueClinic = (props) => {
     ) {
       return (
         <WaitQueue
-          Info={itemData.item}
-          Ownername={props.ownername}
-          Ownerphone={props.ownerphone}
-          CatorDog={props.pettypecatordog}
-          Typeof={props.typeof}
-          Detailpet={props.detailpet}
-          Fullname={props.fullnameowner}
+        Info={itemData.item}
+        Ownername={itemData.item.ownerName}
+        Ownerphone={itemData.item.ownerPhone}
+        CatorDog={props.pettypecatordog}
+        Typeof={itemData.item.petSubType}
+        Detailpet={itemData.item.petDetail}
+        Fullname={itemData.item.ownerFullName}
         />
       );
     } else if (
@@ -359,26 +359,26 @@ const QueueClinic = (props) => {
     ) {
       return (
         <ChangeQueue
-          Info={itemData.item}
-          Ownername={props.ownername}
-          Ownerphone={props.ownerphone}
+        Info={itemData.item}
+          Ownername={itemData.item.ownerName}
+          Ownerphone={itemData.item.ownerPhone}
           CatorDog={props.pettypecatordog}
-          Typeof={props.typeof}
-          Detailpet={props.detailpet}
-          Fullname={props.fullnameowner}
+          Typeof={itemData.item.petSubType}
+          Detailpet={itemData.item.petDetail}
+          Fullname={itemData.item.ownerFullName}
         />
       );
     } else if (props.typeclinicstatus === "สำเร็จ" &&
     (itemData.item.StatusClinic === "สำเร็จ" || itemData.item.StatusClinic === "ยกเลิก")) {
       return (
       <CompleteQueue
-        Info={itemData.item}
-        Ownername={props.ownername}
-          Ownerphone={props.ownerphone}
-          CatorDog={props.pettypecatordog}
-          Typeof={props.typeof}
-          Detailpet={props.detailpet}
-          Fullname={props.fullnameowner}
+      Info={itemData.item}
+      Ownername={itemData.item.ownerName}
+      Ownerphone={itemData.item.ownerPhone}
+      CatorDog={props.pettypecatordog}
+      Typeof={itemData.item.petSubType}
+      Detailpet={itemData.item.petDetail}
+      Fullname={itemData.item.ownerFullName}
       />
       );
     }
