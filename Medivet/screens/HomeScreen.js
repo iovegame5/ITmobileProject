@@ -481,7 +481,7 @@ const HomeScreen = (props) => {
                 </View>
                 <View style={styles.commonill}>
                   <Image
-                    source={require("../pics/cat.jpeg")}
+                    source={require("../pics/catill.jpeg")}
                     style={styles.picill}
                   />
                   <Text>Cat</Text>
@@ -490,9 +490,11 @@ const HomeScreen = (props) => {
             </View>
 
             {/* // Promotion clinic */}
-
-            <View style={{ width: "90%" }}>
-              <Text style={styles.header}>โปรโมชั่นคลินิก</Text>
+            <View style={{width: "90%"}}>
+            <Text style={styles.header}>โปรโมชั่นคลินิก</Text>
+            </View>
+            <View style={{ width: "100%", justifyContent: "center" }}>
+              
               {promotions ? (
                 <Promotion promotions={promotions}></Promotion>
               ) : (

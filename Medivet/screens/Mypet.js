@@ -83,7 +83,6 @@ class Mypet extends Component {
         const imageUrl = await fetchImage(Image);
 
         const age = calculateAge(DateofBirth);
-        console.log(DateofBirth)
 
         all_data.push({
           key: res.id,
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
     
   },
   card: {
-    width: 380,
+    width: "94%",
     height: 200,
     backgroundColor: '#F9F9F9',
     marginTop: 20,
@@ -229,6 +228,7 @@ const styles = StyleSheet.create({
   },
   cardContainer:{
     // backgroundColor:"red"
+    justifyContent: "center",
   }
 });
 
