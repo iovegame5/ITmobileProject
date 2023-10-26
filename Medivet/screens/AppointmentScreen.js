@@ -52,32 +52,35 @@ const AppointmentScreen = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    console.log("route " + route.params.todo);
-    const subjDoc = firebase
-      .firestore()
-      .collection("Appointment")
-      .doc(route.params.queueid);
-    subjDoc.get().then((res) => {
-      if (res.exists) {
-        const subj = res.data();
-        onChangedatetxt(subj.Date);
-        setValuetime(subj.Time);
-        if (role === "Clinic") {
-          console.log(route.params.PetID);
-          onChangeName(route.params.Fullname);
-          console.log("Ownername" + route.params.Fullname);
+    const fetchData = async () => {
+      console.log("route " + route.params.todo);
+      const subjDoc = firebase
+        .firestore()
+        .collection("Appointment")
+        .doc(route.params.queueid);
+      subjDoc.get().then((res) => {
+        if (res.exists) {
+          const subj = res.data();
+          onChangedatetxt(subj.Date);
+          setValuetime(subj.Time);
+          if (role === "Clinic") {
+            console.log(route.params.PetID);
+            onChangeName(route.params.Fullname);
+            console.log("Ownername" + route.params.Fullname);
+          } else {
+            onChangeName(user.firstName + " " + user.lastName);
+            onChangeNumber(user.phone);
+          }
         } else {
-          onChangeName(user.firstName + " " + user.lastName);
-          onChangeNumber(user.phone);
+          console.log("Document does not exist!!");
         }
-      } else {
-        console.log("Document does not exist!!");
-      }
-    });
-    const unsubscribe = firebase
-      .firestore()
-      .collection("Pet")
-      .onSnapshot(getCollection);
+      });
+      const unsubscribe = firebase
+        .firestore()
+        .collection("Pet")
+        .onSnapshot(getCollection);
+    };
+    fetchData()
   }, []);
 
   const selectDate = () => {

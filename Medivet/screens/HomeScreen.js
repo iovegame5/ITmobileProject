@@ -134,7 +134,7 @@ const HomeScreen = (props) => {
     if (!isAuthenticated) {
       navigation.navigate("Main");
     } else {
-      // fetchAppointment();
+      fetchAppointment();
       fetchPromotions();
       Location.requestForegroundPermissionsAsync();
     }

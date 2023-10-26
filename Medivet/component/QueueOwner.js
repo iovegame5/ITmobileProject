@@ -39,8 +39,8 @@ const QueueOwner = (props) => {
           })
           .then(() => {
             Alert.alert(
-              "Updating Alert",
-              "The queue was updated!! Pls check your DB!!"
+              "เปลี่ยนแปลงสำเร็๗",
+              "นัดหมายเสร็จสิ้น!! ท่านสามารถแก้ไขหรือยกเลิกการนัดหมายได้ที่หน้านัดหมาย"
             );
           });
       } else {
@@ -69,8 +69,8 @@ const QueueOwner = (props) => {
           })
           .then(() => {
             Alert.alert(
-              "Updating Alert",
-              "The queue was updated!! Pls check your DB!!"
+              "เปลี่ยนแปลงสำเร็จ",
+              "ยกเลิกคิวแล้ว!"
             );
           });
       } else {
@@ -173,10 +173,12 @@ const QueueOwner = (props) => {
             <Text className="text-right text-green-700 mr-2 mt-2">
               {prop.Status}
             </Text>
-          ):(<Text className="text-right text-orange-700 mr-2 mt-2">
-          {prop.Status}
-        </Text>)}
-          
+          ) : (
+            <Text className="text-right text-orange-700 mr-2 mt-2">
+              {prop.Status}
+            </Text>
+          )}
+
           <View className="flex flex-row justify-evenly items-center">
             <View className="w-2/5 items-center">
               <Image

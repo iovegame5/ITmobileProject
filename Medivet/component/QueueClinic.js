@@ -44,8 +44,8 @@ const QueueClinic = (props) => {
           })
           .then(() => {
             Alert.alert(
-              "Updating Alert",
-              "The queue was updated!! Pls check your DB!!"
+              "เปลี่ยนแปลงสำเร็จ",
+              "นัดหมายเสร็จสิ้น ท่านสามารถยกเลิกหรือแก้ไขวันนัดได้ที่หน้านัดหมาย"
             );
           });
       } else {
@@ -75,8 +75,8 @@ const QueueClinic = (props) => {
           })
           .then(() => {
             Alert.alert(
-              "Updating Alert",
-              "The queue was updated!! Pls check your DB!!"
+              "เปลี่ยนแปลงสำเร็๗",
+              "ยกเลิกนัดสำเร็จ!!"
             );
           });
       } else {
@@ -106,8 +106,8 @@ const QueueClinic = (props) => {
           })
           .then(() => {
             Alert.alert(
-              "Updating Alert",
-              "The queue was updated!! Pls check your DB!!"
+              "เปลี่ยนแปลงสำเร็๗",
+              "เปลีี่ยนแปลงคิวเป็นสำเร็จเรียบร้อย!!"
             );
           });
       } else {
