@@ -7,7 +7,7 @@ import {
   TextInput,
   Pressable,
   Platform,
-  Alert
+  Alert,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -15,16 +15,14 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import firebase from "../database/firebase";
 import { useAuth } from "../Auth/AuthContext";
 
-
-const AppointmentScreen =  ({ route, navigation }) => {
-  const appointmentDB = firebase.firestore().collection("Appointment");
+const AppointmentScreen = ({ route, navigation }) => {
   const { user, role, isAuthenticated, login, logout } = useAuth();
 
   const [Name, onChangeName] = React.useState("");
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [Petname, onChangePetname] = useState([
-   /*  { label: "Apple", value: "apple" },
+    /*  { label: "Apple", value: "apple" },
     { label: "Banana", value: "banana" }, */
   ]);
   const [number, onChangeNumber] = React.useState("");
@@ -41,11 +39,11 @@ const AppointmentScreen =  ({ route, navigation }) => {
   const getCollection = (querySnapshot) => {
     const all_data = [];
     querySnapshot.forEach((res) => {
-      const { Name, OwnerID, PetID} = res.data();
+      const { Name, OwnerID, PetID } = res.data();
       if (OwnerID === user.uid) {
         all_data.push({
           label: Name,
-          value: res.id
+          value: res.id,
         });
       }
     });
@@ -55,7 +53,8 @@ const AppointmentScreen =  ({ route, navigation }) => {
 
   useEffect(() => {
     console.log("route " + route.params.todo);
-    const subjDoc = firebase.firestore()
+    const subjDoc = firebase
+      .firestore()
       .collection("Appointment")
       .doc(route.params.queueid);
     subjDoc.get().then((res) => {
@@ -64,23 +63,22 @@ const AppointmentScreen =  ({ route, navigation }) => {
         onChangedatetxt(subj.Date);
         setValuetime(subj.Time);
         if (role === "Clinic") {
-          console.log(route.params.PetID)
-          onChangeName(route.params.Fullname)
-          console.log("Ownername" + route.params.Fullname)
+          console.log(route.params.PetID);
+          onChangeName(route.params.Fullname);
+          console.log("Ownername" + route.params.Fullname);
         } else {
-          onChangeName(user.firstName + ' ' + user.lastName)
-          onChangeNumber(user.phone)
+          onChangeName(user.firstName + " " + user.lastName);
+          onChangeNumber(user.phone);
         }
       } else {
         console.log("Document does not exist!!");
       }
     });
-    const unsubscribe = firebase.firestore()
+    const unsubscribe = firebase
+      .firestore()
       .collection("Pet")
       .onSnapshot(getCollection);
   }, []);
-        
-
 
   const selectDate = () => {
     setShowdate(!showdate);
@@ -115,10 +113,10 @@ const AppointmentScreen =  ({ route, navigation }) => {
     return `${year}-${month}-${day}`;
   };
 
-  
   function storeAppointment() {
+    const appointmentDB = firebase.firestore().collection("Appointment");
     if (route.params.todo === "addQueue") {
-      console.log( route.params)
+      console.log(route.params);
       appointmentDB
         .add({
           ClinicID: route.params.ClinicID,
@@ -128,7 +126,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
           Status: "รอการยืนยัน",
           Time: valuetime,
           StatusClinic: "รอการยืนยัน",
-          Datestamp: new Date(datetxt)
+          Datestamp: new Date(datetxt),
         })
         .then((res) => {
           onChangedatetxt("");
@@ -138,8 +136,12 @@ const AppointmentScreen =  ({ route, navigation }) => {
             "New Queue was added!! Pls check your DB!!"
           );
         });
-    } else if (route.params.todo === "editQueue" && route.params.editfrom === "Owner") {
-      const updateQueue = firebase.firestore()
+    } else if (
+      route.params.todo === "editQueue" &&
+      route.params.editfrom === "Owner"
+    ) {
+      const updateQueue = firebase
+        .firestore()
         .collection("Appointment")
         .doc(route.params.queueid);
       updateQueue
@@ -151,7 +153,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
           Status: "รอการยืนยัน",
           Time: valuetime,
           StatusClinic: "เลื่อนนัด",
-          Datestamp: new Date(datetxt)
+          Datestamp: new Date(datetxt),
         })
         .then(() => {
           Alert.alert(
@@ -159,8 +161,12 @@ const AppointmentScreen =  ({ route, navigation }) => {
             "The queue was updated!! Pls check your DB!!"
           );
         });
-    } else if (route.params.todo === "editQueue" && route.params.editfrom === "Clinic") {
-      const updateQueue = firebase.firestore()
+    } else if (
+      route.params.todo === "editQueue" &&
+      route.params.editfrom === "Clinic"
+    ) {
+      const updateQueue = firebase
+        .firestore()
         .collection("Appointment")
         .doc(route.params.queueid);
       updateQueue
@@ -172,7 +178,7 @@ const AppointmentScreen =  ({ route, navigation }) => {
           Status: "เลื่อนนัด",
           Time: valuetime,
           StatusClinic: "รอการยืนยัน",
-          Datestamp: new Date(datetxt)
+          Datestamp: new Date(datetxt),
         })
         .then(() => {
           Alert.alert(

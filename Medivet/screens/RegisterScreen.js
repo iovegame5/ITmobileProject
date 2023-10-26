@@ -105,7 +105,7 @@ const RegisterScreen = ({ navigation }) => {
   const auth = firebase.auth();
   // this.subjCollection = firebase.firestore().collection("students");
 
-  const allErrorcheck = () => {
+  const allErrorcheck = async () => {
     if (checked === "Patient") {
       firstNameValidation();
       lastNameValidation();
@@ -154,10 +154,10 @@ const RegisterScreen = ({ navigation }) => {
       }
     }
   };
-  const handleRegister = () => {
+  const handleRegister =async  () => {
     if (checked === "Patient") {
       console.log("Owner Register");
-      allErrorcheck();
+     await allErrorcheck();
       if (error) {
        Alert.alert("กรอกข้อมูลให้ถูกต้อง")
         return;
@@ -202,8 +202,9 @@ const RegisterScreen = ({ navigation }) => {
         });
     } else if (checked === "Vet") {
       console.log("Vet Register");
-      allErrorcheck();
+      await allErrorcheck();
       if (error) {
+        Alert.alert("กรอกข้อมูลให้ถูกต้อง")
         return;
       }
       console.log("กำลังสมัคร");

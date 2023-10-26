@@ -33,7 +33,7 @@ const AllIllness = ({ route, navigation }) => {
             Type
           });
         }
-        console.log(Type)
+        // console.log(Type)
       });
 
       setIllnessList(allData);

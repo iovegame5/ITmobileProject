@@ -134,7 +134,7 @@ const HomeScreen = (props) => {
     if (!isAuthenticated) {
       navigation.navigate("Main");
     } else {
-      fetchAppointment();
+      // fetchAppointment();
       fetchPromotions();
       Location.requestForegroundPermissionsAsync();
     }
@@ -214,13 +214,18 @@ const HomeScreen = (props) => {
   };
 
   const fetchAppointment = async () => {
-    setIsLoading(true);
+    console.log("fetching Appointment");
+    // setIsLoading(true);
 
     try {
+      setIsLoading(true)
       const appointRef = firebase
         .firestore()
         .collection("Appointment")
+
+        // .where("Status", "==", "นัดหมาย")
         .orderBy("Date");
+      // .where("Status", "==", "นัดหมาย")
       const querySnapshot = await appointRef.get();
       if (querySnapshot.empty) {
         // Check if there are no promotions
@@ -234,7 +239,11 @@ const HomeScreen = (props) => {
         const data = doc.data();
         try {
           /* const url = await storageRef.getDownloadURL(); */
-          if (user.uid === data.OwnerID || user.uid === data.ClinicID) {
+          if (
+            (user.uid === data.OwnerID || user.uid === data.ClinicID) &&
+            data.Status === "นัดหมาย" &&
+            data.StatusClinic === "นัดหมาย"
+          ) {
             const allappointment = {
               id: doc.id,
               ClinicID: data.ClinicID,
@@ -247,6 +256,7 @@ const HomeScreen = (props) => {
               // Add more fields as needed
             };
             appointData.push(allappointment);
+            console.log("______", appointData);
           }
 
           counter.count++;
@@ -298,7 +308,7 @@ const HomeScreen = (props) => {
                     ownerData.firstName + " " + ownerData.lastName;
                   // Add more clinic details as needed
                 } else {
-                  console.error("Clinic data not found for promotion:", queue);
+                  console.error("Not found Appoinment", queue);
                   console.error("Pet data not found", queue);
                 }
               });
@@ -314,7 +324,8 @@ const HomeScreen = (props) => {
         }
       });
     } catch (error) {
-      console.error("Error fetching promotions:", error);
+      setIsLoading(false);
+      console.error("Error fetching Appointment:", error);
     }
   };
 
@@ -445,7 +456,7 @@ const HomeScreen = (props) => {
                   </View>
                   <View style={styles.picappoint}>
                     <Image
-                      source={require("../pics/channels4_profile.jpg")}
+                        source={{ uri: alldbappoint[0].petImage}}
                       style={styles.piconappoint}
                     />
                   </View>
@@ -477,9 +488,16 @@ const HomeScreen = (props) => {
                 </Text>
               </View>
 
-              <View style={{ flexDirection: "row", width: "90%", height: 150, justifyContent: "space-evenly" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "90%",
+                  height: 150,
+                  justifyContent: "space-evenly",
+                }}
+              >
                 <Pressable
-                style={{width: "50%"}}
+                  style={{ width: "50%" }}
                   onPress={() => {
                     props.navigation.navigate("illness", {
                       type: "Dog",
@@ -497,7 +515,7 @@ const HomeScreen = (props) => {
                 </Pressable>
 
                 <Pressable
-                style={{width: "50%"}}
+                  style={{ width: "50%" }}
                   onPress={() => {
                     navigation.navigate("illness", {
                       type: "Cat",
